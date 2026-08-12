@@ -10,7 +10,7 @@
   <!-- === Tablet / Android WebView tuning === -->
   <preference name="WebViewEngine"                value="system" />
   <preference name="AndroidInsecureFileModeEnabled" value="true" />
-  <preference name="Orientation"                 value="landscape" />
+  <preference name="Orientation"                 value="portrait" />
   <preference name="Fullscreen"                  value="false" />
   <preference name="DisallowOverscroll"          value="true" />
   <preference name="BackgroundColor"             value="#000000" />

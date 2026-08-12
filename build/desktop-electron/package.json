@@ -45,7 +45,8 @@
     },
     "win": {
       "target": "nsis",
-      "artifactName": "StudyFlow-${version}-setup.${ext}"
+      "artifactName": "StudyFlow-${version}-setup.${ext}",
+      "signAndEditExecutable": false
     },
     "mac": {
       "target": "dmg",
