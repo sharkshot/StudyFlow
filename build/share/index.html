@@ -907,12 +907,17 @@
   }
   .month-selector select:focus { border-color: var(--color-white); }
 
-  /* Month calendar grid — 7 columns, fills available width */
+  /* Month calendar grid — 7 columns, capped width so the whole page fits
+     without scrolling; cells stay square via aspect-ratio. */
   .heatmap-calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 4px;
     margin-top: var(--space-sm);
+    width: 100%;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .cal-weekday-header {
     font-size: var(--text-caption);
@@ -1611,7 +1616,7 @@
     .session-item { padding: var(--space-sm) 0; }
     .session-delete { width: 36px; height: 36px; font-size: 18px; }
     /* Month calendar: compact cells on phone */
-    .heatmap-calendar { gap: 3px; }
+    .heatmap-calendar { gap: 3px; max-width: 340px; }
     .cal-cell { font-size: 11px; padding: 4px 5px; }
     .label-cell { width: 10px; height: 10px; }
     /* Sync view: single column */
