@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Cordova generated
+platforms/
+plugins/
+
+# Android SDK (auto-downloaded by build script)
+tools/
+
+# Build caches & artifacts
+_cache/
+artifacts/
+dist/
+
+# Generated web assets (synced from share/ by build scripts)
+www/
+app-web/
+
+# Build outputs
+*.apk
+*.AppImage
+*.tar.gz
+*.dmg
+*.exe
+
+# Lock files (regenerated on npm install)
+package-lock.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Screenshots & IDE packages
+*.png
+.trae-html-share-packages/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo

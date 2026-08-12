@@ -1,0 +1,3038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>StudyFlow</title>
+<style>
+  /* ============================================================
+     DESIGN SYSTEM — NINE TO FIVE STUDIO
+     Swiss International Style / Brutalist Architecture / Minimal Gallery
+     ============================================================ */
+  :root {
+    /* === COLORS === */
+    --color-black: #000000;
+    --color-white: #FFFFFF;
+    --color-accent-yellow: #FCFF0D;
+    --color-accent-pink: #CD4A85;
+    --color-text-secondary-dark: #979797;
+    --color-text-secondary-light: #6D6D6D;
+    --color-surface-dark: #242424;
+    --color-surface-button: #333333;
+    --color-divider-dark: rgba(255, 255, 255, 0.1);
+    --color-divider-light: rgba(0, 0, 0, 0.1);
+    --color-overlay: rgba(0, 0, 0, 0.6);
+
+    /* === TYPOGRAPHY === */
+    --font-primary: 'Helvetica Neue', 'Inter', Arial, system-ui, sans-serif;
+    --text-nav: 28px;
+    --text-heading: 24px;
+    --text-label: 11px;
+    --text-body: 13px;
+    --text-caption: 11px;
+    --weight-bold: 700;
+    --weight-regular: 400;
+    --weight-light: 300;
+    --leading-tight: 1.2;
+    --leading-heading: 1.3;
+    --leading-body: 1.6;
+    --tracking-tight: -0.02em;
+    --tracking-normal: 0;
+    --tracking-wide: 0.12em;
+    --tracking-wider: 0.15em;
+
+    /* === SPACING === */
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+    --space-2xl: 64px;
+    --sidebar-width: 48px;
+    --panel-padding: 48px;
+    --section-gap: 48px;
+    --link-gap: 8px;
+    --label-gap: 16px;
+
+    /* === RADIUS === */
+    --radius-sharp: 0px;
+    --radius-pill: 20px;
+    --radius-circle: 50%;
+
+    /* === SHADOW === */
+    --shadow-none: none;
+
+    /* === ANIMATION === */
+    --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-default: ease;
+    --duration-fast: 300ms;
+    --duration-normal: 400ms;
+
+    /* === HEATMAP CELL GRADIATION (white on black) === */
+    --cell-0: rgba(255, 255, 255, 0.05);
+    --cell-1: rgba(255, 255, 255, 0.15);
+    --cell-2: rgba(255, 255, 255, 0.3);
+    --cell-3: rgba(255, 255, 255, 0.5);
+    --cell-4: rgba(255, 255, 255, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: var(--font-primary);
+    background: var(--color-black);
+    color: var(--color-white);
+    min-height: 100vh;
+    line-height: var(--leading-body);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: tabular-nums;
+    position: relative;
+  }
+
+  /* ============================================================
+     SIDEBAR RAILS (fixed, 48px)
+     ============================================================ */
+  .nav-rail {
+    position: fixed;
+    top: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: var(--color-black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    cursor: pointer;
+    user-select: none;
+  }
+  .nav-rail-left {
+    left: 0;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    border-right: 1px solid var(--color-divider-dark);
+  }
+  .nav-rail-right {
+    right: 0;
+    writing-mode: vertical-rl;
+    border-left: 1px solid var(--color-divider-dark);
+  }
+  .nav-rail-text {
+    font-size: var(--text-label);
+    font-weight: var(--weight-regular);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-white);
+    transition: color var(--duration-fast) var(--ease-default);
+  }
+  .nav-rail:hover .nav-rail-text {
+    color: var(--color-accent-yellow);
+  }
+
+  /* ============================================================
+     NAV OVERLAY & PANEL (slides from left)
+     ============================================================ */
+  .nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--color-overlay);
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-normal) var(--ease-default);
+  }
+  .nav-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nav-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 400px;
+    max-width: 85vw;
+    height: 100vh;
+    background: var(--color-black);
+    z-index: 300;
+    padding: var(--panel-padding);
+    transform: translateX(-100%);
+    transition: transform var(--duration-normal) var(--ease-expo);
+    border-right: 1px solid var(--color-divider-dark);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .nav-panel.active { transform: translateX(0); }
+
+  .nav-panel-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: var(--color-text-secondary-dark);
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color var(--duration-fast) var(--ease-default);
+  }
+  .nav-panel-close:hover { color: var(--color-accent-pink); }
+
+  .nav-section { margin-bottom: var(--section-gap); }
+  .nav-section + .nav-section { padding-top: var(--section-gap); border-top: 1px solid var(--color-divider-dark); }
+
+  .nav-section-label {
+    font-size: var(--text-label);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+    margin-bottom: var(--label-gap);
+  }
+
+  .nav-links { list-style: none; display: flex; flex-direction: column; gap: var(--link-gap); }
+
+  /* Text link button (main nav style) */
+  .btn-link {
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sharp);
+    padding: 0;
+    font-family: inherit;
+    font-size: var(--text-nav);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    text-transform: uppercase;
+    color: var(--color-white);
+    cursor: pointer;
+    text-align: left;
+    transition: color var(--duration-fast) var(--ease-default), transform var(--duration-fast) var(--ease-default);
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+  }
+  .btn-link:hover {
+    color: var(--color-accent-yellow);
+    transform: translateX(8px);
+  }
+  .btn-link.active::before {
+    content: '•';
+    color: var(--color-accent-yellow);
+    margin-right: var(--space-sm);
+    font-size: var(--text-heading);
+    line-height: 1;
+  }
+  .btn-link.active {
+    /* active doesn't shift; it marks current */
+    color: var(--color-white);
+    transform: none;
+  }
+  .btn-link.active:hover {
+    color: var(--color-accent-yellow);
+  }
+
+  /* Info panel content in right rail click? We'll reuse left panel for all nav */
+  .info-list { list-style: none; display: flex; flex-direction: column; gap: var(--space-xs); }
+  .info-item {
+    font-size: var(--text-body);
+    font-weight: var(--weight-regular);
+    color: var(--color-white);
+    letter-spacing: normal;
+    text-transform: none;
+  }
+  .info-item span {
+    display: block;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    color: var(--color-text-secondary-dark);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  /* ============================================================
+     MAIN CONTENT LAYOUT
+     ============================================================ */
+  .app {
+    position: relative;
+    z-index: 1;
+    padding: var(--panel-padding);
+    padding-left: calc(var(--sidebar-width) + var(--panel-padding));
+    padding-right: calc(var(--sidebar-width) + var(--panel-padding));
+    min-height: 100vh;
+    max-width: 100%;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; animation: fadeInView var(--duration-normal) var(--ease-expo); }
+
+  @keyframes fadeInView {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes staggerIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============================================================
+     TOP HEADER
+     ============================================================ */
+  .top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-divider-dark);
+    position: relative;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+
+  .app-title {
+    font-size: var(--text-heading);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-tight);
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+  .app-title::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--color-accent-yellow);
+    border-radius: var(--radius-circle);
+  }
+
+  .stats-bar {
+    display: flex;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+    padding-top: 2px;
+  }
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--text-label);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+  }
+  .stat-value {
+    color: var(--color-accent-yellow);
+    font-weight: var(--weight-bold);
+    font-size: var(--text-body);
+    letter-spacing: normal;
+  }
+
+  /* ============================================================
+     SECTION / PANEL STRUCTURE — divider only, no card borders
+     ============================================================ */
+  .section {
+    padding: var(--space-xl) 0;
+    border-top: 1px solid var(--color-divider-dark);
+    position: relative;
+  }
+  .section:last-of-type { border-bottom: 1px solid var(--color-divider-dark); }
+
+  .section-label {
+    font-size: var(--text-label);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+    margin-bottom: var(--label-gap);
+  }
+
+  /* ============================================================
+     POMODORO
+     ============================================================ */
+  .stage-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    font-size: var(--text-label);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+  }
+  .stage-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-circle);
+    background: var(--color-accent-yellow);
+    animation: pulseDot 1.6s infinite;
+  }
+  .stage-indicator.rest { color: var(--color-accent-pink); }
+  .stage-indicator.rest .stage-dot { background: var(--color-accent-pink); }
+
+  @keyframes pulseDot {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .ring-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 0 0 var(--space-xl);
+    position: relative;
+  }
+  .pomo-ring { transform: rotate(-90deg); }
+  .pomo-ring circle { fill: none; stroke-linecap: butt; }
+
+  /* Multi-layer concentric rings for depth (no shadows used per DS) */
+  .pomo-ring-outer-outline {
+    stroke: rgba(255, 255, 255, 0.07);
+    stroke-width: 1;
+  }
+  .pomo-ring-outer-halo {
+    stroke: rgba(255, 255, 255, 0.03);
+    stroke-width: 10;
+  }
+  .pomo-ring-bg {
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 1;
+  }
+  .pomo-ring-inner-halo {
+    stroke: rgba(255, 255, 255, 0.025);
+    stroke-width: 10;
+  }
+  .pomo-ring-inner-outline {
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 1;
+  }
+  .pomo-ring-fg {
+    stroke: var(--color-accent-yellow);
+    stroke-width: 2;
+    transition: stroke-dashoffset 0.6s var(--ease-expo);
+  }
+  .pomo-ring-fg.rest { stroke: var(--color-accent-pink); }
+
+  .ring-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+  }
+  /* Geometric block numerals — heavy slab / industrial display style */
+  .timer-num {
+    font-family: 'Arial Black', 'Helvetica Neue', Impact, 'Inter Black', 'Avenir Next Condensed', system-ui, sans-serif;
+    font-size: 96px;
+    font-weight: 900;
+    letter-spacing: -0.055em;
+    color: var(--color-white);
+    line-height: 0.95;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "ss01", "tnum";
+    text-rendering: geometricPrecision;
+    -webkit-font-smoothing: antialiased;
+  }
+  .timer-num .colon {
+    display: inline-block;
+    transform: translateY(-0.06em);
+    color: var(--color-accent-yellow);
+  }
+  .timer-cycle-label {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+    margin-top: var(--space-sm);
+  }
+
+  /* Cycle bars */
+  .cycle-bars {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: var(--space-xl);
+    align-items: center;
+  }
+  .cycle-bar {
+    width: 40px;
+    height: 2px;
+    background: var(--color-divider-dark);
+    transition: all var(--duration-fast) var(--ease-default);
+  }
+  .cycle-bar.done { background: rgba(255,255,255,0.3); }
+  .cycle-bar.active { background: var(--color-accent-yellow); height: 3px; width: 56px; }
+  .cycle-bar.rest-active { background: var(--color-accent-pink); height: 3px; width: 56px; }
+
+  /* Action row */
+  .action-row {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-xl);
+    flex-wrap: wrap;
+  }
+
+  /* Subject input (minimal, line-only) */
+  .subject-input {
+    display: flex;
+    gap: var(--space-sm);
+    margin: var(--space-xl) auto 0;
+    max-width: 520px;
+  }
+  .subject-input input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--color-divider-dark);
+    border-radius: var(--radius-sharp);
+    padding: var(--space-sm) 0;
+    color: var(--color-white);
+    font-family: inherit;
+    font-size: var(--text-body);
+    outline: none;
+    transition: border-color var(--duration-fast);
+    letter-spacing: normal;
+  }
+  .subject-input input:focus { border-color: var(--color-white); }
+  .subject-input input::placeholder { color: var(--color-text-secondary-dark); }
+
+  /* Floating style button for secondary actions (pill, 20px) */
+  .btn-floating {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid var(--color-divider-dark);
+    border-radius: var(--radius-pill);
+    padding: 8px 16px;
+    font-family: inherit;
+    font-size: var(--text-label);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-white);
+    cursor: pointer;
+    transition: background var(--duration-fast) var(--ease-default), transform var(--duration-fast) var(--ease-default);
+  }
+  .btn-floating:hover {
+    background: var(--color-black);
+    border-color: var(--color-white);
+    transform: scale(1.05);
+  }
+
+  /* ============================================================
+     SETTINGS (no cards — labeled rows with dividers)
+     ============================================================ */
+  .settings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+  }
+  @media (max-width: 720px) {
+    .settings-grid { grid-template-columns: 1fr; gap: var(--space-lg); }
+  }
+
+  .setting-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  .setting-label {
+    font-size: var(--text-label);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+  }
+  .num-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+    gap: var(--space-sm);
+  }
+  .num-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sharp);
+    background: transparent;
+    border: 1px solid var(--color-divider-dark);
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 18px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--duration-fast) var(--ease-expo);
+    padding: 0;
+  }
+  .num-btn:hover {
+    border-color: var(--color-white);
+    color: var(--color-accent-yellow);
+  }
+  .num-value {
+    flex: 1;
+    text-align: center;
+    font-size: var(--text-heading);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-white);
+  }
+  .setting-unit {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+    text-align: center;
+  }
+
+  /* Summary row — line-based */
+  .summary-line {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: var(--space-xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-divider-dark);
+  }
+  @media (max-width: 640px) {
+    .summary-line { grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+  }
+  .summary-cell { padding: var(--space-sm) var(--space-xs); text-align: center; }
+  .s-label {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+    margin-bottom: 4px;
+  }
+  .s-num {
+    font-size: 18px;
+    font-weight: var(--weight-bold);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-white);
+  }
+
+  /* Checkbox line */
+  .checkbox-row {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    cursor: pointer;
+    font-size: var(--text-body);
+    color: var(--color-text-secondary-dark);
+    user-select: none;
+    padding: var(--space-xs) 0;
+    margin-top: var(--space-md);
+    letter-spacing: normal;
+  }
+  .checkbox-row input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: var(--radius-sharp);
+    border: 1px solid var(--color-white);
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    transition: all var(--duration-fast) var(--ease-expo);
+    flex-shrink: 0;
+  }
+  .checkbox-row input[type="checkbox"]:checked {
+    background: var(--color-accent-yellow);
+    border-color: var(--color-accent-yellow);
+  }
+  .checkbox-row input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: var(--color-black);
+  }
+  .checkbox-row:hover { color: var(--color-white); }
+
+  /* ============================================================
+     TODAY STATS — line-only
+     ============================================================ */
+  .today-date {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+    margin-bottom: var(--space-md);
+  }
+
+  .today-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+  .today-stat { padding: var(--space-sm) 0; }
+  .today-stat-label {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+    margin-bottom: 4px;
+  }
+  .today-stat-value {
+    font-size: 22px;
+    font-weight: var(--weight-bold);
+    color: var(--color-white);
+    font-variant-numeric: tabular-nums;
+  }
+  .today-stat-unit {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    color: var(--color-text-secondary-dark);
+    margin-left: 2px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .session-list-wrap {
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: var(--space-xs);
+  }
+  .session-list { list-style: none; }
+  .session-item {
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--color-divider-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-sm);
+    transition: opacity var(--duration-fast);
+  }
+  .session-item:last-child { border-bottom: none; }
+  .session-info { flex: 1; min-width: 0; }
+  .session-subject {
+    font-weight: var(--weight-regular);
+    font-size: var(--text-body);
+    letter-spacing: normal;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .session-subject.empty {
+    color: var(--color-text-secondary-dark);
+    font-style: italic;
+  }
+  .session-meta {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    color: var(--color-text-secondary-dark);
+    letter-spacing: 0.05em;
+    text-transform: none;
+  }
+  .session-duration {
+    font-size: var(--text-body);
+    font-weight: var(--weight-bold);
+    color: var(--color-white);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .session-delete {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary-dark);
+    cursor: pointer;
+    padding: 4px;
+    transition: color var(--duration-fast);
+    font-size: 14px;
+    line-height: 1;
+  }
+  .session-delete:hover { color: var(--color-accent-pink); }
+
+  .empty-state {
+    text-align: left;
+    padding: var(--space-md) 0;
+    color: var(--color-text-secondary-dark);
+  }
+  .empty-state-title {
+    font-size: var(--text-body);
+    color: var(--color-white);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .empty-state-desc {
+    font-size: var(--text-caption);
+    color: var(--color-text-secondary-dark);
+    letter-spacing: 0.05em;
+  }
+
+  /* ============================================================
+     HEATMAP
+     ============================================================ */
+  .heatmap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+  .year-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-label);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+  }
+  .year-selector select {
+    background: transparent;
+    color: var(--color-white);
+    border: none;
+    border-bottom: 1px solid var(--color-divider-dark);
+    border-radius: var(--radius-sharp);
+    padding: 4px 0;
+    font-family: inherit;
+    font-size: var(--text-body);
+    font-weight: var(--weight-bold);
+    cursor: pointer;
+    outline: none;
+    letter-spacing: normal;
+  }
+  .year-selector select:focus { border-color: var(--color-white); }
+
+  .month-labels {
+    display: flex;
+    gap: 4px;
+    margin-bottom: var(--space-xs);
+    padding-left: 32px;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+    min-height: 16px;
+  }
+  .month-label { min-width: 60px; }
+
+  .heatmap-with-labels {
+    display: flex;
+    gap: var(--space-xs);
+  }
+  .weekday-labels {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+    padding-top: 8px;
+    width: 24px;
+    flex-shrink: 0;
+  }
+  .weekday-label {
+    height: 14px;
+    display: flex;
+    align-items: center;
+  }
+
+  .heatmap-wrapper {
+    overflow-x: auto;
+    padding-bottom: var(--space-xs);
+    flex: 1;
+  }
+  .heatmap {
+    display: flex;
+    gap: 3px;
+    padding: 8px 0;
+    min-width: 100%;
+  }
+  .heatmap-week {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .heatmap-cell {
+    width: 14px;
+    height: 14px;
+    background: var(--cell-0);
+    border-radius: var(--radius-sharp);
+    cursor: pointer;
+    transition: all 0.2s var(--ease-expo);
+    border: none;
+    position: relative;
+  }
+  .heatmap-cell:hover {
+    transform: scale(1.5);
+    z-index: 10;
+    outline: 1px solid var(--color-accent-yellow);
+    outline-offset: 0;
+  }
+  .heatmap-cell.empty { visibility: hidden; cursor: default; }
+  .heatmap-cell.today { outline: 2px solid var(--color-accent-yellow); outline-offset: 1px; }
+
+  .heatmap-cell[data-level="0"] { background: var(--cell-0); }
+  .heatmap-cell[data-level="1"] { background: var(--cell-1); }
+  .heatmap-cell[data-level="2"] { background: var(--cell-2); }
+  .heatmap-cell[data-level="3"] { background: var(--cell-3); }
+  .heatmap-cell[data-level="4"] { background: var(--cell-4); }
+
+  .heatmap-labels {
+    display: flex;
+    gap: 4px;
+    margin-top: var(--space-md);
+    align-items: center;
+    justify-content: flex-end;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+    flex-wrap: wrap;
+  }
+  .heatmap-labels .labels-row {
+    display: flex;
+    gap: 3px;
+    margin: 0 8px;
+  }
+  .heatmap-labels .label-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radius-sharp);
+  }
+
+  .heatmap-stats {
+    display: flex;
+    gap: var(--space-lg);
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-divider-dark);
+    font-size: var(--text-body);
+    color: var(--color-text-secondary-dark);
+    flex-wrap: wrap;
+    letter-spacing: normal;
+  }
+  .heatmap-stats .stat-item { display: flex; align-items: center; gap: var(--space-xs); text-transform: uppercase; letter-spacing: var(--tracking-wide); font-size: var(--text-label); font-weight: var(--weight-regular);}
+  .heatmap-stats .stat-value {
+    color: var(--color-white);
+    font-weight: var(--weight-bold);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--text-body);
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  /* ============================================================
+     MODAL / OVERLAY (date detail)
+     ============================================================ */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--color-overlay);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 400;
+    padding: 20px;
+    animation: fadeIn var(--duration-fast) var(--ease-default);
+  }
+  .modal-overlay.active { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--color-black);
+    border: 1px solid var(--color-divider-dark);
+    border-radius: var(--radius-sharp);
+    width: 100%;
+    max-width: 480px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp var(--duration-normal) var(--ease-expo);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(24px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--color-accent-yellow);
+  }
+
+  .modal-header {
+    padding: var(--space-md) var(--panel-padding);
+    border-bottom: 1px solid var(--color-divider-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-title {
+    font-size: var(--text-label);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-white);
+  }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary-dark);
+    font-family: inherit;
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    transition: color var(--duration-fast);
+  }
+  .modal-close:hover { color: var(--color-accent-pink); }
+
+  .modal-body { padding: var(--space-md) var(--panel-padding); }
+
+  .date-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--color-divider-dark);
+  }
+  .summary-box {
+    padding: 0;
+    text-align: left;
+  }
+  .summary-box-label {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+    margin-bottom: 4px;
+  }
+  .summary-box-value {
+    font-size: var(--text-heading);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-white);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ============================================================
+     TOAST
+     ============================================================ */
+  .toast {
+    position: fixed;
+    top: var(--space-lg);
+    right: calc(var(--sidebar-width) + var(--space-lg));
+    background: var(--color-black);
+    border: 1px solid var(--color-white);
+    border-radius: var(--radius-sharp);
+    padding: var(--space-sm) var(--space-md);
+    color: var(--color-white);
+    z-index: 500;
+    display: none;
+    animation: slideIn var(--duration-normal) var(--ease-expo);
+    font-size: var(--text-caption);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+  .toast.active { display: block; }
+  .toast.warning {
+    border-color: var(--color-accent-pink);
+    color: var(--color-accent-pink);
+  }
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* ============================================================
+     SYNC / QR
+     ============================================================ */
+  .sync-3col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+  @media (max-width: 640px) { .sync-3col { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); } }
+  .sync-stat {
+    padding: var(--space-sm) 0;
+    text-align: left;
+    border-top: 1px solid var(--color-divider-dark);
+  }
+  .sync-stat-num {
+    font-size: var(--text-heading);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-white);
+  }
+  .sync-stat-label {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+    margin-top: 4px;
+  }
+
+  .device-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-sm) 0;
+    border-top: 1px solid var(--color-divider-dark);
+    gap: var(--space-sm);
+  }
+  .device-meta { display: flex; flex-direction: column; gap: 2px; }
+  .device-label {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+  }
+  .device-id {
+    font-size: 20px;
+    font-weight: var(--weight-bold);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+    color: var(--color-white);
+  }
+
+  .inline-row {
+    display: flex;
+    gap: var(--space-sm);
+    margin: var(--space-sm) 0 var(--space-xs);
+  }
+  .inline-row input[type=text],
+  .inline-row textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--color-divider-dark);
+    border-radius: var(--radius-sharp);
+    padding: var(--space-sm) 0;
+    color: var(--color-white);
+    font-family: inherit;
+    font-size: var(--text-body);
+    outline: none;
+    transition: border-color var(--duration-fast);
+    letter-spacing: normal;
+    resize: vertical;
+    font-variant-numeric: tabular-nums;
+  }
+  .inline-row input[type=text]:focus,
+  .inline-row textarea:focus { border-color: var(--color-white); }
+  .inline-row input[type=text]::placeholder,
+  .inline-row textarea::placeholder { color: var(--color-text-secondary-dark); }
+
+  .hint {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+    color: var(--color-text-secondary-dark);
+    margin-top: var(--space-xs);
+  }
+
+  .trusted-list { list-style: none; display: flex; flex-direction: column; }
+  .trusted-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-sm) 0;
+    border-top: 1px solid var(--color-divider-dark);
+    gap: var(--space-sm);
+  }
+  .trusted-id {
+    font-size: var(--text-body);
+    font-weight: var(--weight-bold);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+    color: var(--color-white);
+  }
+  .trusted-time {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+  }
+  .trusted-empty {
+    text-align: left;
+    padding: var(--space-md) 0;
+    color: var(--color-text-secondary-dark);
+    font-size: var(--text-body);
+    border-top: 1px solid var(--color-divider-dark);
+  }
+
+  /* QR mode row */
+  .qr-mode-row {
+    display: flex;
+    gap: 0;
+    margin-bottom: var(--space-lg);
+    padding: 0;
+    border: 1px solid var(--color-divider-dark);
+    border-radius: var(--radius-sharp);
+  }
+  .qr-mode-btn {
+    flex: 1;
+    padding: var(--space-sm) var(--space-md);
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--color-divider-dark);
+    color: var(--color-text-secondary-dark);
+    font-family: inherit;
+    font-size: var(--text-label);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: var(--radius-sharp);
+    transition: all var(--duration-fast) var(--ease-expo);
+    text-align: center;
+  }
+  .qr-mode-btn:last-child { border-right: none; }
+  .qr-mode-btn.active {
+    background: var(--color-accent-yellow);
+    color: var(--color-black);
+    font-weight: var(--weight-bold);
+  }
+  .qr-section { display: none; }
+  .qr-section.active { display: block; }
+
+  .qr-info-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-sm) 0;
+    margin-bottom: var(--space-md);
+    border-top: 1px solid var(--color-divider-dark);
+    font-size: var(--text-caption);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary-dark);
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+  .qr-info-bar .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: var(--radius-circle);
+    margin-right: var(--space-xs);
+    background: var(--color-white);
+  }
+
+  .qr-display-wrap {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-xl);
+    background: var(--color-white);
+    border-radius: var(--radius-sharp);
+    margin: var(--space-md) 0;
+    min-height: 240px;
+    align-items: center;
+  }
+  .qr-display-wrap canvas, .qr-display-wrap img { display: block; }
+  .qr-placeholder { color: var(--color-text-secondary-light); font-size: var(--text-body); text-align: center; letter-spacing: normal; }
+
+  .qr-scan-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    margin: var(--space-md) auto;
+    border-radius: var(--radius-sharp);
+    overflow: hidden;
+    background: var(--color-black);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-white);
+  }
+  .qr-scan-wrap video { width: 100%; height: 100%; object-fit: cover; }
+  .qr-scan-overlay {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%; height: 70%;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: var(--radius-sharp);
+    pointer-events: none;
+  }
+  .qr-scan-overlay::before, .qr-scan-overlay::after {
+    content: '';
+    position: absolute;
+    width: 24px; height: 24px;
+    border: 2px solid var(--color-white);
+    border-radius: var(--radius-sharp);
+  }
+  .qr-scan-overlay::before { top: -3px; left: -3px; border-right: none; border-bottom: none; }
+  .qr-scan-overlay::after  { bottom: -3px; right: -3px; border-left: none; border-top: none; }
+
+  .qr-scan-line {
+    position: absolute;
+    left: 15%; right: 15%;
+    height: 1px;
+    background: var(--color-white);
+    top: 50%;
+    opacity: 0.6;
+    animation: qrScan 2s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes qrScan {
+    0%   { top: 15%; }
+    50%  { top: 85%; }
+    100% { top: 15%; }
+  }
+  .qr-scan-placeholder {
+    color: var(--color-text-secondary-dark);
+    font-size: var(--text-body);
+    text-align: center;
+    padding: var(--space-md);
+  }
+
+  .actions-row {
+    display: flex;
+    gap: var(--space-sm);
+    justify-content: center;
+    margin-top: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--color-black); }
+  ::-webkit-scrollbar-thumb { background: var(--color-divider-dark); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-accent-yellow); }
+
+  /* Base touch optimisations for all mobile/tablet browsers */
+  html, body {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    overscroll-behavior-y: none;
+    touch-action: manipulation;
+  }
+  input, textarea, select {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  /* ============================================================
+     ANDROID TABLET ADAPTATION (landscape: 768px–1280px, typical 10")
+     Touch targets ≥ 48px; rails enlarged; fluid typography via clamp()
+     ============================================================ */
+  @media (min-width: 768px) and (max-width: 1280px) and (orientation: landscape),
+         (min-width: 768px) and (max-width: 1280px) and (pointer: coarse) {
+    :root {
+      /* Fluid typography for tablet viewing distance */
+      --text-nav: clamp(28px, 3.2vw, 36px);
+      --text-heading: clamp(24px, 2.6vw, 30px);
+      --text-label: clamp(11px, 1.2vw, 13px);
+      --text-body:  clamp(13px, 1.5vw, 16px);
+      --text-caption: clamp(11px, 1.2vw, 13px);
+      /* More generous spacing for touch */
+      --space-xs: 10px;
+      --space-sm: 20px;
+      --space-md: 30px;
+      --space-lg: 40px;
+      --space-xl: 56px;
+      --space-2xl: 72px;
+      --sidebar-width: 64px;   /* touch-friendly rails */
+      --panel-padding: 56px;
+      --section-gap: 56px;
+      --link-gap: 12px;
+      --label-gap: 20px;
+      --tracking-wide: 0.14em;
+      --tracking-wider: 0.18em;
+    }
+    html, body { font-size: 16px; }
+    /* Sidebars: fatter + bigger text for easy thumb tap */
+    .nav-rail { width: var(--sidebar-width); }
+    .nav-rail-text { font-size: 13px; letter-spacing: 0.18em; }
+    /* Nav panel: wider so big text doesn't wrap */
+    .nav-panel { width: clamp(420px, 44vw, 540px); }
+    /* Buttons: enforce 48px+ touch area */
+    .btn-link { min-height: 48px; line-height: 48px; }
+    .btn-floating { min-height: 44px; padding: 12px 22px; }
+    .num-btn {
+      width: 48px; height: 48px; font-size: 24px;
+      border-width: 1px;
+    }
+    .nav-panel-close {
+      width: 48px; height: 48px; font-size: 32px;
+      display: flex; align-items: center; justify-content: center;
+      top: 28px; right: 28px;
+    }
+    .session-delete {
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .modal-close {
+      width: 48px; height: 48px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 28px;
+    }
+    /* Timer block slightly bigger on tablet */
+    .pomo-ring { width: clamp(240px, 30vw, 300px); height: auto; aspect-ratio: 1; }
+    .timer-num {
+      font-size: clamp(84px, 11vw, 120px) !important;
+      letter-spacing: -0.06em;
+    }
+    .cycle-bars { gap: 6px; margin-bottom: var(--space-xl); }
+    .cycle-bar { width: 54px; }
+    .cycle-bar.active, .cycle-bar.rest-active { width: 72px; }
+    /* Subject input: taller for touch */
+    .subject-input input { padding: 18px 0; font-size: 18px; }
+    .inline-row input[type=text],
+    .inline-row textarea { padding: 18px 0; font-size: 16px; }
+    textarea.sync-code-field { padding: 18px 0 !important; font-size: 16px !important; }
+    /* Heatmap cells: bigger + touchable */
+    .heatmap-cell { width: 18px; height: 18px; }
+    .weekday-labels { gap: 7px; padding-top: 10px; width: 30px; }
+    .weekday-label { height: 18px; font-size: 13px; }
+    .heatmap { gap: 5px; }
+    .heatmap-week { gap: 5px; }
+    .month-labels { gap: 6px; padding-left: 38px; font-size: 13px; }
+    .month-label { min-width: 74px; }
+    .label-cell { width: 14px; height: 14px; }
+    /* QR display wrap: touch friendly borders */
+    .qr-display-wrap { min-height: 280px; }
+    .qr-scan-wrap { max-width: 420px; }
+    /* Toast: avoid clipped by edge */
+    .toast { right: calc(var(--sidebar-width) + var(--space-lg)); font-size: 13px; padding: 14px 22px; }
+    /* Stat blocks in sync view */
+    .sync-stat-num { font-size: clamp(28px, 3.6vw, 36px); }
+    .device-id { font-size: 24px; letter-spacing: 0.1em; }
+    /* Inputs line-height */
+    input[type="checkbox"] { width: 20px; height: 20px; }
+    .checkbox-row { font-size: 16px; padding: 10px 0; }
+    /* Ensure link hover doesn't interfere with touch tap on tablet */
+    .btn-link:active { color: var(--color-accent-yellow); transform: translateX(4px); }
+  }
+
+  /* ============================================================
+     LARGE TABLET / 2-in-1 (> 1280px, coarse pointer)
+     Keep desktop layout; only enlarge touch targets
+     ============================================================ */
+  @media (min-width: 1281px) and (pointer: coarse) {
+    :root {
+      --sidebar-width: 64px;
+      --space-sm: 20px;
+      --space-md: 28px;
+      --space-xl: 52px;
+      --panel-padding: 52px;
+    }
+    .nav-rail { width: var(--sidebar-width); }
+    .btn-link { min-height: 48px; line-height: 48px; }
+    .num-btn { width: 44px; height: 44px; font-size: 22px; }
+    .nav-panel-close {
+      width: 48px; height: 48px; display: flex;
+      align-items: center; justify-content: center;
+      top: 28px; right: 28px; font-size: 30px;
+    }
+    .session-delete { width: 36px; height: 36px; font-size: 18px; }
+    .heatmap-cell { width: 16px; height: 16px; }
+    .pomo-ring { width: clamp(240px, 22vw, 300px); height: auto; aspect-ratio: 1; }
+    .timer-num { font-size: clamp(88px, 8.2vw, 120px) !important; }
+  }
+
+  /* ============================================================
+     TABLET PORTRAIT (≥ 600px, not desktop) — keep rails visible,
+     content wraps gracefully (no topbar collapse)
+     ============================================================ */
+  @media (min-width: 600px) and (max-width: 1024px) and (orientation: portrait) {
+    :root { --sidebar-width: 56px; }
+    .app {
+      padding: var(--space-xl);
+      padding-left: calc(var(--sidebar-width) + var(--space-xl));
+      padding-right: calc(var(--sidebar-width) + var(--space-xl));
+    }
+    .nav-rail { width: var(--sidebar-width); }
+    .pomo-ring { width: 240px; height: auto; aspect-ratio: 1; }
+    .timer-num { font-size: 88px !important; }
+    .settings-grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-md); }
+    .summary-line { grid-template-columns: repeat(4, 1fr); gap: 0; }
+    .sync-3col { grid-template-columns: repeat(3, 1fr); }
+    .nav-panel { width: 80vw; max-width: 480px; }
+  }
+
+  /* Responsive (small phone < 768px — kept from original) */
+  @media (max-width: 768px) {
+    .app {
+      padding: var(--space-lg);
+      padding-left: calc(var(--sidebar-width) + var(--space-lg));
+      padding-right: calc(var(--sidebar-width) + var(--space-lg));
+    }
+    .top-header { padding-bottom: var(--space-lg); margin-bottom: var(--space-xl); }
+    .stats-bar { gap: var(--space-md); }
+    .toast { right: var(--space-md); }
+    .nav-panel { width: 100%; max-width: 100%; }
+  }
+  @media (max-width: 480px) {
+    .nav-rail { width: 36px; }
+    :root { --sidebar-width: 36px; }
+    .app {
+      padding: var(--space-md);
+      padding-left: calc(var(--sidebar-width) + var(--space-md));
+      padding-right: calc(var(--sidebar-width) + var(--space-md));
+    }
+    .timer-num { font-size: 72px !important; }
+    .summary-line { grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+    .pomo-ring { width: 200px; height: 200px; }
+    .ring-wrap { margin: 0 0 var(--space-lg); }
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+</head>
+<body>
+
+  <!-- ============ LEFT RAIL: MENU ============ -->
+  <aside class="nav-rail nav-rail-left" id="leftRail" title="Open Menu">
+    <span class="nav-rail-text">Menu</span>
+  </aside>
+
+  <!-- ============ RIGHT RAIL: INFO ============ -->
+  <aside class="nav-rail nav-rail-right" id="rightRail" title="Information">
+    <span class="nav-rail-text">Info</span>
+  </aside>
+
+  <!-- ============ NAV OVERLAY + PANEL ============ -->
+  <div class="nav-overlay" id="navOverlay"></div>
+  <aside class="nav-panel" id="navPanel">
+    <button class="nav-panel-close" id="navPanelClose" aria-label="Close menu">×</button>
+
+    <!-- NAVIGATION SECTION -->
+    <div class="nav-section" id="navSectionNav">
+      <div class="nav-section-label">Navigation</div>
+      <ul class="nav-links">
+        <li><button class="btn-link active" data-view="pomodoro">Pomodoro</button></li>
+        <li><button class="btn-link" data-view="heatmap">Heatmap</button></li>
+        <li><button class="btn-link" data-view="sync">Sync</button></li>
+        <li><button class="btn-link" data-view="qr">QR Sync</button></li>
+      </ul>
+    </div>
+
+    <!-- INFO SECTION -->
+    <div class="nav-section" id="navSectionInfo" style="display:none;">
+      <div class="nav-section-label">Information</div>
+      <ul class="info-list">
+        <li class="info-item">
+          <span>Product</span>
+          Study Time Tracker
+        </li>
+        <li class="info-item">
+          <span>Version</span>
+          v1.0
+        </li>
+        <li class="info-item">
+          <span>Storage</span>
+          Local only · Offline first
+        </li>
+        <li class="info-item">
+          <span>Language</span>
+          EN · UPPERCASE system
+        </li>
+      </ul>
+    </div>
+
+    <!-- FOLLOW SECTION -->
+    <div class="nav-section" id="navSectionFollow" style="display:none;">
+      <div class="nav-section-label">Shortcuts</div>
+      <ul class="info-list">
+        <li class="info-item">
+          <span>Start / Pause</span>
+          SPACE
+        </li>
+        <li class="info-item">
+          <span>Close Dialog</span>
+          ESC
+        </li>
+        <li class="info-item">
+          <span>Open Menu</span>
+          Click Left Rail
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN APP ============ -->
+  <div class="app">
+
+    <!-- HEADER -->
+    <header class="top-header">
+      <h1 class="app-title">Study Tracker</h1>
+      <div class="stats-bar">
+        <div class="stat-item">
+          Total
+          <span class="stat-value" id="totalHours">0</span>
+          HRS
+        </div>
+        <div class="stat-item">
+          Pomodoros
+          <span class="stat-value" id="totalPomodoros">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========== POMODORO VIEW (default) ========== -->
+    <main class="view active" id="view-pomodoro">
+
+      <!-- POMODORO TIMER -->
+      <section class="section">
+        <div class="section-label">Pomodoro Timer</div>
+
+        <div class="stage-indicator" id="stagePill">
+          <span class="stage-dot"></span>
+          <span id="stageText">Focus Session</span>
+        </div>
+
+        <div class="ring-wrap">
+          <svg class="pomo-ring" width="220" height="220" viewBox="0 0 220 220">
+            <circle class="pomo-ring-outer-outline" cx="110" cy="110" r="104"/>
+            <circle class="pomo-ring-outer-halo"    cx="110" cy="110" r="98"/>
+            <circle class="pomo-ring-bg"             cx="110" cy="110" r="92"/>
+            <circle class="pomo-ring-fg" id="ringFg" cx="110" cy="110" r="92"/>
+            <circle class="pomo-ring-inner-halo"    cx="110" cy="110" r="84"/>
+            <circle class="pomo-ring-inner-outline" cx="110" cy="110" r="76"/>
+          </svg>
+          <div class="ring-center">
+            <div class="timer-num" id="timerNum"><span>25</span><span class="colon">:</span><span>00</span></div>
+            <div class="timer-cycle-label" id="timerCycleLabel">Cycle 1 / 4</div>
+          </div>
+        </div>
+
+        <div class="cycle-bars" id="cycleBars"></div>
+
+        <div class="action-row">
+          <button class="btn-link" id="startBtn">Start</button>
+          <button class="btn-link" id="resetBtn">Reset</button>
+        </div>
+
+        <div class="subject-input">
+          <input type="text" id="subjectInput" placeholder="Subject (optional) — press Enter to save">
+        </div>
+      </section>
+
+      <!-- CYCLE SETTINGS -->
+      <section class="section">
+        <div class="section-label">Cycle Settings</div>
+
+        <div class="settings-grid">
+          <div class="setting-block">
+            <div class="setting-label">Focus Duration</div>
+            <div class="num-control">
+              <button class="num-btn" id="focusMinus">−</button>
+              <div class="num-value" id="focusValue">25</div>
+              <button class="num-btn" id="focusPlus">+</button>
+            </div>
+            <div class="setting-unit">Minutes</div>
+          </div>
+          <div class="setting-block">
+            <div class="setting-label">Rest Duration</div>
+            <div class="num-control">
+              <button class="num-btn" id="restMinus">−</button>
+              <div class="num-value" id="restValue">5</div>
+              <button class="num-btn" id="restPlus">+</button>
+            </div>
+            <div class="setting-unit">Minutes</div>
+          </div>
+          <div class="setting-block">
+            <div class="setting-label">Cycles</div>
+            <div class="num-control">
+              <button class="num-btn" id="cycMinus">−</button>
+              <div class="num-value" id="cycValue">4</div>
+              <button class="num-btn" id="cycPlus">+</button>
+            </div>
+            <div class="setting-unit">Rounds</div>
+          </div>
+        </div>
+
+        <div class="summary-line">
+          <div class="summary-cell">
+            <div class="s-label">Cycles</div>
+            <div class="s-num"><span id="sumCyc">4</span>x</div>
+          </div>
+          <div class="summary-cell">
+            <div class="s-label">Focus Total</div>
+            <div class="s-num"><span id="sumFocus">100</span> min</div>
+          </div>
+          <div class="summary-cell">
+            <div class="s-label">Rest Total</div>
+            <div class="s-num"><span id="sumRest">15</span> min</div>
+          </div>
+          <div class="summary-cell">
+            <div class="s-label">Total Time</div>
+            <div class="s-num"><span id="sumTotal">115</span> min</div>
+          </div>
+        </div>
+
+        <label class="checkbox-row">
+          <input type="checkbox" id="skipLastRest" checked>
+          <span>Skip rest after final cycle</span>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" id="soundCuesToggle">
+          <span>Sound cues (start / complete)</span>
+        </label>
+      </section>
+
+      <!-- TODAY -->
+      <section class="section">
+        <div class="section-label">Today</div>
+        <div class="today-date" id="todayDate">—</div>
+
+        <div class="today-stats">
+          <div class="today-stat">
+            <div class="today-stat-label">Focus Today</div>
+            <div class="today-stat-value">
+              <span id="todayMinutes">0</span><span class="today-stat-unit">min</span>
+            </div>
+          </div>
+          <div class="today-stat">
+            <div class="today-stat-label">Pomodoros Done</div>
+            <div class="today-stat-value">
+              <span id="todayPomodoros">0</span><span class="today-stat-unit">count</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="session-list-wrap">
+          <ul class="session-list" id="todaySessionList"></ul>
+        </div>
+      </section>
+    </main>
+
+    <!-- ========== HEATMAP VIEW ========== -->
+    <main class="view" id="view-heatmap">
+      <section class="section">
+        <div class="section-label">Contribution Heatmap</div>
+
+        <div class="heatmap-header">
+          <div style="font-size: var(--text-body); letter-spacing: normal;">Study activity by day</div>
+          <div class="year-selector">
+            Year
+            <select id="yearSelect"></select>
+          </div>
+        </div>
+
+        <div class="month-labels" id="monthLabels"></div>
+        <div class="heatmap-with-labels">
+          <div class="weekday-labels" id="weekdayLabels"></div>
+          <div class="heatmap-wrapper">
+            <div class="heatmap" id="heatmap"></div>
+          </div>
+        </div>
+
+        <div class="heatmap-labels">
+          <span>Less</span>
+          <div class="labels-row">
+            <div class="label-cell" style="background: var(--cell-0)"></div>
+            <div class="label-cell" style="background: var(--cell-1)"></div>
+            <div class="label-cell" style="background: var(--cell-2)"></div>
+            <div class="label-cell" style="background: var(--cell-3)"></div>
+            <div class="label-cell" style="background: var(--cell-4)"></div>
+          </div>
+          <span>More</span>
+        </div>
+
+        <div class="heatmap-stats">
+          <div class="stat-item">
+            Contributions
+            <span class="stat-value" id="yearContributions">0</span> days
+          </div>
+          <div class="stat-item">
+            Longest Streak
+            <span class="stat-value" id="longestStreak">0</span> days
+          </div>
+          <div class="stat-item">
+            Current Streak
+            <span class="stat-value" id="currentStreak">0</span> days
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ========== SYNC VIEW ========== -->
+    <main class="view" id="view-sync">
+
+      <section class="section">
+        <div class="section-label">Data Overview</div>
+        <div class="sync-3col">
+          <div class="sync-stat">
+            <div class="sync-stat-num" id="syncStatSessions">0</div>
+            <div class="sync-stat-label">Sessions</div>
+          </div>
+          <div class="sync-stat">
+            <div class="sync-stat-num" id="syncStatMinutes">0</div>
+            <div class="sync-stat-label">Focus Minutes</div>
+          </div>
+          <div class="sync-stat">
+            <div class="sync-stat-num" id="syncStatDevices">0</div>
+            <div class="sync-stat-label">Paired Devices</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-label">Device Verification</div>
+
+        <div class="device-row">
+          <div class="device-meta">
+            <div class="device-label">Local Device ID</div>
+            <div class="device-id" id="syncDeviceId">—</div>
+          </div>
+          <button class="btn-floating" id="copyDeviceIdBtn">Copy</button>
+        </div>
+
+        <div class="inline-row">
+          <input type="text" class="" id="syncKeyInput" placeholder="Set sync key (use the same key across devices)…">
+          <button class="btn-link" id="saveKeyBtn" style="font-size: var(--text-heading);">Save</button>
+        </div>
+        <p class="hint">
+          Set the same sync key on every device you wish to pair. Keys are stored locally only and never uploaded.
+        </p>
+      </section>
+
+      <section class="section">
+        <div class="section-label">Export Sync Code</div>
+
+        <textarea class="sync-code-field" id="exportCodeArea" readonly placeholder="Click GENERATE to produce a sync code…" style="width:100%;min-height:80px;background:transparent;border:none;border-bottom:1px solid var(--color-divider-dark);border-radius:0;padding:var(--space-sm) 0;color:var(--color-white);font-family:inherit;font-size:var(--text-body);outline:none;resize:vertical;letter-spacing:normal;"></textarea>
+        <div class="actions-row">
+          <button class="btn-link" id="genExportBtn">Generate</button>
+          <button class="btn-link" id="copyExportBtn">Copy</button>
+        </div>
+        <p class="hint">
+          Send the generated sync code to another device. Paste it in the Import field there to merge records.
+        </p>
+      </section>
+
+      <section class="section">
+        <div class="section-label">Import Sync Code</div>
+
+        <textarea class="sync-code-field" id="importCodeArea" placeholder="Paste a sync code received from another device…" style="width:100%;min-height:80px;background:transparent;border:none;border-bottom:1px solid var(--color-divider-dark);border-radius:0;padding:var(--space-sm) 0;color:var(--color-white);font-family:inherit;font-size:var(--text-body);outline:none;resize:vertical;letter-spacing:normal;"></textarea>
+        <div class="actions-row">
+          <button class="btn-link" id="importBtn">Merge</button>
+          <button class="btn-link" id="clearImportBtn">Clear</button>
+        </div>
+        <p class="hint">
+          Imported sessions are de-duplicated automatically. Both devices must use the identical sync key.
+        </p>
+      </section>
+
+      <section class="section">
+        <div class="section-label">Paired Devices</div>
+        <ul class="trusted-list" id="trustedDeviceList"></ul>
+      </section>
+    </main>
+
+    <!-- ========== QR SYNC VIEW ========== -->
+    <main class="view" id="view-qr">
+      <section class="section">
+        <div class="section-label">QR Sync</div>
+
+        <div class="qr-mode-row">
+          <button class="qr-mode-btn active" data-qrmode="generate">Generate QR</button>
+          <button class="qr-mode-btn" data-qrmode="scan">Scan QR</button>
+        </div>
+
+        <!-- GENERATE -->
+        <div class="qr-section active" id="qrGenSection">
+          <div class="qr-info-bar">
+            <span><span class="dot"></span>Show this code to another device for scanning</span>
+            <span id="qrDataSize">0 KB</span>
+          </div>
+          <div class="qr-display-wrap" id="qrDisplayWrap">
+            <div class="qr-placeholder">Tap GENERATE QR below to create a sync code</div>
+          </div>
+          <div class="actions-row">
+            <button class="btn-link" id="qrGenBtn">Generate QR</button>
+            <button class="btn-link" id="qrDownloadBtn">Download</button>
+          </div>
+          <p class="hint">
+            Large datasets can produce dense QR codes. Scan in bright lighting for best results.
+          </p>
+        </div>
+
+        <!-- SCAN -->
+        <div class="qr-section" id="qrScanSection">
+          <div class="qr-info-bar">
+            <span><span class="dot"></span>Point the camera at a sync QR from another device</span>
+            <span id="qrScanStatus">Inactive</span>
+          </div>
+          <div class="qr-scan-wrap" id="qrScanWrap">
+            <div class="qr-scan-placeholder">Tap START CAMERA to begin scanning</div>
+          </div>
+          <div class="actions-row">
+            <button class="btn-link" id="qrScanStartBtn">Start Camera</button>
+            <button class="btn-link" id="qrScanStopBtn" style="display:none;">Stop</button>
+          </div>
+          <p class="hint">
+            Data is merged automatically after a successful scan. Both devices must share the same sync key.
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ============ DATE DETAIL MODAL ============ -->
+  <div class="modal-overlay" id="dateModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Date Detail</div>
+        <button class="modal-close" id="modalClose">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="date-summary">
+          <div class="summary-box">
+            <div class="summary-box-label">Total Time</div>
+            <div class="summary-box-value"><span id="modalTotalMin">0</span> min</div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-box-label">Pomodoros</div>
+            <div class="summary-box-value"><span id="modalPomodoros">0</span></div>
+          </div>
+        </div>
+        <div class="section-label" style="margin-bottom: var(--space-sm);">Sessions</div>
+        <ul class="session-list" id="modalSessionList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TOAST ============ -->
+  <div class="toast" id="toast"></div>
+
+<script>
+  // ============================================================
+  // DATA STORAGE
+  // ============================================================
+  const STORAGE_KEY = 'study_tracker_data_v1';
+
+  function loadData() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return { sessions: [] };
+      const data = JSON.parse(raw);
+      if (!data.sessions) data.sessions = [];
+      return data;
+    } catch (e) {
+      return { sessions: [] };
+    }
+  }
+
+  function saveData(data) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+    catch (e) { console.error('Save failed', e); }
+  }
+
+  let appData = loadData();
+
+  // ============================================================
+  // MULTI-DEVICE SYNC
+  // ============================================================
+  const DEVICE_KEY = 'study_tracker_device_id';
+  const SYNC_KEY = 'study_tracker_sync_key';
+  const TRUSTED_KEY = 'study_tracker_trusted_devices';
+
+  function getDeviceId() {
+    let id = localStorage.getItem(DEVICE_KEY);
+    if (!id) {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let code = '';
+      for (let i = 0; i < 8; i++) {
+        if (i === 4) code += '-';
+        code += chars[Math.floor(Math.random() * chars.length)];
+      }
+      id = code;
+      localStorage.setItem(DEVICE_KEY, id);
+    }
+    return id;
+  }
+
+  function getSyncKey()  { return localStorage.getItem(SYNC_KEY) || ''; }
+  function setSyncKey(k) { localStorage.setItem(SYNC_KEY, k); }
+
+  function getTrustedDevices() {
+    try { return JSON.parse(localStorage.getItem(TRUSTED_KEY) || '[]'); }
+    catch { return []; }
+  }
+  function addTrustedDevice(deviceId) {
+    const list = getTrustedDevices();
+    if (deviceId && !list.find(d => d.id === deviceId)) {
+      list.push({ id: deviceId, time: new Date().toISOString() });
+      localStorage.setItem(TRUSTED_KEY, JSON.stringify(list));
+    } else if (deviceId) {
+      const item = list.find(d => d.id === deviceId);
+      if (item) item.time = new Date().toISOString();
+      localStorage.setItem(TRUSTED_KEY, JSON.stringify(list));
+    }
+  }
+
+  function simpleHash(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = ((h << 5) - h) + str.charCodeAt(i);
+      h |= 0;
+    }
+    return Math.abs(h).toString(36);
+  }
+
+  function generateExportCode() {
+    const key = getSyncKey();
+    if (!key) { showToast('Set a sync key first'); return ''; }
+    const payload = {
+      v: 1, did: getDeviceId(), kh: simpleHash(key),
+      ts: Date.now(), sessions: appData.sessions
+    };
+    try {
+      const json = JSON.stringify(payload);
+      return 'STUDY1:' + btoa(unescape(encodeURIComponent(json)));
+    } catch (e) {
+      showToast('Export failed: ' + e.message);
+      return '';
+    }
+  }
+
+  function importSyncCode(code) {
+    const key = getSyncKey();
+    if (!key) { showToast('Set a sync key first'); return false; }
+    code = code.trim();
+    if (!code.startsWith('STUDY1:')) { showToast('Invalid sync code format'); return false; }
+    try {
+      const b64 = code.slice(7);
+      const json = decodeURIComponent(escape(atob(b64)));
+      const payload = JSON.parse(json);
+
+      if (payload.v !== 1) { showToast('Unsupported sync code version'); return false; }
+      if (payload.kh !== simpleHash(key)) { showToast('Sync key mismatch'); return false; }
+      if (!Array.isArray(payload.sessions)) { showToast('No valid data in sync code'); return false; }
+
+      const sourceDeviceId = payload.did || 'Unknown';
+      const localIds = new Set(appData.sessions.map(s => s.id));
+      let added = 0;
+      payload.sessions.forEach(s => {
+        if (!localIds.has(s.id)) { appData.sessions.push(s); added++; }
+      });
+      appData.sessions.sort((a, b) => (a.completedAt || '').localeCompare(b.completedAt || ''));
+      saveData(appData);
+      addTrustedDevice(sourceDeviceId);
+      renderAll();
+      renderSyncView();
+      showToast(`Synced — added ${added} record(s) from ${sourceDeviceId}`);
+      return true;
+    } catch (e) {
+      showToast('Import parse failed: ' + e.message);
+      return false;
+    }
+  }
+
+  function renderSyncView() {
+    document.getElementById('syncDeviceId').textContent = getDeviceId();
+    const keyInput = document.getElementById('syncKeyInput');
+    if (keyInput && !keyInput.value) keyInput.value = getSyncKey();
+
+    const workSessions = appData.sessions.filter(s => s.type === 'work');
+    const totalMin = workSessions.reduce((sum, s) => sum + s.duration, 0);
+    document.getElementById('syncStatSessions').textContent = appData.sessions.length;
+    document.getElementById('syncStatMinutes').textContent = totalMin;
+    document.getElementById('syncStatDevices').textContent = getTrustedDevices().length;
+
+    const trusted = getTrustedDevices();
+    const listEl = document.getElementById('trustedDeviceList');
+    if (trusted.length === 0) {
+      listEl.innerHTML = '<li class="trusted-empty">No devices paired yet</li>';
+    } else {
+      listEl.innerHTML = trusted.map(d => {
+        const t = d.time ? new Date(d.time).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '—';
+        return `
+          <li class="trusted-item">
+            <div>
+              <div class="trusted-id">${d.id}</div>
+              <div class="trusted-time">Last Sync · ${t}</div>
+            </div>
+          </li>`;
+      }).join('');
+    }
+  }
+
+  // ============================================================
+  // QR SYNC
+  // ============================================================
+  let qrStream = null;
+  let qrScanning = false;
+  let qrCanvas = null;
+  let qrCtx = null;
+
+  function generateQrCode() {
+    const key = getSyncKey();
+    if (!key) { showToast('Set a sync key on the Sync page first'); return; }
+    const code = generateExportCode();
+    if (!code) return;
+
+    const sizeKB = (code.length / 1024).toFixed(1);
+    document.getElementById('qrDataSize').textContent = sizeKB + ' KB';
+    if (sizeKB > 2.5) showToast('Large dataset — QR code may be hard to scan', 'warning');
+
+    try {
+      const qr = qrcode(0, 'L');
+      qr.addData(code); qr.make();
+      const wrap = document.getElementById('qrDisplayWrap');
+      wrap.innerHTML = '';
+      const cellSize = 4; const margin = 0;
+      const moduleCount = qr.getModuleCount();
+      const canvasSize = (moduleCount + margin * 2) * cellSize;
+      const canvas = document.createElement('canvas');
+      canvas.width = canvasSize; canvas.height = canvasSize;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvasSize, canvasSize);
+      ctx.fillStyle = '#000';
+      for (let r = 0; r < moduleCount; r++)
+        for (let c = 0; c < moduleCount; c++)
+          if (qr.isDark(r, c))
+            ctx.fillRect((c + margin) * cellSize, (r + margin) * cellSize, cellSize, cellSize);
+      wrap.appendChild(canvas);
+      showToast('QR code generated');
+    } catch (e) {
+      showToast('QR generation failed — dataset may be too large');
+      console.error(e);
+    }
+  }
+
+  function downloadQrCode() {
+    const canvas = document.querySelector('#qrDisplayWrap canvas');
+    if (!canvas) { showToast('Generate a QR code first'); return; }
+    const link = document.createElement('a');
+    link.download = 'study_sync_qr_' + Date.now() + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('QR image downloaded');
+  }
+
+  async function startQrScanner() {
+    const key = getSyncKey();
+    if (!key) { showToast('Set a sync key on the Sync page first'); return; }
+    try {
+      qrStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      const wrap = document.getElementById('qrScanWrap');
+      wrap.innerHTML = '';
+      const video = document.createElement('video');
+      video.setAttribute('playsinline', 'true');
+      video.srcObject = qrStream;
+      wrap.appendChild(video);
+      const overlay = document.createElement('div');
+      overlay.className = 'qr-scan-overlay';
+      wrap.appendChild(overlay);
+      const line = document.createElement('div');
+      line.className = 'qr-scan-line';
+      wrap.appendChild(line);
+      video.addEventListener('loadedmetadata', () => {
+        video.play();
+        qrScanning = true;
+        document.getElementById('qrScanStatus').textContent = 'Scanning';
+        document.getElementById('qrScanStartBtn').style.display = 'none';
+        document.getElementById('qrScanStopBtn').style.display = '';
+        scanQrLoop(video);
+      });
+    } catch (e) {
+      showToast('Camera access denied: ' + e.message);
+      console.error(e);
+    }
+  }
+
+  function scanQrLoop(video) {
+    if (!qrScanning) return;
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      if (!qrCanvas) { qrCanvas = document.createElement('canvas'); qrCtx = qrCanvas.getContext('2d', { willReadFrequently: true }); }
+      const w = video.videoWidth, h = video.videoHeight;
+      qrCanvas.width = w; qrCanvas.height = h;
+      qrCtx.drawImage(video, 0, 0, w, h);
+      try {
+        const img = qrCtx.getImageData(0, 0, w, h);
+        const res = jsQR(img.data, w, h, { inversionAttempts: 'dontInvert' });
+        if (res && res.data) {
+          stopQrScanner();
+          document.getElementById('qrScanStatus').textContent = 'Detected';
+          handleQrResult(res.data);
+          return;
+        }
+      } catch (e) {}
+    }
+    requestAnimationFrame(() => scanQrLoop(video));
+  }
+
+  function handleQrResult(code) {
+    showToast('QR detected — merging data…');
+    setTimeout(() => {
+      const ok = importSyncCode(code);
+      const wrap = document.getElementById('qrScanWrap');
+      if (ok) {
+        wrap.innerHTML = '<div class="qr-scan-placeholder">Scan succeeded. You may scan again.</div>';
+        document.getElementById('qrScanStatus').textContent = 'Merged';
+        document.getElementById('qrScanStartBtn').style.display = '';
+        document.getElementById('qrScanStopBtn').style.display = 'none';
+      } else {
+        document.getElementById('qrScanStatus').textContent = 'Merge failed';
+        startQrScanner();
+      }
+    }, 300);
+  }
+
+  function stopQrScanner() {
+    qrScanning = false;
+    if (qrStream) { qrStream.getTracks().forEach(t => t.stop()); qrStream = null; }
+    const startBtn = document.getElementById('qrScanStartBtn');
+    const stopBtn  = document.getElementById('qrScanStopBtn');
+    if (startBtn) startBtn.style.display = '';
+    if (stopBtn)  stopBtn.style.display  = 'none';
+    const statusEl = document.getElementById('qrScanStatus');
+    if (statusEl) statusEl.textContent = 'Inactive';
+  }
+
+  function switchQrMode(mode) {
+    document.querySelectorAll('.qr-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.qrmode === mode));
+    document.getElementById('qrGenSection').classList.toggle('active', mode === 'generate');
+    document.getElementById('qrScanSection').classList.toggle('active', mode === 'scan');
+    if (mode !== 'scan') stopQrScanner();
+  }
+
+  // ============================================================
+  // UTILITIES
+  // ============================================================
+  function formatDate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+  function parseDate(str) {
+    const [y, m, d] = str.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+  function formatTime(d) {
+    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  }
+  function showToast(message, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = message;
+    t.className = `toast active ${type === 'warning' ? 'warning' : ''}`;
+    setTimeout(() => t.classList.remove('active'), 2500);
+  }
+
+  // ============================================================
+  // NAV PANEL + VIEW SWITCHING
+  // ============================================================
+  const navOverlay = document.getElementById('navOverlay');
+  const navPanel   = document.getElementById('navPanel');
+  const navSecNav    = document.getElementById('navSectionNav');
+  const navSecInfo   = document.getElementById('navSectionInfo');
+  const navSecFollow = document.getElementById('navSectionFollow');
+
+  function openNav(showInfoOnly = false) {
+    if (showInfoOnly) {
+      navSecNav.style.display = 'none';
+      navSecInfo.style.display = '';
+      navSecFollow.style.display = '';
+    } else {
+      navSecNav.style.display = '';
+      navSecInfo.style.display = 'none';
+      navSecFollow.style.display = 'none';
+    }
+    navOverlay.classList.add('active');
+    navPanel.classList.add('active');
+  }
+  function closeNav() {
+    navOverlay.classList.remove('active');
+    navPanel.classList.remove('active');
+  }
+  document.getElementById('leftRail').addEventListener('click', () => openNav(false));
+  document.getElementById('rightRail').addEventListener('click', () => openNav(true));
+  navOverlay.addEventListener('click', closeNav);
+  document.getElementById('navPanelClose').addEventListener('click', closeNav);
+
+  function switchView(viewName) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(`view-${viewName}`).classList.add('active');
+
+    document.querySelectorAll('.nav-panel .btn-link[data-view]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.view === viewName);
+    });
+
+    closeNav();
+
+    if (viewName === 'heatmap') {
+      const y = parseInt(document.getElementById('yearSelect').value) || new Date().getFullYear();
+      renderHeatmap(y);
+    }
+    if (viewName === 'sync') renderSyncView();
+    if (viewName !== 'qr') stopQrScanner();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ============================================================
+  // HEADER STATS
+  // ============================================================
+  function updateHeaderStats() {
+    const work = appData.sessions.filter(s => s.type === 'work');
+    const totalMin = work.reduce((sum, s) => sum + s.duration, 0);
+    document.getElementById('totalHours').textContent = Math.round(totalMin / 60 * 10) / 10;
+    document.getElementById('totalPomodoros').textContent = work.length;
+  }
+
+  // ============================================================
+  // POMODORO TIMER
+  // ============================================================
+  const RING_R = 92;
+  const RING_CIRC = 2 * Math.PI * RING_R;
+
+  const cfg = {
+    focusMin: 25,
+    restMin: 5,
+    cycles: 4,
+    skipLastRest: true
+  };
+
+  let timer = {
+    mode: 'work',
+    duration: 25 * 60,
+    remaining: 25 * 60,
+    running: false,
+    intervalId: null,
+    startedAt: null,
+    subject: '',
+    inCycle: false,
+    doneWorks: 0
+  };
+
+  function clampInt(v, min, max) {
+    v = parseInt(v);
+    if (isNaN(v)) v = min;
+    return Math.max(min, Math.min(max, v));
+  }
+
+  function applyCfgToUI() {
+    document.getElementById('focusValue').textContent = cfg.focusMin;
+    document.getElementById('restValue').textContent  = cfg.restMin;
+    document.getElementById('cycValue').textContent   = cfg.cycles;
+    document.getElementById('skipLastRest').checked   = cfg.skipLastRest;
+    document.getElementById('soundCuesToggle').checked = _audioEnabled;
+  }
+
+  function formatMMSS(sec) {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
+  function updateSummary() {
+    const n = cfg.cycles;
+    const focusTotal = cfg.focusMin * n;
+    let restCount = cfg.skipLastRest ? Math.max(0, n - 1) : n;
+    const restTotal = cfg.restMin * restCount;
+    document.getElementById('sumCyc').textContent    = n;
+    document.getElementById('sumFocus').textContent  = focusTotal;
+    document.getElementById('sumRest').textContent   = restTotal;
+    document.getElementById('sumTotal').textContent  = focusTotal + restTotal;
+  }
+
+  function renderCycleBars() {
+    const wrap = document.getElementById('cycleBars');
+    wrap.innerHTML = '';
+    for (let i = 1; i <= cfg.cycles; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'cycle-bar';
+      if (i < timer.doneWorks + 1) bar.classList.add('done');
+      else if (i === timer.doneWorks + 1) {
+        bar.classList.add(timer.mode === 'work' ? 'active' : 'rest-active');
+      }
+      wrap.appendChild(bar);
+    }
+  }
+
+  function updateTimerDisplay() {
+    const t = formatMMSS(timer.remaining);
+    const [m, s] = t.split(':');
+    document.getElementById('timerNum').innerHTML =
+      `<span>${m}</span><span class="colon">:</span><span>${s}</span>`;
+    const modeTxt = timer.mode === 'work' ? 'Focus Session' : 'Rest Interval';
+    document.title = `${t} · ${modeTxt} | Study Tracker`;
+
+    const pill = document.getElementById('stagePill');
+    const txt  = document.getElementById('stageText');
+    pill.classList.toggle('rest', timer.mode === 'rest');
+    txt.textContent = modeTxt;
+
+    const label = document.getElementById('timerCycleLabel');
+    label.textContent = `Cycle ${Math.min(timer.doneWorks + 1, cfg.cycles)} / ${cfg.cycles}`;
+  }
+
+  function updateProgressRing() {
+    const fg = document.getElementById('ringFg');
+    const progress = timer.duration > 0 ? timer.remaining / timer.duration : 0;
+    const offset = RING_CIRC * progress;
+    fg.style.strokeDasharray = RING_CIRC;
+    fg.style.strokeDashoffset = RING_CIRC - offset;
+    fg.classList.toggle('rest', timer.mode === 'rest');
+  }
+
+  function updateStartBtnText() {
+    const btn = document.getElementById('startBtn');
+    if (timer.running)                    btn.textContent = 'Pause';
+    else if (timer.remaining === timer.duration) btn.textContent = 'Start';
+    else                                   btn.textContent = 'Resume';
+  }
+
+  function setSettingBtnDisabled(dis) {
+    ['focusMinus','focusPlus','restMinus','restPlus','cycMinus','cycPlus','skipLastRest'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.tagName === 'INPUT' && el.type === 'checkbox') {
+        el.disabled = dis;
+        if (el.parentElement) {
+          el.parentElement.style.opacity = dis ? '0.45' : '1';
+          el.parentElement.style.pointerEvents = dis ? 'none' : 'auto';
+        }
+      } else {
+        el.disabled = dis;
+      }
+    });
+  }
+
+  function startOrPauseTimer() { timer.running ? pauseTimer() : startTimer(); }
+
+  function startTimer() {
+    if (timer.running) return;
+    if (timer.remaining <= 0) timer.remaining = timer.duration;
+    if (!timer.inCycle) {
+      timer.inCycle = true;
+      timer.doneWorks = 0;
+      timer.mode = 'work';
+      timer.duration = cfg.focusMin * 60;
+      timer.remaining = cfg.focusMin * 60;
+    }
+    timer.running = true;
+    // Capture subject input once
+    timer.subject = (document.getElementById('subjectInput').value || '').trim();
+    if (timer.remaining === timer.duration) timer.startedAt = new Date();
+    else if (!timer.startedAt) timer.startedAt = new Date(Date.now() - (timer.duration - timer.remaining) * 1000);
+
+    setSettingBtnDisabled(true);
+    playStartSound(); // ← crisp start cue
+    timer.intervalId = setInterval(() => {
+      timer.remaining--;
+      updateTimerDisplay();
+      updateProgressRing();
+      if (timer.remaining <= 0) { stopTimer(false); onTimerComplete(); }
+    }, 1000);
+    updateStartBtnText();
+    renderCycleBars();
+  }
+
+  function pauseTimer() {
+    if (!timer.running) return;
+    clearInterval(timer.intervalId); timer.intervalId = null;
+    timer.running = false;
+    updateStartBtnText();
+  }
+
+  function stopTimer(keepCycleStage) {
+    if (timer.intervalId) { clearInterval(timer.intervalId); timer.intervalId = null; }
+    timer.running = false;
+    setSettingBtnDisabled(false);
+    updateStartBtnText();
+  }
+
+  function resetTimer() {
+    stopTimer(false);
+    timer.inCycle = false; timer.doneWorks = 0;
+    timer.mode = 'work';
+    timer.duration = cfg.focusMin * 60; timer.remaining = cfg.focusMin * 60;
+    timer.startedAt = null;
+    updateTimerDisplay(); updateProgressRing();
+    updateStartBtnText(); renderCycleBars();
+  }
+
+  function onTimerComplete() {
+    playCompleteSound(); // ← crisp completion cue (replaces old playBeep)
+    if (timer.mode === 'work') {
+      const now = new Date();
+      const durationMin = Math.round(timer.duration / 60);
+      const startTime = timer.startedAt ? formatTime(timer.startedAt) : formatTime(new Date(now - timer.duration * 1000));
+      const endTime = formatTime(now);
+      appData.sessions.push({
+        id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        date: formatDate(timer.startedAt || now),
+        type: 'work',
+        subject: timer.subject || '',
+        duration: durationMin,
+        startTime, endTime,
+        completedAt: now.toISOString()
+      });
+      saveData(appData); renderAll();
+      timer.doneWorks++;
+      showToast(`${durationMin}-minute focus session complete`);
+
+      if (timer.doneWorks >= cfg.cycles) {
+        showToast(`All ${cfg.cycles} cycles complete`, 'warning');
+        timer.inCycle = false;
+        setTimeout(() => {
+          timer.doneWorks = 0; timer.mode = 'work';
+          timer.duration = cfg.focusMin * 60; timer.remaining = cfg.focusMin * 60;
+          timer.startedAt = null;
+          updateTimerDisplay(); updateProgressRing();
+          updateStartBtnText(); renderCycleBars();
+          setSettingBtnDisabled(false);
+        }, 400);
+        return;
+      }
+      advanceToNextStage('rest', cfg.restMin);
+    } else {
+      showToast('Rest interval ended — resume focus', 'warning');
+      advanceToNextStage('work', cfg.focusMin);
+    }
+  }
+
+  function advanceToNextStage(nextMode, nextMin) {
+    timer.mode = nextMode;
+    timer.duration = nextMin * 60; timer.remaining = nextMin * 60;
+    timer.startedAt = null;
+    updateTimerDisplay(); updateProgressRing();
+    updateStartBtnText(); renderCycleBars();
+    if (timer.inCycle) setTimeout(() => startTimer(), 500);
+  }
+
+  // ============================================================
+  // AUDIO ENGINE — crisp synthesized UI cues (no external files)
+  // Single shared AudioContext; triangle + sine blend for bell/edge tone
+  // ============================================================
+  let _audioCtx = null;
+  let _audioEnabled = localStorage.getItem('st_audio_on') !== 'false'; // default ON
+
+  function _ac() {
+    if (!_audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      _audioCtx = new AC();
+    }
+    if (_audioCtx.state === 'suspended') {
+      try { _audioCtx.resume(); } catch (e) {}
+    }
+    return _audioCtx;
+  }
+
+  function _setAudioEnabled(on) {
+    _audioEnabled = !!on;
+    localStorage.setItem('st_audio_on', _audioEnabled ? '1' : 'false');
+  }
+
+  /** Shared note-pluck primitive: freq, duration in seconds, peak gain, waveform */
+  function _playNote({ freq = 880, dur = 0.15, gain = 0.22, type = 'triangle', attack = 0.002, decay = null, detune = 0, delay = 0 }) {
+    if (!_audioEnabled) return;
+    const ctx = _ac(); if (!ctx) return;
+    const t = ctx.currentTime + delay;
+    try {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, t);
+      if (detune) osc.detune.setValueAtTime(detune, t);
+
+      const peak = Math.max(0.0001, gain);
+      const tail = decay ?? Math.max(0.04, dur * 0.78);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(peak, t + attack);
+      g.gain.exponentialRampToValueAtTime(0.0008, t + attack + tail);
+
+      // subtle high-pass to keep sounds crisp and clean (no muddy low-end)
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass'; hp.frequency.value = 420; hp.Q.value = 0.7;
+
+      osc.connect(hp); hp.connect(g); g.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + attack + tail + 0.02);
+    } catch (e) {}
+  }
+
+  /**
+   * START CUE — bright ascending two-note chime (like a wooden xylophone key tap + overtone)
+   * Timing: root → 3rd stacked 50ms apart, very fast attack
+   */
+  function playStartSound() {
+    if (!_audioEnabled) return;
+    const F = timer.mode === 'rest' ? 784 : 988;   // rest→G5, work→B5  (both brighter than 880A)
+    const O = timer.mode === 'rest' ? 1175 : 1480;  // octave harmonic for sparkle
+    _playNote({ freq: F,     dur: 0.16, gain: 0.24, type: 'triangle' });
+    _playNote({ freq: O,     dur: 0.12, gain: 0.10, type: 'sine',     delay: 0.012 });
+    _playNote({ freq: F*1.25, dur: 0.13, gain: 0.13, type: 'triangle', delay: 0.055 }); // Major 3rd up
+  }
+
+  /**
+   * END / COMPLETE CUE — resolving three-note descending arpeggio (bell-like, with shimmer tail)
+   * D5 → G5 → B5 stacked ~55ms → feels like a "ding-dang-dong" completion signal
+   * Extra overtone sine layer for that metallic/glass crispness
+   */
+  function playCompleteSound() {
+    if (!_audioEnabled) return;
+    const chord = timer.mode === 'rest'
+      ? [ 587.33, 783.99, 987.77 ]   // D5 G5 B5  — rest resolution
+      : [ 659.25, 880.00, 1108.73 ]; // E5 A5 C#6 — work completion (major)
+    const shim  = timer.mode === 'rest' ? 1568 : 1760; // overtone shimmer
+    chord.forEach((f, i) => {
+      _playNote({ freq: f, dur: 0.24 + i*0.04, gain: 0.22 - i*0.04, type: 'triangle', delay: i * 0.055 });
+    });
+    _playNote({ freq: shim,  dur: 0.20, gain: 0.08, type: 'sine', delay: 0.07 });
+  }
+
+  /** Soft tick for nav / reset button interactions (kept minimal) */
+  function playClickTick() {
+    if (!_audioEnabled) return;
+    _playNote({ freq: 2400, dur: 0.04, gain: 0.05, type: 'square', attack: 0.0008 });
+  }
+
+  // ============================================================
+  // TODAY INFO
+  // ============================================================
+  function updateTodayInfo() {
+    const todayStr = formatDate(new Date());
+    const wd = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    document.getElementById('todayDate').textContent =
+      `${todayStr} · ${wd[new Date().getDay()]}`;
+
+    const list = appData.sessions
+      .filter(s => s.date === todayStr && s.type === 'work')
+      .sort((a, b) => (b.startTime || '').localeCompare(a.startTime || ''));
+
+    document.getElementById('todayMinutes').textContent =
+      list.reduce((sum, s) => sum + s.duration, 0);
+    document.getElementById('todayPomodoros').textContent = list.length;
+
+    const ul = document.getElementById('todaySessionList');
+    ul.innerHTML = '';
+    if (list.length === 0) {
+      ul.innerHTML = `
+        <li class="empty-state">
+          <div class="empty-state-title">No Sessions Yet</div>
+          <div class="empty-state-desc">Start your first focus block above.</div>
+        </li>`;
+      return;
+    }
+    list.forEach(s => {
+      const li = document.createElement('li');
+      li.className = 'session-item';
+      const subj = s.subject || 'Untitled Session';
+      const time = s.startTime ? `${s.startTime}–${s.endTime || '--:--'}` : '';
+      li.innerHTML = `
+        <div class="session-info">
+          <div class="session-subject ${s.subject ? '' : 'empty'}">${subj}</div>
+          <div class="session-meta">${time}</div>
+        </div>
+        <div class="session-duration">${s.duration} min</div>
+        <button class="session-delete" title="Delete session">×</button>`;
+      li.querySelector('.session-delete').addEventListener('click', () => deleteSession(s.id));
+      ul.appendChild(li);
+    });
+  }
+
+  function deleteSession(id) {
+    appData.sessions = appData.sessions.filter(s => s.id !== id);
+    saveData(appData); renderAll();
+    showToast('Session deleted');
+  }
+
+  // ============================================================
+  // HEATMAP
+  // ============================================================
+  function getLevelByMinutes(min) {
+    if (min <= 0)  return 0;
+    if (min < 25)  return 1;
+    if (min < 75)  return 2;
+    if (min < 150) return 3;
+    return 4;
+  }
+  function aggregateMinutesByDate() {
+    const map = {};
+    appData.sessions.forEach(s => {
+      if (s.type !== 'work') return;
+      map[s.date] = (map[s.date] || 0) + s.duration;
+    });
+    return map;
+  }
+
+  function renderHeatmap(year) {
+    const heatmap = document.getElementById('heatmap');
+    const monthLabels = document.getElementById('monthLabels');
+    const weekdayLabels = document.getElementById('weekdayLabels');
+    heatmap.innerHTML = ''; monthLabels.innerHTML = ''; weekdayLabels.innerHTML = '';
+
+    const wdNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    for (let i = 0; i < 7; i++) {
+      const d = document.createElement('div');
+      d.className = 'weekday-label';
+      if (i === 1 || i === 3 || i === 5) d.textContent = wdNames[i];
+      weekdayLabels.appendChild(d);
+    }
+
+    const minutesMap = aggregateMinutesByDate();
+    const todayStr = formatDate(new Date());
+    const firstDay = new Date(year, 0, 1);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay());
+    const lastDay = new Date(year, 11, 31);
+    const endDate = new Date(lastDay);
+    endDate.setDate(endDate.getDate() + (6 - lastDay.getDay()));
+    const totalWeeks = Math.ceil((endDate - startDate) / (7 * 24 * 3600 * 1000)) + 1;
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    let curMonthLabel = -1;
+    const labelPos = [];
+    let weekStart = new Date(startDate);
+    for (let w = 0; w < totalWeeks; w++) {
+      const weekDiv = document.createElement('div');
+      weekDiv.className = 'heatmap-week';
+      const mIdx = weekStart.getMonth();
+      if (mIdx !== curMonthLabel && weekStart.getDate() <= 7) {
+        curMonthLabel = mIdx;
+        labelPos.push({ week: w, label: monthNames[mIdx] });
+      }
+      for (let d = 0; d < 7; d++) {
+        const cd = new Date(weekStart); cd.setDate(cd.getDate() + d);
+        const cs = formatDate(cd);
+        const cell = document.createElement('div');
+        cell.className = 'heatmap-cell';
+        if (cd.getFullYear() !== year) cell.classList.add('empty');
+        else {
+          const min = minutesMap[cs] || 0;
+          cell.dataset.level = getLevelByMinutes(min);
+          cell.dataset.date = cs;
+          if (cs === todayStr) cell.classList.add('today');
+          cell.title = `${cs}: ${min} min`;
+          cell.addEventListener('click', () => openDateModal(cs));
+        }
+        weekDiv.appendChild(cell);
+      }
+      heatmap.appendChild(weekDiv);
+      weekStart.setDate(weekStart.getDate() + 7);
+    }
+
+    let html = ''; let widx = 0;
+    labelPos.forEach(({ week, label }) => {
+      const gap = week - widx;
+      if (gap > 0) html += `<div style="min-width: ${gap * 18}px;"></div>`;
+      html += `<div class="month-label">${label}</div>`;
+      widx = week + 1;
+    });
+    monthLabels.innerHTML = html;
+    updateYearStats(year, minutesMap);
+  }
+
+  function updateYearStats(year, minutesMap) {
+    const ys = new Date(year, 0, 1);
+    const ye = new Date(year, 11, 31);
+    let c = 0;
+    for (const date in minutesMap) {
+      const d = parseDate(date);
+      if (d >= ys && d <= ye && minutesMap[date] > 0) c++;
+    }
+    document.getElementById('yearContributions').textContent = c;
+
+    let curStreak = 0;
+    const today = new Date(); today.setHours(0,0,0,0);
+    let cs = formatDate(today);
+    if ((minutesMap[cs] || 0) === 0) { const d = parseDate(cs); d.setDate(d.getDate() - 1); cs = formatDate(d); }
+    while ((minutesMap[cs] || 0) > 0) {
+      curStreak++;
+      const d = parseDate(cs); d.setDate(d.getDate() - 1); cs = formatDate(d);
+    }
+
+    let run = 0; let longest = 0;
+    const all = [];
+    const it = new Date(ys);
+    while (it <= ye) { all.push(formatDate(it)); it.setDate(it.getDate() + 1); }
+    for (const ds of all) {
+      if ((minutesMap[ds] || 0) > 0) { run++; longest = Math.max(longest, run); }
+      else run = 0;
+    }
+    document.getElementById('longestStreak').textContent = longest;
+    document.getElementById('currentStreak').textContent = curStreak;
+  }
+
+  function initYearSelector() {
+    const sel = document.getElementById('yearSelect');
+    const cur = new Date().getFullYear();
+    for (let y = cur - 3; y <= cur + 1; y++) {
+      const o = document.createElement('option');
+      o.value = y; o.textContent = y;
+      if (y === cur) o.selected = true;
+      sel.appendChild(o);
+    }
+    sel.addEventListener('change', () => renderHeatmap(parseInt(sel.value)));
+  }
+
+  // ============================================================
+  // DATE MODAL
+  // ============================================================
+  function openDateModal(dateStr) {
+    const d = parseDate(dateStr);
+    const wd = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    document.getElementById('modalTitle').textContent = `${dateStr} · ${wd[d.getDay()]}`;
+
+    const list = appData.sessions
+      .filter(s => s.date === dateStr && s.type === 'work')
+      .sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
+
+    document.getElementById('modalTotalMin').textContent = list.reduce((s, x) => s + x.duration, 0);
+    document.getElementById('modalPomodoros').textContent = list.length;
+
+    const ul = document.getElementById('modalSessionList');
+    ul.innerHTML = '';
+    if (list.length === 0) {
+      ul.innerHTML = `
+        <li class="empty-state">
+          <div class="empty-state-title">No Activity</div>
+          <div class="empty-state-desc">No focus sessions recorded on this day.</div>
+        </li>`;
+    } else {
+      list.forEach(s => {
+        const li = document.createElement('li');
+        li.className = 'session-item';
+        const subj = s.subject || 'Untitled Session';
+        const t = s.startTime ? `${s.startTime} – ${s.endTime || '--:--'}` : '';
+        li.innerHTML = `
+          <div class="session-info">
+            <div class="session-subject ${s.subject ? '' : 'empty'}">${subj}</div>
+            <div class="session-meta">${t}</div>
+          </div>
+          <div class="session-duration">${s.duration} min</div>
+          <button class="session-delete" title="Delete">×</button>`;
+        li.querySelector('.session-delete').addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteSession(s.id);
+          openDateModal(dateStr);
+        });
+        ul.appendChild(li);
+      });
+    }
+    document.getElementById('dateModal').classList.add('active');
+  }
+  function closeDateModal() { document.getElementById('dateModal').classList.remove('active'); }
+
+  // ============================================================
+  // RENDER ALL
+  // ============================================================
+  function renderAll() {
+    updateHeaderStats();
+    updateTodayInfo();
+    if (document.getElementById('view-heatmap').classList.contains('active')) {
+      const y = parseInt(document.getElementById('yearSelect').value) || new Date().getFullYear();
+      renderHeatmap(y);
+    }
+  }
+
+  // ============================================================
+  // INIT
+  // ============================================================
+  function init() {
+    // Nav panel links → switch view
+    document.querySelectorAll('.nav-panel .btn-link[data-view]').forEach(btn => {
+      btn.addEventListener('click', () => switchView(btn.dataset.view));
+    });
+
+    // Subject input: Enter stores so it survives into the session recording
+    document.getElementById('subjectInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); timer.subject = e.target.value.trim(); showToast('Subject saved'); }
+    });
+
+    // Settings +/-
+    document.getElementById('focusMinus').addEventListener('click', () => {
+      cfg.focusMin = clampInt(cfg.focusMin - 1, 1, 180); applyCfgToUI(); onCfgChanged();
+    });
+    document.getElementById('focusPlus').addEventListener('click', () => {
+      cfg.focusMin = clampInt(cfg.focusMin + 1, 1, 180); applyCfgToUI(); onCfgChanged();
+    });
+    document.getElementById('restMinus').addEventListener('click', () => {
+      cfg.restMin = clampInt(cfg.restMin - 1, 1, 60); applyCfgToUI(); onCfgChanged();
+    });
+    document.getElementById('restPlus').addEventListener('click', () => {
+      cfg.restMin = clampInt(cfg.restMin + 1, 1, 60); applyCfgToUI(); onCfgChanged();
+    });
+    document.getElementById('cycMinus').addEventListener('click', () => {
+      cfg.cycles = clampInt(cfg.cycles - 1, 1, 20); applyCfgToUI(); onCfgChanged();
+    });
+    document.getElementById('cycPlus').addEventListener('click', () => {
+      cfg.cycles = clampInt(cfg.cycles + 1, 1, 20); applyCfgToUI(); onCfgChanged();
+    });
+    document.getElementById('skipLastRest').addEventListener('change', (e) => {
+      cfg.skipLastRest = !!e.target.checked; updateSummary();
+    });
+    document.getElementById('soundCuesToggle').addEventListener('change', (e) => {
+      _setAudioEnabled(!!e.target.checked);
+      // user gesture => also prime the audio context
+      if (_audioEnabled) playClickTick();
+    });
+
+    // Pomodoro buttons
+    document.getElementById('startBtn').addEventListener('click', startOrPauseTimer);
+    document.getElementById('resetBtn').addEventListener('click', () => { playClickTick(); resetTimer(); });
+
+    // Sync page events
+    document.getElementById('saveKeyBtn').addEventListener('click', () => {
+      const val = document.getElementById('syncKeyInput').value.trim();
+      if (!val) { showToast('Enter a sync key'); return; }
+      setSyncKey(val); showToast('Sync key saved');
+    });
+    document.getElementById('copyDeviceIdBtn').addEventListener('click', () => {
+      const id = getDeviceId();
+      navigator.clipboard?.writeText(id).then(() => showToast('Device ID copied'))
+        .catch(() => {
+          const ta = document.createElement('textarea');
+          ta.value = id; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); showToast('Device ID copied'); }
+          catch { showToast('Copy failed — select manually'); }
+          document.body.removeChild(ta);
+        });
+    });
+    document.getElementById('genExportBtn').addEventListener('click', () => {
+      const code = generateExportCode();
+      if (code) { document.getElementById('exportCodeArea').value = code; showToast('Sync code generated'); }
+    });
+    document.getElementById('copyExportBtn').addEventListener('click', () => {
+      const code = document.getElementById('exportCodeArea').value;
+      if (!code) { showToast('Generate a sync code first'); return; }
+      navigator.clipboard?.writeText(code).then(() => showToast('Sync code copied'))
+        .catch(() => {
+          const ta = document.getElementById('exportCodeArea'); ta.select();
+          try { document.execCommand('copy'); showToast('Sync code copied'); }
+          catch { showToast('Copy failed — select manually'); }
+        });
+    });
+    document.getElementById('importBtn').addEventListener('click', () => {
+      const code = document.getElementById('importCodeArea').value.trim();
+      if (!code) { showToast('Paste a sync code'); return; }
+      importSyncCode(code);
+    });
+    document.getElementById('clearImportBtn').addEventListener('click', () => {
+      document.getElementById('importCodeArea').value = '';
+    });
+
+    // QR events
+    document.querySelectorAll('.qr-mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchQrMode(btn.dataset.qrmode));
+    });
+    document.getElementById('qrGenBtn').addEventListener('click', generateQrCode);
+    document.getElementById('qrDownloadBtn').addEventListener('click', downloadQrCode);
+    document.getElementById('qrScanStartBtn').addEventListener('click', startQrScanner);
+    document.getElementById('qrScanStopBtn').addEventListener('click', stopQrScanner);
+
+    // Modal
+    document.getElementById('modalClose').addEventListener('click', closeDateModal);
+    document.getElementById('dateModal').addEventListener('click', (e) => {
+      if (e.target.id === 'dateModal') closeDateModal();
+    });
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { closeDateModal(); closeNav(); }
+      if (e.code === 'Space' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
+        e.preventDefault(); startOrPauseTimer();
+      }
+    });
+
+    initYearSelector();
+    applyCfgToUI();
+    updateSummary();
+    updateTimerDisplay();
+    updateProgressRing();
+    updateStartBtnText();
+    renderCycleBars();
+    renderAll();
+
+    window.addEventListener('beforeunload', () => {
+      if (timer.intervalId) clearInterval(timer.intervalId);
+    });
+  }
+
+  /* ============================================================
+     ANDROID TABLET: prevent accidental double-tap zoom on timer
+     buttons; keep page sized to viewport (Android Chrome WebView)
+     ============================================================ */
+  (function tabletViewportLock() {
+    const isTouchCoarse = window.matchMedia('(pointer: coarse)').matches;
+    const isTabletish = window.matchMedia('(min-width: 600px)').matches;
+    if (!isTouchCoarse && !isTabletish) return;
+
+    // (a) Stop double-tap zoom on every button/timer area
+    const noZoom = 'manipulation';
+    document.querySelectorAll(
+      '.btn-link, .btn-floating, .num-btn, .qr-mode-btn, .session-delete, .modal-close, .nav-panel-close, .nav-rail, .checkbox-row'
+    ).forEach(el => {
+      const prev = el.style.touchAction;
+      el.style.touchAction = prev || noZoom;
+    });
+
+    // (b) Optional: resize handler for orientation change
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        // force minor reflow so layout recalculates correctly after rotation
+        document.body.style.display = 'none';
+        document.body.getBoundingClientRect();
+        document.body.style.display = '';
+      }, 180);
+    }, { passive: true });
+
+    // (c) Keep timer visible during on-screen keyboard popup
+    // (scroll to focused input without shifting whole layout)
+    document.querySelectorAll('input, textarea, select').forEach(el => {
+      el.addEventListener('focus', () => {
+        setTimeout(() => {
+          el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }, 250);
+      }, { passive: true });
+    });
+  })();
+
+
+  function onCfgChanged() {
+    updateSummary();
+    if (!timer.inCycle && !timer.running && timer.mode === 'work') {
+      timer.duration = cfg.focusMin * 60;
+      timer.remaining = cfg.focusMin * 60;
+      updateTimerDisplay();
+      updateProgressRing();
+    }
+    renderCycleBars();
+  }
+
+  init();
+</script>
+</body>
+</html>

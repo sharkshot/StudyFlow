@@ -1,0 +1,50 @@
+{
+  "name": "studyflow-desktop",
+  "productName": "StudyFlow",
+  "version": "1.0.0",
+  "description": "Brutalist black & white study time tracker (Pomodoro + Heatmap) — desktop build",
+  "main": "main.js",
+  "private": true,
+  "author": "nine-to-five-studio",
+  "scripts": {
+    "prepare": "node scripts/sync-web-assets.js",
+    "start": "node scripts/sync-web-assets.js && electron .",
+    "dist": "node scripts/sync-web-assets.js && electron-builder --linux --x64",
+    "dist:win": "node scripts/sync-web-assets.js && electron-builder --win --x64",
+    "dist:mac": "node scripts/sync-web-assets.js && electron-builder --mac --x64"
+  },
+  "devDependencies": {
+    "electron": "^32.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "studio.ninetofive.studyflow",
+    "productName": "StudyFlow",
+    "asar": true,
+    "files": [
+      "main.js",
+      "preload.js",
+      "app-web/**",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build-res"
+    },
+    "linux": {
+      "target": [
+        { "target": "AppImage", "arch": ["x64"] },
+        { "target": "tar.gz",   "arch": ["x64"] }
+      ],
+      "category": "Productivity"
+    },
+    "win": {
+      "target": "nsis",
+      "artifactName": "StudyFlow-${version}-setup.${ext}"
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.productivity"
+    }
+  }
+}

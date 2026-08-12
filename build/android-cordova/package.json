@@ -1,0 +1,23 @@
+{
+  "name": "studyflow-android",
+  "version": "1.0.0",
+  "private": true,
+  "displayName": "StudyFlow",
+  "description": "Pomodoro / Heatmap study tracker — Android build",
+  "author": "nine-to-five-studio",
+  "main": "index.js",
+  "scripts": {
+    "cordova": "cordova",
+    "prepare": "node scripts/sync-web-assets.js",
+    "platform:add": "node scripts/sync-web-assets.js && cordova platform add android --no-interactive",
+    "build:apk": "node scripts/sync-web-assets.js && cordova build android --debug --no-interactive"
+  },
+  "devDependencies": {
+    "cordova": "^12.0.0",
+    "cordova-android": "^13.0.0"
+  },
+  "cordova": {
+    "platforms": [],
+    "plugins": {}
+  }
+}

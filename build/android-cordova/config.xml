@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="studio.ninetofive.studyflow" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <name>StudyFlow</name>
+  <description>
+    A brutalist, black &amp; white focus &amp; study time tracker. Pomodoro, heatmap, offline-first.
+  </description>
+  <author email="dev@9to5studio.it" href="https://9to5studio.it">nine-to-five-studio</author>
+  <content src="index.html" />
+
+  <!-- === Tablet / Android WebView tuning === -->
+  <preference name="WebViewEngine"                value="system" />
+  <preference name="AndroidInsecureFileModeEnabled" value="true" />
+  <preference name="Orientation"                 value="landscape" />
+  <preference name="Fullscreen"                  value="false" />
+  <preference name="DisallowOverscroll"          value="true" />
+  <preference name="BackgroundColor"             value="#000000" />
+  <preference name="StatusBarStyle"              value="blacktranslucent" />
+  <preference name="StatusBarBackgroundColor"    value="#000000" />
+  <preference name="StatusBarOverlaysWebView"    value="true" />
+  <preference name="AndroidWindowSplashScreenBackground" value="#000000" />
+  <preference name="KeepRunning"                 value="true" />
+  <preference name="AndroidLaunchMode"           value="singleTask" />
+  <preference name="SupportsRtl"                 value="false" />
+  <preference name="LoadUrlTimeoutValue"         value="70000" />
+
+  <!-- minSdk 24 (Android 7+)  ~98% device coverage; targetSdk 34 per Google Play -->
+  <preference name="android-minSdkVersion"       value="24" />
+  <preference name="android-targetSdkVersion"    value="34" />
+  <preference name="android-compileSdkVersion"   value="34" />
+  <preference name="android-buildToolsVersion"   value="34.0.0" />
+  <preference name="GradlePluginKotlinEnabled"   value="false" />
+
+  <access origin="*" />
+  <allow-navigation href="*" />
+  <allow-intent href="http://*/*" />
+  <allow-intent href="https://*/*" />
+
+  <!-- Required for pomodoro keep-awake and audio cues -->
+  <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/uses-permission">
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+  </edit-config>
+
+  <!-- Camera / Media for QR scanner -->
+  <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/uses-permission" xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+  </edit-config>
+
+  <!-- Force tablet-style large-screen support (no stretch) -->
+  <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:hardwareAccelerated="true" android:largeHeap="true">
+      <meta-data android:name="android.max_aspect" android:value="2.4" />
+    </application>
+  </edit-config>
+
+  <platform name="android">
+  </platform>
+</widget>
