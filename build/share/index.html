@@ -263,10 +263,86 @@
     z-index: 1;
     padding: var(--panel-padding);
     padding-left: calc(var(--sidebar-width) + var(--panel-padding));
-    padding-right: calc(var(--sidebar-width) + var(--panel-padding));
+    padding-right: var(--panel-padding);
     min-height: 100vh;
     max-width: 100%;
   }
+
+  /* ============================================================
+     BOTTOM MENU BAR (phone only — hidden on desktop/tablet)
+     ============================================================ */
+  .bottom-bar { display: none; }
+  .bottom-info-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: var(--color-overlay);
+    z-index: 400;
+    opacity: 0; pointer-events: none;
+    transition: opacity var(--duration-normal) var(--ease-default);
+  }
+  .bottom-info-overlay.active { opacity: 1; pointer-events: auto; }
+  .bottom-info-panel {
+    display: none;
+    position: fixed; left: 0; right: 0; bottom: 0;
+    background: var(--color-black);
+    z-index: 500;
+    padding: var(--space-lg) var(--space-md) var(--space-xl);
+    border-top: 1px solid var(--color-divider-dark);
+    transform: translateY(100%);
+    transition: transform var(--duration-normal) var(--ease-expo);
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .bottom-info-panel.active { transform: translateY(0); }
+  .bottom-info-close {
+    position: absolute; top: 12px; right: 16px;
+    background: transparent; border: none;
+    color: var(--color-text-secondary-dark);
+    font-size: 26px; cursor: pointer; line-height: 1;
+    width: 40px; height: 40px;
+  }
+  .bottom-info-close:hover { color: var(--color-accent-pink); }
+
+  /* Bottom bar tab styling (only visible on phone portrait) */
+  .bottom-bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--color-black);
+    border-top: 1px solid var(--color-divider-dark);
+    justify-content: space-around;
+    align-items: stretch;
+    z-index: 350;
+    padding: 0 env(safe-area-inset-bottom, 0);
+  }
+  .bottom-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--color-text-secondary-dark);
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 10px 4px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-height: 56px;
+    transition: color var(--duration-fast) var(--ease-default);
+  }
+  .bottom-tab-dot {
+    width: 6px; height: 6px;
+    border-radius: var(--radius-circle);
+    background: transparent;
+    transition: background var(--duration-fast) var(--ease-default);
+  }
+  .bottom-tab.active { color: var(--color-white); }
+  .bottom-tab.active .bottom-tab-dot { background: var(--color-accent-yellow); }
+  .bottom-tab:active { color: var(--color-accent-yellow); }
+  .bottom-tab-label { line-height: 1; }
 
   .view { display: none; }
   .view.active { display: block; animation: fadeInView var(--duration-normal) var(--ease-expo); }
@@ -750,6 +826,10 @@
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
+  /* Interrupted / partial sessions: dimmed + pink accent marker */
+  .session-item.partial .session-duration { color: var(--color-accent-pink); }
+  .session-item.partial .session-meta { color: var(--color-accent-pink); opacity: 0.85; }
+  .session-item.partial .session-subject { color: var(--color-text-secondary-dark); }
   .session-delete {
     background: none;
     border: none;
@@ -792,23 +872,32 @@
     flex-wrap: wrap;
     gap: var(--space-sm);
   }
-  .year-selector {
+  /* Month selector — prev / [month][year] / next */
+  .month-selector {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
-    font-size: var(--text-label);
-    font-weight: var(--weight-regular);
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
+    gap: var(--space-xs);
+  }
+  .month-display {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+  .month-nav {
+    font-size: var(--text-heading);
+    line-height: 1;
+    padding: 0 var(--space-xs);
     color: var(--color-text-secondary-dark);
   }
-  .year-selector select {
+  .month-nav:hover { color: var(--color-accent-yellow); transform: none; }
+  .month-selector select,
+  .month-selector select {
     background: transparent;
     color: var(--color-white);
     border: none;
     border-bottom: 1px solid var(--color-divider-dark);
     border-radius: var(--radius-sharp);
-    padding: 4px 0;
+    padding: 4px 4px;
     font-family: inherit;
     font-size: var(--text-body);
     font-weight: var(--weight-bold);
@@ -816,85 +905,54 @@
     outline: none;
     letter-spacing: normal;
   }
-  .year-selector select:focus { border-color: var(--color-white); }
+  .month-selector select:focus { border-color: var(--color-white); }
 
-  .month-labels {
-    display: flex;
+  /* Month calendar grid — 7 columns, fills available width */
+  .heatmap-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
     gap: 4px;
-    margin-bottom: var(--space-xs);
-    padding-left: 32px;
+    margin-top: var(--space-sm);
+  }
+  .cal-weekday-header {
     font-size: var(--text-caption);
     font-weight: var(--weight-light);
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
     color: var(--color-text-secondary-dark);
-    min-height: 16px;
+    text-align: center;
+    padding: 4px 0;
   }
-  .month-label { min-width: 60px; }
-
-  .heatmap-with-labels {
+  .cal-cell {
+    aspect-ratio: 1 / 1;
     display: flex;
-    gap: var(--space-xs);
-  }
-  .weekday-labels {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: var(--text-caption);
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 5px 6px;
+    font-size: 11px;
     font-weight: var(--weight-light);
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
     color: var(--color-text-secondary-dark);
-    padding-top: 8px;
-    width: 24px;
-    flex-shrink: 0;
-  }
-  .weekday-label {
-    height: 14px;
-    display: flex;
-    align-items: center;
-  }
-
-  .heatmap-wrapper {
-    overflow-x: auto;
-    padding-bottom: var(--space-xs);
-    flex: 1;
-  }
-  .heatmap {
-    display: flex;
-    gap: 3px;
-    padding: 8px 0;
-    min-width: 100%;
-  }
-  .heatmap-week {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .heatmap-cell {
-    width: 14px;
-    height: 14px;
     background: var(--cell-0);
     border-radius: var(--radius-sharp);
     cursor: pointer;
-    transition: all 0.2s var(--ease-expo);
+    transition: transform 0.2s var(--ease-expo), outline 0.2s var(--ease-expo);
     border: none;
     position: relative;
+    font-variant-numeric: tabular-nums;
   }
-  .heatmap-cell:hover {
-    transform: scale(1.5);
+  .cal-cell.empty { background: transparent; cursor: default; color: transparent; }
+  .cal-cell:not(.empty):hover {
+    transform: scale(1.06);
     z-index: 10;
     outline: 1px solid var(--color-accent-yellow);
     outline-offset: 0;
   }
-  .heatmap-cell.empty { visibility: hidden; cursor: default; }
-  .heatmap-cell.today { outline: 2px solid var(--color-accent-yellow); outline-offset: 1px; }
-
-  .heatmap-cell[data-level="0"] { background: var(--cell-0); }
-  .heatmap-cell[data-level="1"] { background: var(--cell-1); }
-  .heatmap-cell[data-level="2"] { background: var(--cell-2); }
-  .heatmap-cell[data-level="3"] { background: var(--cell-3); }
-  .heatmap-cell[data-level="4"] { background: var(--cell-4); }
+  .cal-cell.today { outline: 2px solid var(--color-accent-yellow); outline-offset: -1px; }
+  .cal-cell[data-level="0"] { background: var(--cell-0); }
+  .cal-cell[data-level="1"] { background: var(--cell-1); }
+  .cal-cell[data-level="2"] { background: var(--cell-2); }
+  .cal-cell[data-level="3"] { background: var(--cell-3); }
+  .cal-cell[data-level="4"] { background: var(--cell-4); color: var(--color-black); font-weight: var(--weight-bold); }
 
   .heatmap-labels {
     display: flex;
@@ -1415,14 +1473,9 @@
     .inline-row input[type=text],
     .inline-row textarea { padding: 18px 0; font-size: 16px; }
     textarea.sync-code-field { padding: 18px 0 !important; font-size: 16px !important; }
-    /* Heatmap cells: bigger + touchable */
-    .heatmap-cell { width: 18px; height: 18px; }
-    .weekday-labels { gap: 7px; padding-top: 10px; width: 30px; }
-    .weekday-label { height: 18px; font-size: 13px; }
-    .heatmap { gap: 5px; }
-    .heatmap-week { gap: 5px; }
-    .month-labels { gap: 6px; padding-left: 38px; font-size: 13px; }
-    .month-label { min-width: 74px; }
+    /* Month calendar: larger touch-friendly cells */
+    .heatmap-calendar { gap: 6px; }
+    .cal-cell { font-size: 13px; padding: 7px 8px; }
     .label-cell { width: 14px; height: 14px; }
     /* QR display wrap: touch friendly borders */
     .qr-display-wrap { min-height: 280px; }
@@ -1460,7 +1513,7 @@
       top: 28px; right: 28px; font-size: 30px;
     }
     .session-delete { width: 36px; height: 36px; font-size: 18px; }
-    .heatmap-cell { width: 16px; height: 16px; }
+    .cal-cell { font-size: 14px; }
     .pomo-ring { width: clamp(240px, 22vw, 300px); height: auto; aspect-ratio: 1; }
     .timer-num { font-size: clamp(88px, 8.2vw, 120px) !important; }
   }
@@ -1474,7 +1527,7 @@
     .app {
       padding: var(--space-xl);
       padding-left: calc(var(--sidebar-width) + var(--space-xl));
-      padding-right: calc(var(--sidebar-width) + var(--space-xl));
+      padding-right: var(--space-xl);
     }
     .nav-rail { width: var(--sidebar-width); }
     .pomo-ring { width: 240px; height: auto; aspect-ratio: 1; }
@@ -1506,16 +1559,17 @@
       --text-body: 13px;
     }
     html, body { font-size: 15px; }
+    /* Hide desktop left rail + slide-out panel; use bottom bar instead */
+    .nav-rail-left, .nav-overlay, .nav-panel { display: none !important; }
+    /* Show bottom menu bar + info panel */
+    .bottom-bar { display: flex; }
+    .bottom-info-overlay { display: block; }
+    .bottom-info-panel { display: block; }
     .app {
-      padding: var(--space-lg);
-      padding-left: calc(var(--sidebar-width) + var(--space-md));
-      padding-right: calc(var(--sidebar-width) + var(--space-md));
-      padding-top: var(--space-xl);
-      padding-bottom: var(--space-2xl);
+      padding: var(--space-md);
+      padding-top: var(--space-lg);
+      padding-bottom: calc(72px + var(--space-md) + env(safe-area-inset-bottom, 0));
     }
-    /* Rails: thinner, smaller text */
-    .nav-rail { width: var(--sidebar-width); }
-    .nav-rail-text { font-size: 9px; letter-spacing: 0.16em; }
     /* Header: stack title and stats vertically */
     .top-header {
       flex-direction: column;
@@ -1554,15 +1608,9 @@
     /* Session list: tighter */
     .session-item { padding: var(--space-sm) 0; }
     .session-delete { width: 36px; height: 36px; font-size: 18px; }
-    /* Heatmap: horizontal scroll on narrow screens */
-    .heatmap-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: var(--space-sm); }
-    .heatmap-cell { width: 12px; height: 12px; }
-    .weekday-labels { gap: 4px; padding-top: 6px; width: 22px; }
-    .weekday-label { height: 12px; font-size: 10px; }
-    .heatmap { gap: 3px; }
-    .heatmap-week { gap: 3px; }
-    .month-labels { gap: 4px; padding-left: 28px; font-size: 10px; }
-    .month-label { min-width: 50px; }
+    /* Month calendar: compact cells on phone */
+    .heatmap-calendar { gap: 3px; }
+    .cal-cell { font-size: 11px; padding: 4px 5px; }
     .label-cell { width: 10px; height: 10px; }
     /* Sync view: single column */
     .sync-3col { grid-template-columns: 1fr; gap: var(--space-md); }
@@ -1592,16 +1640,10 @@
       --space-lg: 22px;
       --space-xl: 28px;
     }
-    .app {
-      padding: var(--space-md);
-      padding-left: calc(var(--sidebar-width) + var(--space-sm));
-      padding-right: calc(var(--sidebar-width) + var(--space-sm));
-    }
     .pomo-ring { width: 180px; height: 180px; }
     .timer-num { font-size: 56px !important; }
-    .nav-rail-text { font-size: 8px; }
-    .heatmap-cell { width: 10px; height: 10px; }
-    .weekday-label { height: 10px; font-size: 9px; }
+    .cal-cell { font-size: 9px; padding: 3px 4px; }
+    .bottom-tab-label { font-size: 9px; }
   }
 
   /* Landscape phone (short height) — keep usable but compact */
@@ -1618,17 +1660,12 @@
 </head>
 <body>
 
-  <!-- ============ LEFT RAIL: MENU ============ -->
+  <!-- ============ LEFT RAIL: MENU (desktop/tablet only) ============ -->
   <aside class="nav-rail nav-rail-left" id="leftRail" title="Open Menu">
     <span class="nav-rail-text">Menu</span>
   </aside>
 
-  <!-- ============ RIGHT RAIL: INFO ============ -->
-  <aside class="nav-rail nav-rail-right" id="rightRail" title="Information">
-    <span class="nav-rail-text">Info</span>
-  </aside>
-
-  <!-- ============ NAV OVERLAY + PANEL ============ -->
+  <!-- ============ NAV OVERLAY + PANEL (desktop/tablet only) ============ -->
   <div class="nav-overlay" id="navOverlay"></div>
   <aside class="nav-panel" id="navPanel">
     <button class="nav-panel-close" id="navPanelClose" aria-label="Close menu">×</button>
@@ -1645,12 +1682,12 @@
     </div>
 
     <!-- INFO SECTION -->
-    <div class="nav-section" id="navSectionInfo" style="display:none;">
+    <div class="nav-section" id="navSectionInfo">
       <div class="nav-section-label">Information</div>
       <ul class="info-list">
         <li class="info-item">
           <span>Product</span>
-          Study Time Tracker
+          StudyFlow
         </li>
         <li class="info-item">
           <span>Version</span>
@@ -1668,7 +1705,7 @@
     </div>
 
     <!-- FOLLOW SECTION -->
-    <div class="nav-section" id="navSectionFollow" style="display:none;">
+    <div class="nav-section" id="navSectionFollow">
       <div class="nav-section-label">Shortcuts</div>
       <ul class="info-list">
         <li class="info-item">
@@ -1685,6 +1722,48 @@
         </li>
       </ul>
     </div>
+  </aside>
+
+  <!-- ============ BOTTOM MENU BAR (phone only) ============ -->
+  <nav class="bottom-bar" id="bottomBar">
+    <button class="bottom-tab active" data-view="pomodoro">
+      <span class="bottom-tab-dot"></span>
+      <span class="bottom-tab-label">Focus</span>
+    </button>
+    <button class="bottom-tab" data-view="heatmap">
+      <span class="bottom-tab-dot"></span>
+      <span class="bottom-tab-label">Heat</span>
+    </button>
+    <button class="bottom-tab" data-view="sync">
+      <span class="bottom-tab-dot"></span>
+      <span class="bottom-tab-label">Sync</span>
+    </button>
+    <button class="bottom-tab" data-view="qr">
+      <span class="bottom-tab-dot"></span>
+      <span class="bottom-tab-label">QR</span>
+    </button>
+    <button class="bottom-tab" id="bottomInfoBtn">
+      <span class="bottom-tab-dot"></span>
+      <span class="bottom-tab-label">Info</span>
+    </button>
+  </nav>
+
+  <!-- ============ BOTTOM INFO PANEL (phone only) ============ -->
+  <div class="bottom-info-overlay" id="bottomInfoOverlay"></div>
+  <aside class="bottom-info-panel" id="bottomInfoPanel">
+    <button class="bottom-info-close" id="bottomInfoClose" aria-label="Close info">×</button>
+    <div class="nav-section-label">Information</div>
+    <ul class="info-list">
+      <li class="info-item"><span>Product</span>StudyFlow</li>
+      <li class="info-item"><span>Version</span>v1.0</li>
+      <li class="info-item"><span>Storage</span>Local only · Offline first</li>
+      <li class="info-item"><span>Language</span>EN · UPPERCASE system</li>
+    </ul>
+    <div class="nav-section-label" style="margin-top:var(--space-md);">Shortcuts</div>
+    <ul class="info-list">
+      <li class="info-item"><span>Start / Pause</span>SPACE</li>
+      <li class="info-item"><span>Close Dialog</span>ESC</li>
+    </ul>
   </aside>
 
   <!-- ============ MAIN APP ============ -->
@@ -1841,19 +1920,17 @@
 
         <div class="heatmap-header">
           <div style="font-size: var(--text-body); letter-spacing: normal;">Study activity by day</div>
-          <div class="year-selector">
-            Year
-            <select id="yearSelect"></select>
+          <div class="month-selector">
+            <button class="btn-link month-nav" id="monthPrev" aria-label="Previous month">‹</button>
+            <div class="month-display">
+              <select id="monthSelect"></select>
+              <select id="yearSelect"></select>
+            </div>
+            <button class="btn-link month-nav" id="monthNext" aria-label="Next month">›</button>
           </div>
         </div>
 
-        <div class="month-labels" id="monthLabels"></div>
-        <div class="heatmap-with-labels">
-          <div class="weekday-labels" id="weekdayLabels"></div>
-          <div class="heatmap-wrapper">
-            <div class="heatmap" id="heatmap"></div>
-          </div>
-        </div>
+        <div class="heatmap-calendar" id="heatmapCalendar"></div>
 
         <div class="heatmap-labels">
           <span>Less</span>
@@ -2354,20 +2431,8 @@
   // ============================================================
   const navOverlay = document.getElementById('navOverlay');
   const navPanel   = document.getElementById('navPanel');
-  const navSecNav    = document.getElementById('navSectionNav');
-  const navSecInfo   = document.getElementById('navSectionInfo');
-  const navSecFollow = document.getElementById('navSectionFollow');
 
-  function openNav(showInfoOnly = false) {
-    if (showInfoOnly) {
-      navSecNav.style.display = 'none';
-      navSecInfo.style.display = '';
-      navSecFollow.style.display = '';
-    } else {
-      navSecNav.style.display = '';
-      navSecInfo.style.display = 'none';
-      navSecFollow.style.display = 'none';
-    }
+  function openNav() {
     navOverlay.classList.add('active');
     navPanel.classList.add('active');
   }
@@ -2375,10 +2440,30 @@
     navOverlay.classList.remove('active');
     navPanel.classList.remove('active');
   }
-  document.getElementById('leftRail').addEventListener('click', () => openNav(false));
-  document.getElementById('rightRail').addEventListener('click', () => openNav(true));
+  const leftRailEl = document.getElementById('leftRail');
+  if (leftRailEl) leftRailEl.addEventListener('click', openNav);
   navOverlay.addEventListener('click', closeNav);
   document.getElementById('navPanelClose').addEventListener('click', closeNav);
+
+  // Bottom bar (phone) — view tabs + info button
+  document.querySelectorAll('.bottom-tab[data-view]').forEach(btn => {
+    btn.addEventListener('click', () => switchView(btn.dataset.view));
+  });
+  const bottomInfoBtn = document.getElementById('bottomInfoBtn');
+  const bottomInfoPanel = document.getElementById('bottomInfoPanel');
+  const bottomInfoOverlay = document.getElementById('bottomInfoOverlay');
+  const bottomInfoClose = document.getElementById('bottomInfoClose');
+  function openBottomInfo() {
+    bottomInfoOverlay.classList.add('active');
+    bottomInfoPanel.classList.add('active');
+  }
+  function closeBottomInfo() {
+    bottomInfoOverlay.classList.remove('active');
+    bottomInfoPanel.classList.remove('active');
+  }
+  if (bottomInfoBtn) bottomInfoBtn.addEventListener('click', openBottomInfo);
+  if (bottomInfoOverlay) bottomInfoOverlay.addEventListener('click', closeBottomInfo);
+  if (bottomInfoClose) bottomInfoClose.addEventListener('click', closeBottomInfo);
 
   function switchView(viewName) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -2387,12 +2472,17 @@
     document.querySelectorAll('.nav-panel .btn-link[data-view]').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.view === viewName);
     });
+    document.querySelectorAll('.bottom-tab[data-view]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.view === viewName);
+    });
 
     closeNav();
+    closeBottomInfo();
 
     if (viewName === 'heatmap') {
-      const y = parseInt(document.getElementById('yearSelect').value) || new Date().getFullYear();
-      renderHeatmap(y);
+      const y = parseInt(document.getElementById('yearSelect').value);
+      const m = parseInt(document.getElementById('monthSelect').value);
+      renderHeatmap(isNaN(y) ? _hmYear : y, isNaN(m) ? _hmMonth : m);
     }
     if (viewName === 'sync') renderSyncView();
     if (viewName !== 'qr') stopQrScanner();
@@ -2402,11 +2492,35 @@
   // ============================================================
   // HEADER STATS
   // ============================================================
+  // Elapsed whole minutes of the in-progress work session (not yet saved).
+  // Counts while the timer has progressed, even when paused; resets on reset.
+  function liveElapsedMin() {
+    if (timer.mode === 'work' && timer.duration > 0 && timer.remaining < timer.duration) {
+      return Math.floor((timer.duration - timer.remaining) / 60);
+    }
+    return 0;
+  }
+
   function updateHeaderStats() {
     const work = appData.sessions.filter(s => s.type === 'work');
-    const totalMin = work.reduce((sum, s) => sum + s.duration, 0);
+    const totalMin = work.reduce((sum, s) => sum + s.duration, 0) + liveElapsedMin();
     document.getElementById('totalHours').textContent = Math.round(totalMin / 60 * 10) / 10;
     document.getElementById('totalPomodoros').textContent = work.length;
+  }
+
+  // Lightweight numeric-only refresh (called every second during the run).
+  // Avoids re-rendering the session list on each tick.
+  function updateLiveStats() {
+    const totalMin = appData.sessions
+      .filter(s => s.type === 'work')
+      .reduce((sum, s) => sum + s.duration, 0) + liveElapsedMin();
+    document.getElementById('totalHours').textContent = Math.round(totalMin / 60 * 10) / 10;
+
+    const todayStr = formatDate(new Date());
+    const todayMin = appData.sessions
+      .filter(s => s.date === todayStr && s.type === 'work')
+      .reduce((sum, s) => sum + s.duration, 0) + liveElapsedMin();
+    document.getElementById('todayMinutes').textContent = todayMin;
   }
 
   // ============================================================
@@ -2553,6 +2667,7 @@
       updateTimerDisplay();
       updateProgressRing();
       if (timer.remaining <= 0) { stopTimer(false); onTimerComplete(); }
+      else { updateLiveStats(); }
     }, 1000);
     updateStartBtnText();
     renderCycleBars();
@@ -2572,7 +2687,34 @@
     updateStartBtnText();
   }
 
+  // Save an interrupted work session so its focused time still counts.
+  // Only fires when at least 1 minute has elapsed; marks it completed:false.
+  function savePartialSessionIfNeeded() {
+    if (timer.mode !== 'work') return false;
+    const elapsedSec = timer.duration - timer.remaining;
+    if (elapsedSec < 60) return false; // under a minute — not worth recording
+    const elapsedMin = Math.floor(elapsedSec / 60);
+    const now = new Date();
+    const startedAt = timer.startedAt || new Date(now.getTime() - elapsedSec * 1000);
+    appData.sessions.push({
+      id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      date: formatDate(startedAt),
+      type: 'work',
+      subject: timer.subject || '',
+      duration: elapsedMin,
+      startTime: formatTime(startedAt),
+      endTime: formatTime(now),
+      completedAt: now.toISOString(),
+      completed: false // interrupted / partial
+    });
+    saveData(appData);
+    showToast(`${elapsedMin}-min partial session saved`);
+    return true;
+  }
+
   function resetTimer() {
+    // Abandoning an in-progress work run? Record its focused time first.
+    const saved = savePartialSessionIfNeeded();
     stopTimer(false);
     timer.inCycle = false; timer.doneWorks = 0;
     timer.mode = 'work';
@@ -2580,6 +2722,7 @@
     timer.startedAt = null;
     updateTimerDisplay(); updateProgressRing();
     updateStartBtnText(); renderCycleBars();
+    renderAll();
   }
 
   function onTimerComplete() {
@@ -2733,7 +2876,7 @@
       .sort((a, b) => (b.startTime || '').localeCompare(a.startTime || ''));
 
     document.getElementById('todayMinutes').textContent =
-      list.reduce((sum, s) => sum + s.duration, 0);
+      list.reduce((sum, s) => sum + s.duration, 0) + liveElapsedMin();
     document.getElementById('todayPomodoros').textContent = list.length;
 
     const ul = document.getElementById('todaySessionList');
@@ -2748,9 +2891,10 @@
     }
     list.forEach(s => {
       const li = document.createElement('li');
-      li.className = 'session-item';
+      li.className = 'session-item' + (s.completed === false ? ' partial' : '');
       const subj = s.subject || 'Untitled Session';
-      const time = s.startTime ? `${s.startTime}–${s.endTime || '--:--'}` : '';
+      const partialTag = s.completed === false ? ' · partial' : '';
+      const time = s.startTime ? `${s.startTime}–${s.endTime || '--:--'}${partialTag}` : partialTag.trim();
       li.innerHTML = `
         <div class="session-info">
           <div class="session-subject ${s.subject ? '' : 'empty'}">${subj}</div>
@@ -2788,76 +2932,69 @@
     return map;
   }
 
-  function renderHeatmap(year) {
-    const heatmap = document.getElementById('heatmap');
-    const monthLabels = document.getElementById('monthLabels');
-    const weekdayLabels = document.getElementById('weekdayLabels');
-    heatmap.innerHTML = ''; monthLabels.innerHTML = ''; weekdayLabels.innerHTML = '';
+  // Current displayed month in the heatmap
+  let _hmYear = new Date().getFullYear();
+  let _hmMonth = new Date().getMonth();
 
+  function renderHeatmap(year, month) {
+    if (typeof year !== 'number') year = _hmYear;
+    if (typeof month !== 'number') month = _hmMonth;
+    _hmYear = year; _hmMonth = month;
+
+    // Keep the selector dropdowns in sync with the rendered grid
+    const ys = document.getElementById('yearSelect');
+    const ms = document.getElementById('monthSelect');
+    if (ys) ys.value = String(year);
+    if (ms) ms.value = String(month);
+
+    const cal = document.getElementById('heatmapCalendar');
+    if (!cal) return;
+    cal.innerHTML = '';
+
+    // 7 weekday headers (Sun..Sat)
     const wdNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    for (let i = 0; i < 7; i++) {
-      const d = document.createElement('div');
-      d.className = 'weekday-label';
-      if (i === 1 || i === 3 || i === 5) d.textContent = wdNames[i];
-      weekdayLabels.appendChild(d);
-    }
+    wdNames.forEach(n => {
+      const h = document.createElement('div');
+      h.className = 'cal-weekday-header';
+      h.textContent = n;
+      cal.appendChild(h);
+    });
 
     const minutesMap = aggregateMinutesByDate();
     const todayStr = formatDate(new Date());
-    const firstDay = new Date(year, 0, 1);
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay());
-    const lastDay = new Date(year, 11, 31);
-    const endDate = new Date(lastDay);
-    endDate.setDate(endDate.getDate() + (6 - lastDay.getDay()));
-    const totalWeeks = Math.ceil((endDate - startDate) / (7 * 24 * 3600 * 1000)) + 1;
-    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const startWeekday = new Date(year, month, 1).getDay();       // 0=Sun
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    let curMonthLabel = -1;
-    const labelPos = [];
-    let weekStart = new Date(startDate);
-    for (let w = 0; w < totalWeeks; w++) {
-      const weekDiv = document.createElement('div');
-      weekDiv.className = 'heatmap-week';
-      const mIdx = weekStart.getMonth();
-      if (mIdx !== curMonthLabel && weekStart.getDate() <= 7) {
-        curMonthLabel = mIdx;
-        labelPos.push({ week: w, label: monthNames[mIdx] });
-      }
-      for (let d = 0; d < 7; d++) {
-        const cd = new Date(weekStart); cd.setDate(cd.getDate() + d);
-        const cs = formatDate(cd);
-        const cell = document.createElement('div');
-        cell.className = 'heatmap-cell';
-        if (cd.getFullYear() !== year) cell.classList.add('empty');
-        else {
-          const min = minutesMap[cs] || 0;
-          cell.dataset.level = getLevelByMinutes(min);
-          cell.dataset.date = cs;
-          if (cs === todayStr) cell.classList.add('today');
-          cell.title = `${cs}: ${min} min`;
-          cell.addEventListener('click', () => openDateModal(cs));
-        }
-        weekDiv.appendChild(cell);
-      }
-      heatmap.appendChild(weekDiv);
-      weekStart.setDate(weekStart.getDate() + 7);
+    // Leading empty cells to align the 1st under its weekday column
+    for (let i = 0; i < startWeekday; i++) {
+      const e = document.createElement('div');
+      e.className = 'cal-cell empty';
+      cal.appendChild(e);
     }
 
-    let html = ''; let widx = 0;
-    labelPos.forEach(({ week, label }) => {
-      const gap = week - widx;
-      if (gap > 0) html += `<div style="min-width: ${gap * 18}px;"></div>`;
-      html += `<div class="month-label">${label}</div>`;
-      widx = week + 1;
-    });
-    monthLabels.innerHTML = html;
-    updateYearStats(year, minutesMap);
+    for (let d = 1; d <= daysInMonth; d++) {
+      const cd = new Date(year, month, d);
+      const cs = formatDate(cd);
+      const min = minutesMap[cs] || 0;
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell';
+      cell.dataset.level = getLevelByMinutes(min);
+      cell.dataset.date = cs;
+      if (cs === todayStr) cell.classList.add('today');
+      cell.textContent = d;
+      cell.title = `${cs}: ${min} min`;
+      cell.addEventListener('click', () => openDateModal(cs));
+      cal.appendChild(cell);
+    }
+
+    updateMonthStats(year, month, minutesMap);
   }
 
-  function updateYearStats(year, minutesMap) {
-    const ys = new Date(year, 0, 1);
-    const ye = new Date(year, 11, 31);
+  function updateMonthStats(year, month, minutesMap) {
+    const ys = new Date(year, month, 1);
+    const ye = new Date(year, month + 1, 0);
+
+    // Contribution days within the month
     let c = 0;
     for (const date in minutesMap) {
       const d = parseDate(date);
@@ -2865,37 +3002,74 @@
     }
     document.getElementById('yearContributions').textContent = c;
 
-    let curStreak = 0;
-    const today = new Date(); today.setHours(0,0,0,0);
-    let cs = formatDate(today);
-    if ((minutesMap[cs] || 0) === 0) { const d = parseDate(cs); d.setDate(d.getDate() - 1); cs = formatDate(d); }
-    while ((minutesMap[cs] || 0) > 0) {
-      curStreak++;
-      const d = parseDate(cs); d.setDate(d.getDate() - 1); cs = formatDate(d);
-    }
-
-    let run = 0; let longest = 0;
-    const all = [];
+    // Longest streak within the month
+    let run = 0, longest = 0;
     const it = new Date(ys);
-    while (it <= ye) { all.push(formatDate(it)); it.setDate(it.getDate() + 1); }
-    for (const ds of all) {
-      if ((minutesMap[ds] || 0) > 0) { run++; longest = Math.max(longest, run); }
+    while (it <= ye) {
+      if ((minutesMap[formatDate(it)] || 0) > 0) { run++; longest = Math.max(longest, run); }
       else run = 0;
+      it.setDate(it.getDate() + 1);
     }
     document.getElementById('longestStreak').textContent = longest;
+
+    // Current streak: count consecutive active days ending today (or last active day in month)
+    let curStreak = 0;
+    let cursor = new Date(); cursor.setHours(0,0,0,0);
+    // If viewing a future month, no current streak
+    if (cursor < ys) curStreak = 0;
+    else {
+      if (cursor > ye) cursor = new Date(ye);
+      // If today (or month-end) has no activity, step back to the last active day
+      if ((minutesMap[formatDate(cursor)] || 0) === 0) {
+        const prev = new Date(cursor); prev.setDate(prev.getDate() - 1);
+        if (prev >= ys) cursor = prev;
+      }
+      while (cursor >= ys && (minutesMap[formatDate(cursor)] || 0) > 0) {
+        curStreak++;
+        cursor.setDate(cursor.getDate() - 1);
+      }
+    }
     document.getElementById('currentStreak').textContent = curStreak;
   }
 
-  function initYearSelector() {
-    const sel = document.getElementById('yearSelect');
-    const cur = new Date().getFullYear();
-    for (let y = cur - 3; y <= cur + 1; y++) {
+  function shiftMonth(delta) {
+    let m = _hmMonth + delta;
+    let y = _hmYear;
+    while (m < 0) { m += 12; y--; }
+    while (m > 11) { m -= 12; y++; }
+    _hmYear = y; _hmMonth = m;
+    // Sync the selector dropdowns
+    const ys = document.getElementById('yearSelect');
+    const ms = document.getElementById('monthSelect');
+    if (ys) ys.value = String(y);
+    if (ms) ms.value = String(m);
+    renderHeatmap(y, m);
+  }
+
+  function initMonthSelector() {
+    const ys = document.getElementById('yearSelect');
+    const ms = document.getElementById('monthSelect');
+    const cur = new Date();
+    // Years: cur-5 .. cur+1
+    for (let y = cur.getFullYear() - 5; y <= cur.getFullYear() + 1; y++) {
       const o = document.createElement('option');
       o.value = y; o.textContent = y;
-      if (y === cur) o.selected = true;
-      sel.appendChild(o);
+      if (y === _hmYear) o.selected = true;
+      ys.appendChild(o);
     }
-    sel.addEventListener('change', () => renderHeatmap(parseInt(sel.value)));
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    for (let m = 0; m < 12; m++) {
+      const o = document.createElement('option');
+      o.value = m; o.textContent = monthNames[m];
+      if (m === _hmMonth) o.selected = true;
+      ms.appendChild(o);
+    }
+    ys.addEventListener('change', () => renderHeatmap(parseInt(ys.value), parseInt(ms.value)));
+    ms.addEventListener('change', () => renderHeatmap(parseInt(ys.value), parseInt(ms.value)));
+    const prev = document.getElementById('monthPrev');
+    const next = document.getElementById('monthNext');
+    if (prev) prev.addEventListener('click', () => { playClickTick(); shiftMonth(-1); });
+    if (next) next.addEventListener('click', () => { playClickTick(); shiftMonth(1); });
   }
 
   // ============================================================
@@ -2924,9 +3098,10 @@
     } else {
       list.forEach(s => {
         const li = document.createElement('li');
-        li.className = 'session-item';
+        li.className = 'session-item' + (s.completed === false ? ' partial' : '');
         const subj = s.subject || 'Untitled Session';
-        const t = s.startTime ? `${s.startTime} – ${s.endTime || '--:--'}` : '';
+        const partialTag = s.completed === false ? ' · partial' : '';
+        const t = s.startTime ? `${s.startTime} – ${s.endTime || '--:--'}${partialTag}` : partialTag.trim();
         li.innerHTML = `
           <div class="session-info">
             <div class="session-subject ${s.subject ? '' : 'empty'}">${subj}</div>
@@ -2953,8 +3128,9 @@
     updateHeaderStats();
     updateTodayInfo();
     if (document.getElementById('view-heatmap').classList.contains('active')) {
-      const y = parseInt(document.getElementById('yearSelect').value) || new Date().getFullYear();
-      renderHeatmap(y);
+      const y = parseInt(document.getElementById('yearSelect').value);
+      const m = parseInt(document.getElementById('monthSelect').value);
+      renderHeatmap(isNaN(y) ? _hmYear : y, isNaN(m) ? _hmMonth : m);
     }
   }
 
@@ -3061,13 +3237,13 @@
 
     // Keyboard
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeDateModal(); closeNav(); }
+      if (e.key === 'Escape') { closeDateModal(); closeNav(); closeBottomInfo(); }
       if (e.code === 'Space' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
         e.preventDefault(); startOrPauseTimer();
       }
     });
 
-    initYearSelector();
+    initMonthSelector();
     applyCfgToUI();
     updateSummary();
     updateTimerDisplay();
