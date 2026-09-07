@@ -40,3 +40,9 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Server runtime
+server/data.sqlite
+server/data.sqlite-*
+server/node_modules/
+build/android-cordova/.gradle-home/

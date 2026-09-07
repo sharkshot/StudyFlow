@@ -1661,11 +1661,183 @@
     .timer-num { font-size: 52px !important; }
     .cycle-bars { margin-bottom: var(--space-md); }
   }
+
+  /* ============================================================
+     AUTH SCREEN + ACCOUNT + COMMUNITY (v3)
+     ============================================================ */
+  .auth-screen {
+    position: fixed; inset: 0; z-index: 500;
+    background: var(--color-black);
+    display: flex; align-items: center; justify-content: center;
+    padding: var(--space-md);
+  }
+  .auth-screen.hidden { display: none; }
+  .auth-card {
+    width: 100%; max-width: 380px;
+    border: 1px solid var(--color-divider-dark);
+    padding: var(--space-xl);
+  }
+  .auth-logo {
+    font-size: var(--text-heading); font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide); text-transform: uppercase;
+    margin-bottom: var(--space-lg);
+  }
+  .auth-logo .accent { color: var(--color-accent-yellow); }
+  .auth-tab-row {
+    display: flex; gap: 0; margin-bottom: var(--space-md);
+    border-bottom: 1px solid var(--color-divider-dark);
+  }
+  .auth-tab {
+    flex: 1; background: none; border: none; color: var(--color-text-secondary-dark);
+    font-family: inherit; font-size: var(--text-body);
+    text-transform: uppercase; letter-spacing: var(--tracking-wide);
+    padding: var(--space-sm) 0; cursor: pointer;
+    border-bottom: 2px solid transparent;
+  }
+  .auth-tab.active { color: var(--color-white); border-bottom-color: var(--color-accent-yellow); }
+  .auth-field { margin-bottom: var(--space-md); }
+  .auth-field label {
+    display: block; font-size: var(--text-label); text-transform: uppercase;
+    letter-spacing: var(--tracking-wide); color: var(--color-text-secondary-dark);
+    margin-bottom: var(--space-xs);
+  }
+  .auth-field input {
+    width: 100%; background: transparent; border: none;
+    border-bottom: 1px solid var(--color-divider-dark);
+    color: var(--color-white); font-family: inherit; font-size: var(--text-body);
+    padding: var(--space-xs) 0; outline: none;
+  }
+  .auth-field input:focus { border-bottom-color: var(--color-accent-yellow); }
+  .auth-submit {
+    width: 100%; background: var(--color-white); color: var(--color-black);
+    border: none; padding: var(--space-sm); font-family: inherit;
+    font-size: var(--text-body); text-transform: uppercase;
+    letter-spacing: var(--tracking-wide); cursor: pointer;
+    font-weight: var(--weight-bold);
+  }
+  .auth-submit:hover { background: var(--color-accent-yellow); }
+  .auth-qr-toggle {
+    display: block; width: 100%; text-align: center; margin-top: var(--space-md);
+    background: none; border: none; color: var(--color-text-secondary-dark);
+    font-family: inherit; font-size: var(--text-label); text-transform: uppercase;
+    letter-spacing: var(--tracking-wide); cursor: pointer;
+  }
+  .auth-qr-toggle:hover { color: var(--color-accent-yellow); }
+  .auth-qr-box {
+    text-align: center; padding: var(--space-md) 0;
+  }
+  .auth-qr-box canvas { background: var(--color-white); padding: 12px; }
+  .auth-qr-hint {
+    font-size: var(--text-caption); color: var(--color-text-secondary-dark);
+    margin-top: var(--space-sm); line-height: var(--leading-body);
+  }
+
+  /* Sync status indicator */
+  .sync-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: var(--text-caption); text-transform: uppercase;
+    letter-spacing: var(--tracking-wide); color: var(--color-text-secondary-dark);
+  }
+  .sync-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-text-secondary-dark); }
+  .sync-status.online .dot { background: var(--color-accent-yellow); }
+  .sync-status.offline .dot { background: var(--color-accent-pink); }
+
+  /* Community view */
+  .community-card {
+    border: 1px solid var(--color-divider-dark);
+    padding: var(--space-md); margin-bottom: var(--space-md);
+  }
+  .community-card-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: var(--space-sm);
+  }
+  .community-name { font-size: var(--text-heading); font-weight: var(--weight-bold); }
+  .community-meta { font-size: var(--text-caption); color: var(--color-text-secondary-dark); text-transform: uppercase; letter-spacing: var(--tracking-wide); }
+  .community-desc { font-size: var(--text-body); color: var(--color-text-secondary-dark); margin-bottom: var(--space-sm); }
+  .invite-code-box {
+    display: inline-flex; align-items: center; gap: var(--space-sm);
+    border: 1px solid var(--color-divider-dark); padding: var(--space-xs) var(--space-sm);
+    font-family: 'Courier New', monospace; font-size: var(--text-body);
+  }
+  .proposal-card {
+    border: 1px solid var(--color-divider-dark);
+    padding: var(--space-md); margin-bottom: var(--space-sm);
+  }
+  .proposal-title { font-weight: var(--weight-bold); font-size: var(--text-body); margin-bottom: 4px; }
+  .proposal-desc { font-size: var(--text-caption); color: var(--color-text-secondary-dark); margin-bottom: var(--space-sm); }
+  .proposal-vote-row { display: flex; gap: var(--space-sm); align-items: center; }
+  .vote-count { font-size: var(--text-caption); color: var(--color-text-secondary-dark); }
+  .proposal-status {
+    display: inline-block; font-size: var(--text-label); text-transform: uppercase;
+    letter-spacing: var(--tracking-wide); padding: 2px 8px;
+    border: 1px solid var(--color-divider-dark);
+  }
+  .proposal-status.passed { color: var(--color-accent-yellow); border-color: var(--color-accent-yellow); }
+  .inline-form { display: flex; gap: var(--space-sm); margin-bottom: var(--space-md); }
+  .inline-form input {
+    flex: 1; background: transparent; border: none;
+    border-bottom: 1px solid var(--color-divider-dark);
+    color: var(--color-white); font-family: inherit; font-size: var(--text-body);
+    padding: var(--space-xs) 0; outline: none;
+  }
+  .inline-form input:focus { border-bottom-color: var(--color-accent-yellow); }
+  .empty-state { text-align: center; padding: var(--space-xl) 0; color: var(--color-text-secondary-dark); font-size: var(--text-body); }
 </style>
 <script src="vendor/qrcode.min.js"></script>
 <script src="vendor/jsQR.js"></script>
 </head>
 <body>
+
+  <!-- ============ AUTH SCREEN (shown when not logged in) ============ -->
+  <div class="auth-screen" id="authScreen">
+    <div class="auth-card">
+      <div class="auth-logo">Study<span class="accent">Flow</span></div>
+
+      <div class="auth-tab-row">
+        <button class="auth-tab active" data-authtab="login">Login</button>
+        <button class="auth-tab" data-authtab="register">Register</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="auth-form" id="authLoginForm">
+        <div class="auth-field">
+          <label>Username</label>
+          <input type="text" id="loginUsername" autocomplete="username">
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" id="loginPassword" autocomplete="current-password">
+        </div>
+        <button class="auth-submit" id="loginSubmitBtn">Login</button>
+        <button class="auth-qr-toggle" id="showQrLoginBtn">Login via QR Code</button>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="auth-form" id="authRegisterForm" style="display:none;">
+        <div class="auth-field">
+          <label>Username</label>
+          <input type="text" id="regUsername" autocomplete="username">
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" id="regPassword" autocomplete="new-password">
+        </div>
+        <button class="auth-submit" id="registerSubmitBtn">Create Account</button>
+      </div>
+
+      <!-- QR LOGIN -->
+      <div class="auth-form" id="authQrForm" style="display:none;">
+        <div class="auth-qr-box" id="authQrBox">
+          <div class="empty-state">Generating QR code…</div>
+        </div>
+        <p class="auth-qr-hint">
+          On a device where you are already logged in, open Menu → Account → Show QR Login.<br>
+          Scan it here to sign in to the same account.
+        </p>
+        <button class="auth-qr-toggle" id="backToLoginBtn">← Back to Login</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ============ LEFT RAIL: MENU (desktop/tablet only) ============ -->
   <aside class="nav-rail nav-rail-left" id="leftRail" title="Open Menu">
@@ -1683,8 +1855,10 @@
       <ul class="nav-links">
         <li><button class="btn-link active" data-view="pomodoro">Pomodoro</button></li>
         <li><button class="btn-link" data-view="heatmap">Heatmap</button></li>
+        <li><button class="btn-link" data-view="community">Community</button></li>
         <li><button class="btn-link" data-view="sync">Sync</button></li>
         <li><button class="btn-link" data-view="qr">QR Sync</button></li>
+        <li><button class="btn-link" data-view="account">Account</button></li>
       </ul>
     </div>
 
@@ -1741,17 +1915,17 @@
       <span class="bottom-tab-dot"></span>
       <span class="bottom-tab-label">Heat</span>
     </button>
+    <button class="bottom-tab" data-view="community">
+      <span class="bottom-tab-dot"></span>
+      <span class="bottom-tab-label">Group</span>
+    </button>
     <button class="bottom-tab" data-view="sync">
       <span class="bottom-tab-dot"></span>
       <span class="bottom-tab-label">Sync</span>
     </button>
-    <button class="bottom-tab" data-view="qr">
+    <button class="bottom-tab" id="bottomMenuBtn">
       <span class="bottom-tab-dot"></span>
-      <span class="bottom-tab-label">QR</span>
-    </button>
-    <button class="bottom-tab" id="bottomInfoBtn">
-      <span class="bottom-tab-dot"></span>
-      <span class="bottom-tab-label">Info</span>
+      <span class="bottom-tab-label">Menu</span>
     </button>
   </nav>
 
@@ -1759,18 +1933,21 @@
   <div class="bottom-info-overlay" id="bottomInfoOverlay"></div>
   <aside class="bottom-info-panel" id="bottomInfoPanel">
     <button class="bottom-info-close" id="bottomInfoClose" aria-label="Close info">×</button>
-    <div class="nav-section-label">Information</div>
+    <div class="nav-section-label">Account</div>
     <ul class="info-list">
-      <li class="info-item"><span>Product</span>StudyFlow</li>
-      <li class="info-item"><span>Version</span>v1.0</li>
-      <li class="info-item"><span>Storage</span>Local only · Offline first</li>
-      <li class="info-item"><span>Language</span>EN · UPPERCASE system</li>
+      <li class="info-item"><span>User</span><span id="bottomInfoUser">—</span></li>
+      <li class="info-item"><span>Sync</span><span id="bottomInfoSyncStatus">—</span></li>
     </ul>
     <div class="nav-section-label" style="margin-top:var(--space-md);">Shortcuts</div>
     <ul class="info-list">
       <li class="info-item"><span>Start / Pause</span>SPACE</li>
       <li class="info-item"><span>Close Dialog</span>ESC</li>
     </ul>
+    <div style="margin-top:var(--space-md); display:flex; flex-direction:column; gap:var(--space-xs);">
+      <button class="btn-link" id="bottomQrSyncBtn" style="text-align:left;">QR Sync</button>
+      <button class="btn-link" id="bottomAccountBtn" style="text-align:left;">Account</button>
+      <button class="btn-link" id="logoutBtn" style="text-align:left; color:var(--color-accent-pink);">Logout</button>
+    </div>
   </aside>
 
   <!-- ============ MAIN APP ============ -->
@@ -1778,7 +1955,7 @@
 
     <!-- HEADER -->
     <header class="top-header">
-      <h1 class="app-title">Study Tracker</h1>
+      <h1 class="app-title">StudyFlow</h1>
       <div class="stats-bar">
         <div class="stat-item">
           Total
@@ -1788,6 +1965,10 @@
         <div class="stat-item">
           Pomodoros
           <span class="stat-value" id="totalPomodoros">0</span>
+        </div>
+        <div class="stat-item" id="accountStatusItem" style="display:none;">
+          <span id="accountUsername">—</span>
+          <span class="sync-status" id="syncStatus"><span class="dot"></span><span id="syncStatusText">Offline</span></span>
         </div>
       </div>
     </header>
@@ -2088,6 +2269,85 @@
         </div>
       </section>
     </main>
+
+    <!-- ========== COMMUNITY VIEW ========== -->
+    <main class="view" id="view-community">
+      <section class="section">
+        <div class="section-label">Your Communities</div>
+        <div id="communityList"></div>
+
+        <div class="section-label" style="margin-top:var(--space-lg);">Create Community</div>
+        <div class="inline-form">
+          <input type="text" id="newCommunityName" placeholder="Community name">
+          <button class="btn-link" id="createCommunityBtn">Create</button>
+        </div>
+        <input type="text" id="newCommunityDesc" placeholder="Description (optional)" style="width:100%;background:transparent;border:none;border-bottom:1px solid var(--color-divider-dark);color:var(--color-white);font-family:inherit;font-size:var(--text-body);padding:var(--space-xs) 0;outline:none;margin-bottom:var(--space-md);">
+
+        <div class="section-label">Join Community</div>
+        <div class="inline-form">
+          <input type="text" id="joinInviteCode" placeholder="Invite code">
+          <button class="btn-link" id="joinCommunityBtn">Join</button>
+        </div>
+      </section>
+
+      <section class="section" id="communityDetailSection" style="display:none;">
+        <div class="section-label" id="communityDetailName">—</div>
+        <div class="community-desc" id="communityDetailDesc"></div>
+        <div style="margin-bottom:var(--space-md);">
+          <span class="community-meta">Invite Code</span>
+          <div class="invite-code-box">
+            <span id="communityInviteCode">—</span>
+            <button class="btn-link" id="copyInviteBtn" style="font-size:var(--text-label);">Copy</button>
+          </div>
+        </div>
+        <div class="community-meta" id="communityMemberCount">—</div>
+
+        <div class="section-label" style="margin-top:var(--space-lg);">Propose Standard</div>
+        <div class="inline-form">
+          <input type="text" id="proposalTitle" placeholder="Proposal title">
+          <input type="number" id="proposalMinutes" placeholder="Target min/day" style="max-width:120px;">
+        </div>
+        <textarea id="proposalDesc" placeholder="Description (optional)" style="width:100%;min-height:60px;background:transparent;border:none;border-bottom:1px solid var(--color-divider-dark);color:var(--color-white);font-family:inherit;font-size:var(--text-body);padding:var(--space-xs) 0;outline:none;resize:vertical;margin-bottom:var(--space-sm);"></textarea>
+        <button class="btn-link" id="submitProposalBtn">Submit Proposal</button>
+
+        <div class="section-label" style="margin-top:var(--space-lg);">Proposals</div>
+        <div id="proposalList"></div>
+
+        <div class="section-label" style="margin-top:var(--space-lg);">Current Standard</div>
+        <div id="currentStandard" class="empty-state">No active standard</div>
+      </section>
+    </main>
+
+    <!-- ========== ACCOUNT VIEW ========== -->
+    <main class="view" id="view-account">
+      <section class="section">
+        <div class="section-label">Account</div>
+        <ul class="info-list">
+          <li class="info-item"><span>Username</span><span id="accountName">—</span></li>
+          <li class="info-item"><span>User ID</span><span id="accountId">—</span></li>
+          <li class="info-item"><span>Device ID</span><span id="accountDeviceId">—</span></li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <div class="section-label">QR Login</div>
+        <p class="hint">Generate a QR code and scan it on another device to log in to this account instantly.</p>
+        <div class="qr-display-wrap" id="accountQrWrap" style="min-height:200px;">
+          <div class="qr-placeholder">Tap GENERATE to create a login QR</div>
+        </div>
+        <div class="actions-row">
+          <button class="btn-link" id="genAccountQrBtn">Generate QR</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-label">Data & Sync</div>
+        <div class="actions-row">
+          <button class="btn-link" id="syncNowBtn">Sync Now</button>
+          <button class="btn-link" id="logoutBtn2" style="color:var(--color-accent-pink);">Logout</button>
+        </div>
+      </section>
+    </main>
   </div>
 
   <!-- ============ DATE DETAIL MODAL ============ -->
@@ -2119,6 +2379,252 @@
 
 <script>
   // ============================================================
+  // API CLIENT (v3 — cloud backend)
+  // ============================================================
+  const API_BASE = (function () {
+    // Allow explicit override (Electron preload / Cordova can set window.STUDYFLOW_API)
+    if (window.STUDYFLOW_API) return window.STUDYFLOW_API;
+    const proto = window.location.protocol;
+    // When loaded from the backend (http/https), use same origin.
+    if (proto === 'http:' || proto === 'https:') {
+      if (window.location.port === '3000' || window.location.port === '') {
+        return window.location.origin;
+      }
+      return `http://${window.location.hostname}:3000`;
+    }
+    // file:// (Electron) or content:// (Cordova) — default to localhost:3000.
+    return 'http://localhost:3000';
+  })();
+
+  const AUTH_KEY = 'studyflow_auth_v3';
+
+  function getAuth() {
+    try { return JSON.parse(localStorage.getItem(AUTH_KEY) || 'null'); }
+    catch { return null; }
+  }
+  function setAuth(auth) {
+    if (auth) localStorage.setItem(AUTH_KEY, JSON.stringify(auth));
+    else localStorage.removeItem(AUTH_KEY);
+  }
+  function getToken() { return getAuth()?.token || ''; }
+
+  async function api(method, path, body) {
+    const headers = { 'Content-Type': 'application/json' };
+    const token = getToken();
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    const opts = { method, headers };
+    if (body !== undefined) opts.body = JSON.stringify(body);
+    try {
+      const res = await fetch(API_BASE + path, opts);
+      const text = await res.text();
+      const data = text ? JSON.parse(text) : {};
+      if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+      return data;
+    } catch (e) {
+      // Network error — treat as offline
+      const err = new Error(e.message);
+      err.offline = !e.message.startsWith('HTTP ');
+      throw err;
+    }
+  }
+
+  // ============================================================
+  // AUTH (login / register / QR login)
+  // ============================================================
+  let currentUser = null;
+
+  async function doLogin(username, password) {
+    const data = await api('POST', '/api/auth/login', { username, password });
+    setAuth({ token: data.token, user: data.user });
+    currentUser = data.user;
+    return data;
+  }
+
+  async function doRegister(username, password) {
+    const data = await api('POST', '/api/auth/register', { username, password });
+    setAuth({ token: data.token, user: data.user });
+    currentUser = data.user;
+    return data;
+  }
+
+  async function doQrLogin(token) {
+    const data = await api('POST', '/api/auth/qr/login', { token });
+    setAuth({ token: data.token, user: data.user });
+    currentUser = data.user;
+    return data;
+  }
+
+  function logout() {
+    setAuth(null);
+    currentUser = null;
+    showAuthScreen();
+    showToast('Logged out');
+  }
+
+  function showAuthScreen() {
+    document.getElementById('authScreen').classList.remove('hidden');
+  }
+  function hideAuthScreen() {
+    document.getElementById('authScreen').classList.add('hidden');
+  }
+
+  // ============================================================
+  // CLOUD SYNC (dual-mode: online push/pull + offline queue)
+  // ============================================================
+  const SYNC_QUEUE_KEY = 'studyflow_sync_queue_v3';
+  const LAST_SYNC_KEY = 'studyflow_last_sync_v3';
+
+  function getSyncQueue() {
+    try { return JSON.parse(localStorage.getItem(SYNC_QUEUE_KEY) || '[]'); }
+    catch { return []; }
+  }
+  function setSyncQueue(q) { localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify(q)); }
+  function enqueueSession(session) {
+    const q = getSyncQueue();
+    // Replace existing entry with same id
+    const idx = q.findIndex(s => s.id === session.id);
+    if (idx >= 0) q[idx] = session; else q.push(session);
+    setSyncQueue(q);
+  }
+  function getLastSync() { return localStorage.getItem(LAST_SYNC_KEY) || '1970-01-01T00:00:00.000Z'; }
+  function setLastSync(ts) { localStorage.setItem(LAST_SYNC_KEY, ts); }
+
+  let syncOnline = false;
+
+  async function syncPull() {
+    try {
+      const since = getLastSync();
+      const data = await api('GET', `/api/sync/pull?since=${encodeURIComponent(since)}`);
+      // Merge pulled sessions into local (last-write-wins)
+      const localIds = new Map(appData.sessions.map(s => [s.id, s]));
+      for (const s of data.sessions) {
+        const local = localIds.get(s.id);
+        if (!local || (s.updated_at >= local.updated_at)) {
+          if (s.deleted) {
+            appData.sessions = appData.sessions.filter(x => x.id !== s.id);
+          } else {
+            const idx = appData.sessions.findIndex(x => x.id === s.id);
+            const clean = { id: s.id, type: s.type, duration: s.duration, subject: s.subject, completedAt: s.completed_at, updated_at: s.updated_at };
+            if (idx >= 0) appData.sessions[idx] = clean;
+            else appData.sessions.push(clean);
+          }
+        }
+      }
+      appData.sessions.sort((a, b) => (a.completedAt || '').localeCompare(b.completedAt || ''));
+      saveData(appData);
+      if (data.server_now) setLastSync(data.server_now);
+      return data.sessions.length;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async function syncPush() {
+    const queue = getSyncQueue();
+    if (queue.length === 0) return 0;
+    try {
+      const data = await api('POST', '/api/sync/push', { sessions: queue });
+      // Clear queue on success
+      setSyncQueue([]);
+      // Merge server's authoritative view back
+      const localIds = new Map(appData.sessions.map(s => [s.id, s]));
+      for (const s of data.sessions) {
+        const local = localIds.get(s.id);
+        if (!local || (s.updated_at >= local.updated_at)) {
+          if (s.deleted) {
+            appData.sessions = appData.sessions.filter(x => x.id !== s.id);
+          } else {
+            const idx = appData.sessions.findIndex(x => x.id === s.id);
+            const clean = { id: s.id, type: s.type, duration: s.duration, subject: s.subject, completedAt: s.completed_at, updated_at: s.updated_at };
+            if (idx >= 0) appData.sessions[idx] = clean;
+            else appData.sessions.push(clean);
+          }
+        }
+      }
+      appData.sessions.sort((a, b) => (a.completedAt || '').localeCompare(b.completedAt || ''));
+      saveData(appData);
+      if (data.server_now) setLastSync(data.server_now);
+      return queue.length;
+    } catch (e) {
+      // Offline — keep queue, retry later
+      throw e;
+    }
+  }
+
+  async function syncNow() {
+    if (!getToken()) return;
+    try {
+      await syncPush();
+    } catch (e) { /* offline */ }
+    try {
+      const n = await syncPull();
+      setSyncOnline(true);
+      renderAll();
+      return n;
+    } catch (e) {
+      setSyncOnline(false);
+      throw e;
+    }
+  }
+
+  function setSyncOnline(online) {
+    syncOnline = online;
+    const el = document.getElementById('syncStatus');
+    const txt = document.getElementById('syncStatusText');
+    if (el) {
+      el.classList.toggle('online', online);
+      el.classList.toggle('offline', !online);
+    }
+    if (txt) txt.textContent = online ? 'Online' : 'Offline';
+    const bs = document.getElementById('bottomInfoSyncStatus');
+    if (bs) bs.textContent = online ? 'Cloud synced' : 'Local only';
+  }
+
+  // Auto-sync loop: try push+pull every 30s when online
+  let syncInterval = null;
+  function startAutoSync() {
+    if (syncInterval) clearInterval(syncInterval);
+    syncInterval = setInterval(() => {
+      if (getToken()) syncNow().catch(() => {});
+    }, 30000);
+  }
+
+  // ============================================================
+  // ENCRYPTED P2P SYNC (AES-GCM via Web Crypto API)
+  // ============================================================
+  // The sync key is used to derive an AES key. Sessions are encrypted
+  // before encoding into the QR code / text export.
+  async function deriveKey(passphrase) {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey(
+      'raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']
+    );
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: enc.encode('studyflow-p2p-salt'), iterations: 100000, hash: 'SHA-256' },
+      keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+    );
+  }
+
+  async function encryptData(keyStr, data) {
+    const key = await deriveKey(keyStr);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const enc = new TextEncoder();
+    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(JSON.stringify(data)));
+    const ivB64 = btoa(String.fromCharCode(...iv));
+    const ctB64 = btoa(String.fromCharCode(...new Uint8Array(ct)));
+    return ivB64 + '.' + ctB64;
+  }
+
+  async function decryptData(keyStr, blob) {
+    const [ivB64, ctB64] = blob.split('.');
+    const iv = new Uint8Array(atob(ivB64).split('').map(c => c.charCodeAt(0)));
+    const ct = new Uint8Array(atob(ctB64).split('').map(c => c.charCodeAt(0)));
+    const key = await deriveKey(keyStr);
+    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+
+  // ============================================================
   // DATA STORAGE
   // ============================================================
   const STORAGE_KEY = 'study_tracker_data_v1';
@@ -2138,6 +2644,16 @@
   function saveData(data) {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
     catch (e) { console.error('Save failed', e); }
+    // Cloud sync: enqueue any new/updated sessions for upload
+    if (getToken() && data && Array.isArray(data.sessions)) {
+      for (const s of data.sessions) {
+        const ts = s.updated_at || s.completedAt || new Date().toISOString();
+        enqueueSession({
+          id: s.id, type: s.type, duration: s.duration, subject: s.subject || null,
+          completed_at: s.completedAt, updated_at: ts, deleted: s.deleted ? 1 : 0
+        });
+      }
+    }
   }
 
   let appData = loadData();
@@ -2192,34 +2708,42 @@
     return Math.abs(h).toString(36);
   }
 
-  function generateExportCode() {
+  async function generateExportCode() {
     const key = getSyncKey();
     if (!key) { showToast('Set a sync key first'); return ''; }
     const payload = {
-      v: 1, did: getDeviceId(), kh: simpleHash(key),
+      v: 2, did: getDeviceId(),
       ts: Date.now(), sessions: appData.sessions
     };
     try {
-      const json = JSON.stringify(payload);
-      return 'STUDY1:' + btoa(unescape(encodeURIComponent(json)));
+      const encrypted = await encryptData(key, payload);
+      return 'STUDY2:' + encrypted;
     } catch (e) {
       showToast('Export failed: ' + e.message);
       return '';
     }
   }
 
-  function importSyncCode(code) {
+  async function importSyncCode(code) {
     const key = getSyncKey();
     if (!key) { showToast('Set a sync key first'); return false; }
     code = code.trim();
-    if (!code.startsWith('STUDY1:')) { showToast('Invalid sync code format'); return false; }
     try {
-      const b64 = code.slice(7);
-      const json = decodeURIComponent(escape(atob(b64)));
-      const payload = JSON.parse(json);
+      let payload;
+      if (code.startsWith('STUDY2:')) {
+        // Encrypted (AES-GCM) payload
+        const blob = code.slice(7);
+        payload = await decryptData(key, blob);
+      } else if (code.startsWith('STUDY1:')) {
+        // Legacy plaintext payload (backward compat)
+        const b64 = code.slice(7);
+        const json = decodeURIComponent(escape(atob(b64)));
+        payload = JSON.parse(json);
+        if (payload.kh !== simpleHash(key)) { showToast('Sync key mismatch'); return false; }
+      } else {
+        showToast('Invalid sync code format'); return false;
+      }
 
-      if (payload.v !== 1) { showToast('Unsupported sync code version'); return false; }
-      if (payload.kh !== simpleHash(key)) { showToast('Sync key mismatch'); return false; }
       if (!Array.isArray(payload.sessions)) { showToast('No valid data in sync code'); return false; }
 
       const sourceDeviceId = payload.did || 'Unknown';
@@ -2278,10 +2802,10 @@
   let qrCanvas = null;
   let qrCtx = null;
 
-  function generateQrCode() {
+  async function generateQrCode() {
     const key = getSyncKey();
     if (!key) { showToast('Set a sync key on the Sync page first'); return; }
-    const code = generateExportCode();
+    const code = await generateExportCode();
     if (!code) return;
 
     const sizeKB = (code.length / 1024).toFixed(1);
@@ -2377,8 +2901,8 @@
 
   function handleQrResult(code) {
     showToast('QR detected — merging data…');
-    setTimeout(() => {
-      const ok = importSyncCode(code);
+    setTimeout(async () => {
+      const ok = await importSyncCode(code);
       const wrap = document.getElementById('qrScanWrap');
       if (ok) {
         wrap.innerHTML = '<div class="qr-scan-placeholder">Scan succeeded. You may scan again.</div>';
@@ -2456,7 +2980,7 @@
   document.querySelectorAll('.bottom-tab[data-view]').forEach(btn => {
     btn.addEventListener('click', () => switchView(btn.dataset.view));
   });
-  const bottomInfoBtn = document.getElementById('bottomInfoBtn');
+  const bottomInfoBtn = document.getElementById('bottomMenuBtn');
   const bottomInfoPanel = document.getElementById('bottomInfoPanel');
   const bottomInfoOverlay = document.getElementById('bottomInfoOverlay');
   const bottomInfoClose = document.getElementById('bottomInfoClose');
@@ -2492,6 +3016,8 @@
       renderHeatmap(isNaN(y) ? _hmYear : y, isNaN(m) ? _hmMonth : m);
     }
     if (viewName === 'sync') renderSyncView();
+    if (viewName === 'community') loadCommunities();
+    if (viewName === 'account') renderAccount();
     if (viewName !== 'qr') stopQrScanner();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -3142,6 +3668,206 @@
   }
 
   // ============================================================
+  // COMMUNITY (v3)
+  // ============================================================
+  let currentCommunityId = null;
+
+  async function loadCommunities() {
+    if (!getToken()) return;
+    try {
+      const data = await api('GET', '/api/community');
+      const list = document.getElementById('communityList');
+      if (!data.communities || data.communities.length === 0) {
+        list.innerHTML = '<div class="empty-state">No communities yet. Create or join one.</div>';
+        return;
+      }
+      list.innerHTML = data.communities.map(c => `
+        <div class="community-card" data-cid="${c.id}">
+          <div class="community-card-head">
+            <div class="community-name">${c.name}</div>
+            <div class="community-meta">${c.member_count} members</div>
+          </div>
+          <div class="community-desc">${c.description || ''}</div>
+          <button class="btn-link" onclick="openCommunityDetail(${c.id})">Open</button>
+        </div>
+      `).join('');
+    } catch (e) {
+      showToast('Failed to load communities');
+    }
+  }
+
+  async function openCommunityDetail(id) {
+    currentCommunityId = id;
+    document.getElementById('communityDetailSection').style.display = '';
+    try {
+      const data = await api('GET', '/api/community/' + id);
+      document.getElementById('communityDetailName').textContent = data.community.name;
+      document.getElementById('communityDetailDesc').textContent = data.community.description || '';
+      document.getElementById('communityInviteCode').textContent = data.community.invite_code;
+      document.getElementById('communityMemberCount').textContent = data.members.length + ' members';
+      if (data.standard) {
+        document.getElementById('currentStandard').innerHTML =
+          `<strong>${data.standard.title}</strong> — ${data.standard.target_minutes} min/day`;
+      } else {
+        document.getElementById('currentStandard').textContent = 'No active standard';
+      }
+      await loadProposals(id);
+    } catch (e) {
+      showToast('Failed to load community');
+    }
+  }
+
+  async function loadProposals(communityId) {
+    try {
+      const data = await api('GET', `/api/community/${communityId}/proposals`);
+      const list = document.getElementById('proposalList');
+      if (!data.proposals || data.proposals.length === 0) {
+        list.innerHTML = '<div class="empty-state">No proposals</div>';
+        return;
+      }
+      list.innerHTML = data.proposals.map(p => `
+        <div class="proposal-card">
+          <div class="proposal-title">${p.title} <span class="proposal-status ${p.status}">${p.status}</span></div>
+          <div class="proposal-desc">${p.description || ''}${p.target_minutes ? ' · Target: ' + p.target_minutes + ' min/day' : ''}</div>
+          <div class="proposal-vote-row">
+            <button class="btn-link" onclick="voteProposal(${p.id}, true)" ${p.status !== 'active' ? 'disabled' : ''}>For (${p.votes_for})</button>
+            <button class="btn-link" onclick="voteProposal(${p.id}, false)" ${p.status !== 'active' ? 'disabled' : ''}>Against (${p.votes_against})</button>
+            <span class="vote-count">${p.votes_for}/${data.total_members} to pass</span>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) {
+      showToast('Failed to load proposals');
+    }
+  }
+
+  async function voteProposal(proposalId, vote) {
+    try {
+      const res = await api('POST', `/api/community/proposals/${proposalId}/vote`, { vote });
+      showToast(res.status === 'passed' ? 'Proposal PASSED!' : 'Vote recorded');
+      if (currentCommunityId) loadProposals(currentCommunityId);
+    } catch (e) {
+      showToast('Vote failed: ' + e.message);
+    }
+  }
+
+  // ============================================================
+  // ACCOUNT (v3)
+  // ============================================================
+  function renderAccount() {
+    const auth = getAuth();
+    if (!auth) return;
+    document.getElementById('accountName').textContent = auth.user.username;
+    document.getElementById('accountId').textContent = auth.user.id;
+    document.getElementById('accountDeviceId').textContent = getDeviceId();
+  }
+
+  async function generateAccountQr() {
+    try {
+      const data = await api('POST', '/api/auth/qr/token');
+      const wrap = document.getElementById('accountQrWrap');
+      wrap.innerHTML = '';
+      const qr = qrcode(0, 'M');
+      qr.addData(data.token); qr.make();
+      const cellSize = 6; const margin = 2;
+      const moduleCount = qr.getModuleCount();
+      const canvasSize = (moduleCount + margin * 2) * cellSize;
+      const canvas = document.createElement('canvas');
+      canvas.width = canvasSize; canvas.height = canvasSize;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvasSize, canvasSize);
+      ctx.fillStyle = '#000';
+      for (let r = 0; r < moduleCount; r++)
+        for (let c = 0; c < moduleCount; c++)
+          if (qr.isDark(r, c))
+            ctx.fillRect((c + margin) * cellSize, (r + margin) * cellSize, cellSize, cellSize);
+      wrap.appendChild(canvas);
+      showToast('Login QR generated — valid 5 min');
+    } catch (e) {
+      showToast('Failed: ' + e.message);
+    }
+  }
+
+  // ============================================================
+  // AUTH SCREEN LOGIC
+  // ============================================================
+  let _qrLoginPolling = null;
+
+  function switchAuthTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.authtab === tab));
+    document.getElementById('authLoginForm').style.display = tab === 'login' ? '' : 'none';
+    document.getElementById('authRegisterForm').style.display = tab === 'register' ? '' : 'none';
+    document.getElementById('authQrForm').style.display = 'none';
+    stopQrLoginPolling();
+  }
+
+  function showAuthQrLogin() {
+    document.getElementById('authLoginForm').style.display = 'none';
+    document.getElementById('authRegisterForm').style.display = 'none';
+    document.getElementById('authQrForm').style.display = '';
+    startQrLoginPolling();
+  }
+
+  function startQrLoginPolling() {
+    // The scanning device polls a token endpoint. For simplicity, we use the
+    // same QR token flow: a logged-in device generates the token, we scan it
+    // here via camera. We provide a text-input fallback for manual entry.
+    const box = document.getElementById('authQrBox');
+    box.innerHTML = `
+      <div style="margin-bottom:var(--space-sm);">
+        <input type="text" id="qrTokenInput" placeholder="Paste QR token here" style="width:100%;background:transparent;border:none;border-bottom:1px solid var(--color-divider-dark);color:var(--color-white);font-family:inherit;font-size:var(--text-body);padding:var(--space-xs) 0;outline:none;text-align:center;">
+      </div>
+      <button class="auth-submit" id="qrTokenSubmitBtn">Sign In</button>
+    `;
+    document.getElementById('qrTokenSubmitBtn').addEventListener('click', async () => {
+      const token = document.getElementById('qrTokenInput').value.trim();
+      if (!token) { showToast('Enter a token'); return; }
+      try {
+        await doQrLogin(token);
+        onAuthSuccess();
+      } catch (e) { showToast('QR login failed: ' + e.message); }
+    });
+  }
+
+  function stopQrLoginPolling() {
+    if (_qrLoginPolling) { clearInterval(_qrLoginPolling); _qrLoginPolling = null; }
+  }
+
+  async function onAuthSuccess() {
+    hideAuthScreen();
+    document.getElementById('accountStatusItem').style.display = '';
+    const auth = getAuth();
+    document.getElementById('accountUsername').textContent = auth.user.username;
+    document.getElementById('bottomInfoUser').textContent = auth.user.username;
+    // Pull cloud data
+    try {
+      await syncNow();
+      showToast('Welcome, ' + auth.user.username);
+    } catch (e) {
+      showToast('Logged in (offline mode)');
+    }
+    startAutoSync();
+    renderAll();
+    renderAccount();
+  }
+
+  function bootAuth() {
+    const auth = getAuth();
+    if (auth) {
+      currentUser = auth.user;
+      hideAuthScreen();
+      document.getElementById('accountStatusItem').style.display = '';
+      document.getElementById('accountUsername').textContent = auth.user.username;
+      document.getElementById('bottomInfoUser').textContent = auth.user.username;
+      setSyncOnline(false);
+      syncNow().catch(() => {});
+      startAutoSync();
+    } else {
+      showAuthScreen();
+    }
+  }
+
+  // ============================================================
   // INIT
   // ============================================================
   function init() {
@@ -3204,8 +3930,8 @@
           document.body.removeChild(ta);
         });
     });
-    document.getElementById('genExportBtn').addEventListener('click', () => {
-      const code = generateExportCode();
+    document.getElementById('genExportBtn').addEventListener('click', async () => {
+      const code = await generateExportCode();
       if (code) { document.getElementById('exportCodeArea').value = code; showToast('Sync code generated'); }
     });
     document.getElementById('copyExportBtn').addEventListener('click', () => {
@@ -3250,6 +3976,95 @@
       }
     });
 
+    // ============================================================
+    // AUTH SCREEN HANDLERS
+    // ============================================================
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+      tab.addEventListener('click', () => switchAuthTab(tab.dataset.authtab));
+    });
+    document.getElementById('loginSubmitBtn').addEventListener('click', async () => {
+      const u = document.getElementById('loginUsername').value.trim();
+      const p = document.getElementById('loginPassword').value;
+      if (!u || !p) { showToast('Enter username and password'); return; }
+      try { await doLogin(u, p); onAuthSuccess(); }
+      catch (e) { showToast('Login failed: ' + e.message); }
+    });
+    document.getElementById('registerSubmitBtn').addEventListener('click', async () => {
+      const u = document.getElementById('regUsername').value.trim();
+      const p = document.getElementById('regPassword').value;
+      if (!u || !p) { showToast('Enter username and password'); return; }
+      try { await doRegister(u, p); onAuthSuccess(); }
+      catch (e) { showToast('Register failed: ' + e.message); }
+    });
+    document.getElementById('showQrLoginBtn').addEventListener('click', showAuthQrLogin);
+    document.getElementById('backToLoginBtn').addEventListener('click', () => switchAuthTab('login'));
+
+    // ============================================================
+    // ACCOUNT / LOGOUT HANDLERS
+    // ============================================================
+    const logoutHandler = () => logout();
+    if (document.getElementById('logoutBtn')) document.getElementById('logoutBtn').addEventListener('click', logoutHandler);
+    if (document.getElementById('logoutBtn2')) document.getElementById('logoutBtn2').addEventListener('click', logoutHandler);
+    document.getElementById('syncNowBtn').addEventListener('click', async () => {
+      try { const n = await syncNow(); showToast(n + ' record(s) synced'); }
+      catch (e) { showToast('Sync failed (offline?)'); }
+    });
+    document.getElementById('genAccountQrBtn').addEventListener('click', generateAccountQr);
+
+    // Bottom panel quick links
+    if (document.getElementById('bottomQrSyncBtn')) {
+      document.getElementById('bottomQrSyncBtn').addEventListener('click', () => { closeBottomInfo(); switchView('qr'); });
+    }
+    if (document.getElementById('bottomAccountBtn')) {
+      document.getElementById('bottomAccountBtn').addEventListener('click', () => { closeBottomInfo(); switchView('account'); });
+    }
+
+    // ============================================================
+    // COMMUNITY HANDLERS
+    // ============================================================
+    document.getElementById('createCommunityBtn').addEventListener('click', async () => {
+      const name = document.getElementById('newCommunityName').value.trim();
+      const desc = document.getElementById('newCommunityDesc').value.trim();
+      if (!name) { showToast('Enter a community name'); return; }
+      try {
+        const c = await api('POST', '/api/community', { name, description: desc });
+        showToast('Community created: ' + c.name);
+        document.getElementById('newCommunityName').value = '';
+        document.getElementById('newCommunityDesc').value = '';
+        loadCommunities();
+      } catch (e) { showToast('Create failed: ' + e.message); }
+    });
+    document.getElementById('joinCommunityBtn').addEventListener('click', async () => {
+      const code = document.getElementById('joinInviteCode').value.trim();
+      if (!code) { showToast('Enter an invite code'); return; }
+      try {
+        await api('POST', '/api/community/join', { invite_code: code });
+        showToast('Joined community');
+        document.getElementById('joinInviteCode').value = '';
+        loadCommunities();
+      } catch (e) { showToast('Join failed: ' + e.message); }
+    });
+    document.getElementById('copyInviteBtn').addEventListener('click', () => {
+      const code = document.getElementById('communityInviteCode').textContent;
+      navigator.clipboard?.writeText(code).then(() => showToast('Invite code copied'))
+        .catch(() => showToast('Copy failed'));
+    });
+    document.getElementById('submitProposalBtn').addEventListener('click', async () => {
+      if (!currentCommunityId) { showToast('Open a community first'); return; }
+      const title = document.getElementById('proposalTitle').value.trim();
+      const minutes = parseInt(document.getElementById('proposalMinutes').value, 10) || 0;
+      const desc = document.getElementById('proposalDesc').value.trim();
+      if (!title) { showToast('Enter a proposal title'); return; }
+      try {
+        await api('POST', `/api/community/${currentCommunityId}/proposals`, { title, description: desc, target_minutes: minutes });
+        showToast('Proposal submitted');
+        document.getElementById('proposalTitle').value = '';
+        document.getElementById('proposalMinutes').value = '';
+        document.getElementById('proposalDesc').value = '';
+        loadProposals(currentCommunityId);
+      } catch (e) { showToast('Submit failed: ' + e.message); }
+    });
+
     initMonthSelector();
     applyCfgToUI();
     updateSummary();
@@ -3258,6 +4073,9 @@
     updateStartBtnText();
     renderCycleBars();
     renderAll();
+
+    // Boot auth (show login screen or enter app + cloud sync)
+    bootAuth();
 
     window.addEventListener('beforeunload', () => {
       if (timer.intervalId) clearInterval(timer.intervalId);

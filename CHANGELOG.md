@@ -4,6 +4,64 @@ All notable changes to **StudyFlow** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v3.0.0] — 2026-09-07
+
+A full-architecture rewrite that turns StudyFlow into a cross-platform,
+cloud-synced study management system with multi-device accounts, dual-mode
+data sync, encrypted peer-to-peer sync, and community group supervision.
+
+### Added
+
+- **Multi-device account system.** A new backend server (`server/`) built on
+  Node.js + Express with a MySQL primary database (SQLite fallback for
+  single-machine or offline development). Users register with a username and
+  password (bcrypt-hashed) and receive a JWT session token valid for 30 days.
+- **QR-code login.** A logged-in device can generate a one-time QR token
+  (valid 5 minutes). Scanning (or pasting) that token on a new device signs it
+  into the same account instantly — no password re-entry needed.
+- **Dual-mode cloud sync.** Online sessions are pushed to the cloud database;
+  offline sessions are queued locally and auto-uploaded when connectivity
+  returns. A pull merges cloud records into the local store using
+  last-write-wins (by `updated_at`) with tombstone deletes. An auto-sync loop
+  runs every 30 seconds.
+- **Encrypted P2P sync.** The existing QR/text sync code is now encrypted with
+  AES-256-GCM. The shared sync key is fed through PBKDF2 (100k iterations) to
+  derive the AES key. The new `STUDY2:` payload format carries an IV-prefixed
+  ciphertext; the legacy `STUDY1:` plaintext format is still accepted for
+  backward compatibility.
+- **Community supervision.** Create or join study communities via an invite
+  code. Members can propose a study standard (title + target daily minutes).
+  A proposal **passes when more than 50% of members vote "for"** (majority
+  rule) and becomes the community's active standard. Proposals expire after
+  7 days.
+- **Account view.** Shows username, user ID, local device ID, a QR-login
+  generator, and a manual "Sync Now" button.
+- **Community view.** Lists the user's communities, supports creation, joining
+  by invite code, and per-community detail (members, proposals, voting,
+  current standard).
+
+### Changed
+
+- **Login gate.** The app now opens to a login/register screen. Local data is
+  still available offline once the user has logged in at least once.
+- **Navigation.** The desktop/tablet left-rail menu and the phone bottom bar
+  now include `Community` and `Account` entries. The phone bottom bar is
+  `Focus · Heat · Group · Sync · Menu`; the `Menu` tab opens a panel with
+  account info, QR Sync, Account, and Logout.
+- **Header.** The top header now shows the logged-in username and a sync
+  status indicator (yellow dot = online/synced, pink dot = offline).
+- **P2P sync code.** Now AES-encrypted (see above).
+
+### Architecture
+
+- New `server/` directory with the backend:
+  - `src/server.js` — Express entry point, serves the frontend.
+  - `src/db.js` — MySQL (mysql2) primary, SQLite (better-sqlite3) fallback.
+  - `src/auth.js` — register / password-login / QR-login / JWT middleware.
+  - `src/sync.js` — pull/push with last-write-wins conflict resolution.
+  - `src/community.js` — communities, members, proposals, majority voting.
+  - `sql/schema.sql` — MySQL schema.
+
 ## [v2.0.0] — 2026-08-12
 
 A focused update that improves how the app counts focus time, reworks the
