@@ -1828,10 +1828,10 @@
       <!-- QR LOGIN -->
       <div class="auth-form" id="authQrForm" style="display:none;">
         <div class="auth-qr-box" id="authQrBox">
-          <div class="empty-state">Generating QR code…</div>
+          <div class="empty-state">Preparing QR login…</div>
         </div>
         <p class="auth-qr-hint">
-          On a device where you are already logged in, open Menu → Account → Show QR Login.<br>
+          On a device where you are already logged in, open Menu → Account → Generate QR.<br>
           Scan it here to sign in to the same account.
         </p>
         <button class="auth-qr-toggle" id="backToLoginBtn">← Back to Login</button>
@@ -1919,9 +1919,9 @@
       <span class="bottom-tab-dot"></span>
       <span class="bottom-tab-label">Group</span>
     </button>
-    <button class="bottom-tab" data-view="sync">
+    <button class="bottom-tab" data-view="qr">
       <span class="bottom-tab-dot"></span>
-      <span class="bottom-tab-label">Sync</span>
+      <span class="bottom-tab-label">QR</span>
     </button>
     <button class="bottom-tab" id="bottomMenuBtn">
       <span class="bottom-tab-dot"></span>
@@ -1944,7 +1944,7 @@
       <li class="info-item"><span>Close Dialog</span>ESC</li>
     </ul>
     <div style="margin-top:var(--space-md); display:flex; flex-direction:column; gap:var(--space-xs);">
-      <button class="btn-link" id="bottomQrSyncBtn" style="text-align:left;">QR Sync</button>
+      <button class="btn-link" id="bottomSyncBtn" style="text-align:left;">Sync</button>
       <button class="btn-link" id="bottomAccountBtn" style="text-align:left;">Account</button>
       <button class="btn-link" id="logoutBtn" style="text-align:left; color:var(--color-accent-pink);">Logout</button>
     </div>
@@ -2149,7 +2149,7 @@
       </section>
     </main>
 
-    <!-- ========== SYNC VIEW ========== -->
+    <!-- ========== SYNC VIEW (cloud dual-mode + P2P offline) ========== -->
     <main class="view" id="view-sync">
 
       <section class="section">
@@ -2164,21 +2164,37 @@
             <div class="sync-stat-label">Focus Minutes</div>
           </div>
           <div class="sync-stat">
-            <div class="sync-stat-num" id="syncStatDevices">0</div>
-            <div class="sync-stat-label">Paired Devices</div>
+            <div class="sync-stat-num" id="syncStatPending">0</div>
+            <div class="sync-stat-label">Pending Upload</div>
           </div>
         </div>
       </section>
 
       <section class="section">
-        <div class="section-label">Device Verification</div>
+        <div class="section-label">Cloud Sync</div>
+        <ul class="info-list">
+          <li class="info-item"><span>Account</span><span id="syncAccountName">—</span></li>
+          <li class="info-item"><span>Status</span><span id="syncCloudStatus">—</span></li>
+          <li class="info-item"><span>Last Sync</span><span id="syncLastTime">—</span></li>
+          <li class="info-item"><span>Device ID</span><span id="syncDeviceId">—</span></li>
+        </ul>
+        <div class="actions-row">
+          <button class="btn-link" id="syncNowBtn2">Sync Now</button>
+          <button class="btn-floating" id="copyDeviceIdBtn">Copy Device ID</button>
+        </div>
+        <p class="hint">
+          Online changes sync to the cloud automatically every 30 seconds. Offline records are cached locally and uploaded as soon as the network returns — nothing is lost.
+        </p>
+      </section>
+
+      <section class="section">
+        <div class="section-label">Device Verification (P2P)</div>
 
         <div class="device-row">
           <div class="device-meta">
             <div class="device-label">Local Device ID</div>
-            <div class="device-id" id="syncDeviceId">—</div>
+            <div class="device-id" id="syncDeviceIdP2P">—</div>
           </div>
-          <button class="btn-floating" id="copyDeviceIdBtn">Copy</button>
         </div>
 
         <div class="inline-row">
@@ -2186,7 +2202,7 @@
           <button class="btn-link" id="saveKeyBtn" style="font-size: var(--text-heading);">Save</button>
         </div>
         <p class="hint">
-          Set the same sync key on every device you wish to pair. Keys are stored locally only and never uploaded.
+          For offline P2P sync: set the same sync key on every device you wish to pair. Keys are stored locally only and never uploaded.
         </p>
       </section>
 
@@ -2199,7 +2215,7 @@
           <button class="btn-link" id="copyExportBtn">Copy</button>
         </div>
         <p class="hint">
-          Send the generated sync code to another device. Paste it in the Import field there to merge records.
+          Send the generated encrypted sync code to another device. Paste it in the Import field there to merge records.
         </p>
       </section>
 
@@ -2222,10 +2238,10 @@
       </section>
     </main>
 
-    <!-- ========== QR SYNC VIEW ========== -->
+    <!-- ========== QR SYNC VIEW (P2P) ========== -->
     <main class="view" id="view-qr">
       <section class="section">
-        <div class="section-label">QR Sync</div>
+        <div class="section-label">QR Sync (P2P)</div>
 
         <div class="qr-mode-row">
           <button class="qr-mode-btn active" data-qrmode="generate">Generate QR</button>
@@ -2559,6 +2575,7 @@
     try {
       const n = await syncPull();
       setSyncOnline(true);
+      localStorage.setItem('studyflow_last_sync_time', new Date().toISOString());
       renderAll();
       return n;
     } catch (e) {
@@ -2592,8 +2609,8 @@
   // ============================================================
   // ENCRYPTED P2P SYNC (AES-GCM via Web Crypto API)
   // ============================================================
-  // The sync key is used to derive an AES key. Sessions are encrypted
-  // before encoding into the QR code / text export.
+  // For two devices that are BOTH OFFLINE: pair them with a shared sync
+  // key, then exchange an encrypted data packet via QR code / text.
   async function deriveKey(passphrase) {
     const enc = new TextEncoder();
     const keyMaterial = await crypto.subtle.importKey(
@@ -2644,26 +2661,31 @@
   function saveData(data) {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
     catch (e) { console.error('Save failed', e); }
-    // Cloud sync: enqueue any new/updated sessions for upload
-    if (getToken() && data && Array.isArray(data.sessions)) {
-      for (const s of data.sessions) {
-        const ts = s.updated_at || s.completedAt || new Date().toISOString();
-        enqueueSession({
-          id: s.id, type: s.type, duration: s.duration, subject: s.subject || null,
-          completed_at: s.completedAt, updated_at: ts, deleted: s.deleted ? 1 : 0
-        });
-      }
-    }
+    invalidateMinutesCache(); // sessions changed → heatmap must re-aggregate
+  }
+
+  // Enqueue a single session for cloud upload (called at mutation points,
+  // NOT inside saveData — avoids re-queuing the whole dataset every save).
+  function markSessionDirty(session, deleted = false) {
+    if (!session || !session.id || !getToken()) return;
+    const ts = session.updated_at || session.completedAt || new Date().toISOString();
+    enqueueSession({
+      id: session.id,
+      type: session.type || 'work',
+      duration: session.duration || 0,
+      subject: session.subject || null,
+      completed_at: session.completedAt || ts,
+      updated_at: ts,
+      deleted: deleted ? 1 : 0
+    });
   }
 
   let appData = loadData();
 
   // ============================================================
-  // MULTI-DEVICE SYNC
+  // DEVICE ID (shown in Account / Sync views)
   // ============================================================
   const DEVICE_KEY = 'study_tracker_device_id';
-  const SYNC_KEY = 'study_tracker_sync_key';
-  const TRUSTED_KEY = 'study_tracker_trusted_devices';
 
   function getDeviceId() {
     let id = localStorage.getItem(DEVICE_KEY);
@@ -2679,6 +2701,12 @@
     }
     return id;
   }
+
+  // ============================================================
+  // P2P SYNC KEY + TRUSTED DEVICES
+  // ============================================================
+  const SYNC_KEY = 'study_tracker_sync_key';
+  const TRUSTED_KEY = 'study_tracker_trusted_devices';
 
   function getSyncKey()  { return localStorage.getItem(SYNC_KEY) || ''; }
   function setSyncKey(k) { localStorage.setItem(SYNC_KEY, k); }
@@ -2708,6 +2736,7 @@
     return Math.abs(h).toString(36);
   }
 
+  // Build an AES-encrypted P2P export code (STUDY2: prefix).
   async function generateExportCode() {
     const key = getSyncKey();
     if (!key) { showToast('Set a sync key first'); return ''; }
@@ -2724,6 +2753,7 @@
     }
   }
 
+  // Decrypt + merge a P2P sync code from another device.
   async function importSyncCode(code) {
     const key = getSyncKey();
     if (!key) { showToast('Set a sync key first'); return false; }
@@ -2732,8 +2762,7 @@
       let payload;
       if (code.startsWith('STUDY2:')) {
         // Encrypted (AES-GCM) payload
-        const blob = code.slice(7);
-        payload = await decryptData(key, blob);
+        payload = await decryptData(key, code.slice(7));
       } else if (code.startsWith('STUDY1:')) {
         // Legacy plaintext payload (backward compat)
         const b64 = code.slice(7);
@@ -2767,41 +2796,117 @@
 
   function renderSyncView() {
     document.getElementById('syncDeviceId').textContent = getDeviceId();
-    const keyInput = document.getElementById('syncKeyInput');
-    if (keyInput && !keyInput.value) keyInput.value = getSyncKey();
+    const p2pIdEl = document.getElementById('syncDeviceIdP2P');
+    if (p2pIdEl) p2pIdEl.textContent = getDeviceId();
+    const auth = getAuth();
+    document.getElementById('syncAccountName').textContent = auth ? auth.user.username : '—';
+    document.getElementById('syncCloudStatus').textContent =
+      !auth ? 'Not signed in' : (syncOnline ? 'Online · synced' : 'Offline · cached locally');
+    const last = localStorage.getItem('studyflow_last_sync_time');
+    document.getElementById('syncLastTime').textContent = last
+      ? new Date(last).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' })
+      : '—';
 
     const workSessions = appData.sessions.filter(s => s.type === 'work');
     const totalMin = workSessions.reduce((sum, s) => sum + s.duration, 0);
     document.getElementById('syncStatSessions').textContent = appData.sessions.length;
     document.getElementById('syncStatMinutes').textContent = totalMin;
-    document.getElementById('syncStatDevices').textContent = getTrustedDevices().length;
+    document.getElementById('syncStatPending').textContent = getSyncQueue().length;
+
+    const keyInput = document.getElementById('syncKeyInput');
+    if (keyInput && !keyInput.value) keyInput.value = getSyncKey();
 
     const trusted = getTrustedDevices();
     const listEl = document.getElementById('trustedDeviceList');
-    if (trusted.length === 0) {
-      listEl.innerHTML = '<li class="trusted-empty">No devices paired yet</li>';
-    } else {
-      listEl.innerHTML = trusted.map(d => {
-        const t = d.time ? new Date(d.time).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '—';
-        return `
-          <li class="trusted-item">
-            <div>
-              <div class="trusted-id">${d.id}</div>
-              <div class="trusted-time">Last Sync · ${t}</div>
-            </div>
-          </li>`;
-      }).join('');
+    if (listEl) {
+      if (trusted.length === 0) {
+        listEl.innerHTML = '<li class="trusted-empty">No devices paired yet</li>';
+      } else {
+        listEl.innerHTML = trusted.map(d => {
+          const t = d.time ? new Date(d.time).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '—';
+          return `
+            <li class="trusted-item">
+              <div>
+                <div class="trusted-id">${d.id}</div>
+                <div class="trusted-time">Last Sync · ${t}</div>
+              </div>
+            </li>`;
+        }).join('');
+      }
     }
   }
 
   // ============================================================
-  // QR SYNC
+  // QR CAMERA ENGINE — shared by P2P data sync (QR Sync view)
+  // and account login (auth screen).
   // ============================================================
   let qrStream = null;
   let qrScanning = false;
   let qrCanvas = null;
   let qrCtx = null;
+  let qrOnResult = null; // callback fired when a QR is detected
 
+  /** Start the camera and scan until a QR is found. onResult(code) is called once. */
+  async function startQrCamera(container, onResult) {
+    if (qrScanning) return false;
+    qrOnResult = onResult;
+    container.innerHTML = '';
+    try {
+      qrStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      const video = document.createElement('video');
+      video.setAttribute('playsinline', 'true');
+      video.muted = true;
+      video.srcObject = qrStream;
+      container.appendChild(video);
+      const overlay = document.createElement('div');
+      overlay.className = 'qr-scan-overlay';
+      container.appendChild(overlay);
+      const line = document.createElement('div');
+      line.className = 'qr-scan-line';
+      container.appendChild(line);
+      video.addEventListener('loadedmetadata', () => {
+        video.play();
+        qrScanning = true;
+        qrScanLoop(video);
+      });
+      return true;
+    } catch (e) {
+      qrOnResult = null;
+      // Camera unavailable — signal failure so callers can show a fallback
+      throw e;
+    }
+  }
+
+  function qrScanLoop(video) {
+    if (!qrScanning) return;
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      if (!qrCanvas) { qrCanvas = document.createElement('canvas'); qrCtx = qrCanvas.getContext('2d', { willReadFrequently: true }); }
+      const w = video.videoWidth, h = video.videoHeight;
+      qrCanvas.width = w; qrCanvas.height = h;
+      qrCtx.drawImage(video, 0, 0, w, h);
+      try {
+        const img = qrCtx.getImageData(0, 0, w, h);
+        const res = jsQR(img.data, w, h, { inversionAttempts: 'dontInvert' });
+        if (res && res.data) {
+          const cb = qrOnResult;
+          stopQrCamera();
+          if (cb) cb(res.data);
+          return;
+        }
+      } catch (e) {}
+    }
+    requestAnimationFrame(() => qrScanLoop(video));
+  }
+
+  function stopQrCamera() {
+    qrScanning = false;
+    qrOnResult = null;
+    if (qrStream) { qrStream.getTracks().forEach(t => t.stop()); qrStream = null; }
+  }
+
+  // ============================================================
+  // P2P QR SYNC (QR Sync view — generate/scan encrypted packets)
+  // ============================================================
   async function generateQrCode() {
     const key = getSyncKey();
     if (!key) { showToast('Set a sync key on the Sync page first'); return; }
@@ -2850,53 +2955,18 @@
   async function startQrScanner() {
     const key = getSyncKey();
     if (!key) { showToast('Set a sync key on the Sync page first'); return; }
+    const wrap = document.getElementById('qrScanWrap');
+    document.getElementById('qrScanStatus').textContent = 'Scanning';
+    document.getElementById('qrScanStartBtn').style.display = 'none';
+    document.getElementById('qrScanStopBtn').style.display = '';
     try {
-      qrStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      const wrap = document.getElementById('qrScanWrap');
-      wrap.innerHTML = '';
-      const video = document.createElement('video');
-      video.setAttribute('playsinline', 'true');
-      video.srcObject = qrStream;
-      wrap.appendChild(video);
-      const overlay = document.createElement('div');
-      overlay.className = 'qr-scan-overlay';
-      wrap.appendChild(overlay);
-      const line = document.createElement('div');
-      line.className = 'qr-scan-line';
-      wrap.appendChild(line);
-      video.addEventListener('loadedmetadata', () => {
-        video.play();
-        qrScanning = true;
-        document.getElementById('qrScanStatus').textContent = 'Scanning';
-        document.getElementById('qrScanStartBtn').style.display = 'none';
-        document.getElementById('qrScanStopBtn').style.display = '';
-        scanQrLoop(video);
-      });
+      await startQrCamera(wrap, handleQrResult);
     } catch (e) {
+      document.getElementById('qrScanStatus').textContent = 'Camera error';
+      document.getElementById('qrScanStartBtn').style.display = '';
+      document.getElementById('qrScanStopBtn').style.display = 'none';
       showToast('Camera access denied: ' + e.message);
-      console.error(e);
     }
-  }
-
-  function scanQrLoop(video) {
-    if (!qrScanning) return;
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      if (!qrCanvas) { qrCanvas = document.createElement('canvas'); qrCtx = qrCanvas.getContext('2d', { willReadFrequently: true }); }
-      const w = video.videoWidth, h = video.videoHeight;
-      qrCanvas.width = w; qrCanvas.height = h;
-      qrCtx.drawImage(video, 0, 0, w, h);
-      try {
-        const img = qrCtx.getImageData(0, 0, w, h);
-        const res = jsQR(img.data, w, h, { inversionAttempts: 'dontInvert' });
-        if (res && res.data) {
-          stopQrScanner();
-          document.getElementById('qrScanStatus').textContent = 'Detected';
-          handleQrResult(res.data);
-          return;
-        }
-      } catch (e) {}
-    }
-    requestAnimationFrame(() => scanQrLoop(video));
   }
 
   function handleQrResult(code) {
@@ -2917,8 +2987,9 @@
   }
 
   function stopQrScanner() {
-    qrScanning = false;
-    if (qrStream) { qrStream.getTracks().forEach(t => t.stop()); qrStream = null; }
+    stopQrCamera();
+    const wrap = document.getElementById('qrScanWrap');
+    if (wrap) wrap.innerHTML = '<div class="qr-scan-placeholder">Tap START CAMERA to begin scanning</div>';
     const startBtn = document.getElementById('qrScanStartBtn');
     const stopBtn  = document.getElementById('qrScanStopBtn');
     if (startBtn) startBtn.style.display = '';
@@ -2932,6 +3003,48 @@
     document.getElementById('qrGenSection').classList.toggle('active', mode === 'generate');
     document.getElementById('qrScanSection').classList.toggle('active', mode === 'scan');
     if (mode !== 'scan') stopQrScanner();
+  }
+
+  // ============================================================
+  // QR LOGIN (auth screen — scans a login QR generated on a
+  // device that is already signed in)
+  // ============================================================
+  async function startAuthQrScanner() {
+    if (qrScanning) return;
+    const box = document.getElementById('authQrBox');
+    try {
+      await startQrCamera(box, handleAuthQrResult);
+    } catch (e) {
+      // Camera unavailable (permission / no camera) — manual token entry fallback
+      box.innerHTML = `
+        <div style="margin-bottom:var(--space-sm);">
+          <input type="text" id="qrTokenInput" placeholder="Paste QR token here" style="width:100%;background:transparent;border:none;border-bottom:1px solid var(--color-divider-dark);color:var(--color-white);font-family:inherit;font-size:var(--text-body);padding:var(--space-xs) 0;outline:none;text-align:center;">
+        </div>
+        <button class="auth-submit" id="qrTokenSubmitBtn">Sign In</button>
+        <p class="auth-qr-hint">Camera unavailable — enter the token shown under the QR code manually.</p>`;
+      document.getElementById('qrTokenSubmitBtn').addEventListener('click', async () => {
+        const token = document.getElementById('qrTokenInput').value.trim();
+        if (!token) { showToast('Enter a token'); return; }
+        try { await doQrLogin(token); onAuthSuccess(); }
+        catch (e2) { showToast('QR login failed: ' + e2.message); }
+      });
+      if (e && e.name === 'NotAllowedError') showToast('Camera permission denied', 'warning');
+    }
+  }
+
+  async function handleAuthQrResult(token) {
+    showToast('QR detected — signing in…');
+    try {
+      await doQrLogin(token);
+      onAuthSuccess();
+    } catch (e) {
+      showToast('QR login failed: ' + e.message);
+      startAuthQrScanner();
+    }
+  }
+
+  function stopAuthQrScanner() {
+    stopQrCamera();
   }
 
   // ============================================================
@@ -3076,10 +3189,67 @@
     running: false,
     intervalId: null,
     startedAt: null,
+    endAt: null,        // absolute wall-clock end time (anti-throttle anchor)
     subject: '',
     inCycle: false,
     doneWorks: 0
   };
+
+  // ============================================================
+  // TIMER STATE PERSISTENCE — survives tab kill / app swipe / crash
+  // ============================================================
+  const TIMER_STATE_KEY = 'studyflow_timer_state_v1';
+
+  function persistTimerState() {
+    try {
+      localStorage.setItem(TIMER_STATE_KEY, JSON.stringify({
+        running: timer.running,
+        mode: timer.mode,
+        duration: timer.duration,
+        remaining: timer.remaining,
+        endAt: timer.endAt ? timer.endAt.getTime() : null,
+        startedAt: timer.startedAt ? timer.startedAt.getTime() : null,
+        subject: timer.subject,
+        inCycle: timer.inCycle,
+        doneWorks: timer.doneWorks,
+        savedAt: Date.now()
+      }));
+    } catch (e) { /* storage full — timer continues in memory */ }
+  }
+
+  function clearTimerState() {
+    try { localStorage.removeItem(TIMER_STATE_KEY); } catch (e) {}
+  }
+
+  /** Restore a running timer after page reload / app kill. */
+  function restoreTimerState() {
+    let s = null;
+    try { s = JSON.parse(localStorage.getItem(TIMER_STATE_KEY) || 'null'); }
+    catch { s = null; }
+    if (!s || !s.running || !s.endAt) { clearTimerState(); return; }
+
+    // Restore fields
+    timer.mode = s.mode || 'work';
+    timer.duration = s.duration || 25 * 60;
+    timer.subject = s.subject || '';
+    timer.inCycle = !!s.inCycle;
+    timer.doneWorks = s.doneWorks || 0;
+    timer.startedAt = s.startedAt ? new Date(s.startedAt) : null;
+    timer.endAt = new Date(s.endAt);
+    timer.remaining = Math.max(0, Math.ceil((s.endAt - Date.now()) / 1000));
+
+    // Re-enter running state; wall-clock tick keeps it exact even if
+    // the deadline already passed while the page was killed.
+    timer.running = false;
+    setSettingBtnDisabled(true);
+    timer.running = true;
+    timer.intervalId = setInterval(tickTimer, 1000);
+    tickTimer();
+    updateStartBtnText();
+    renderCycleBars();
+    persistTimerState();
+    showToast('Timer restored');
+  }
 
   function clampInt(v, min, max) {
     v = parseInt(v);
@@ -3193,29 +3363,51 @@
     if (timer.remaining === timer.duration) timer.startedAt = new Date();
     else if (!timer.startedAt) timer.startedAt = new Date(Date.now() - (timer.duration - timer.remaining) * 1000);
 
+    // Wall-clock anchor: the countdown ends at this absolute time, so
+    // background tab throttling / device sleep can never slow the timer.
+    timer.endAt = new Date(Date.now() + timer.remaining * 1000);
+
     setSettingBtnDisabled(true);
     playStartSound(); // ← crisp start cue
-    timer.intervalId = setInterval(() => {
-      timer.remaining--;
-      updateTimerDisplay();
-      updateProgressRing();
-      if (timer.remaining <= 0) { stopTimer(false); onTimerComplete(); }
-      else { updateLiveStats(); }
-    }, 1000);
+    persistTimerState();
+    timer.intervalId = setInterval(tickTimer, 1000);
+    tickTimer(); // immediate first tick
     updateStartBtnText();
     renderCycleBars();
+  }
+
+  /** Wall-clock tick: remaining is recomputed from Date.now(), not decremented. */
+  function tickTimer() {
+    if (!timer.running) return;
+    const remaining = Math.max(0, Math.ceil((timer.endAt.getTime() - Date.now()) / 1000));
+    timer.remaining = remaining;
+    updateTimerDisplay();
+    updateProgressRing();
+    if (remaining <= 0) {
+      stopTimer(false);
+      clearTimerState();
+      onTimerComplete();
+    } else {
+      updateLiveStats();
+      persistTimerState(); // keep the restore snapshot fresh
+    }
   }
 
   function pauseTimer() {
     if (!timer.running) return;
     clearInterval(timer.intervalId); timer.intervalId = null;
+    // Freeze at the TRUE remaining value (wall-clock), then drop the anchor
+    timer.remaining = Math.max(0, Math.ceil((timer.endAt.getTime() - Date.now()) / 1000));
     timer.running = false;
+    timer.endAt = null;
+    persistTimerState();
     updateStartBtnText();
   }
 
   function stopTimer(keepCycleStage) {
     if (timer.intervalId) { clearInterval(timer.intervalId); timer.intervalId = null; }
     timer.running = false;
+    timer.endAt = null;
     setSettingBtnDisabled(false);
     updateStartBtnText();
   }
@@ -3240,7 +3432,9 @@
       completedAt: now.toISOString(),
       completed: false // interrupted / partial
     });
+    const savedPartial = appData.sessions[appData.sessions.length - 1];
     saveData(appData);
+    markSessionDirty(savedPartial);
     showToast(`${elapsedMin}-min partial session saved`);
     return true;
   }
@@ -3249,10 +3443,11 @@
     // Abandoning an in-progress work run? Record its focused time first.
     const saved = savePartialSessionIfNeeded();
     stopTimer(false);
+    clearTimerState();
     timer.inCycle = false; timer.doneWorks = 0;
     timer.mode = 'work';
     timer.duration = cfg.focusMin * 60; timer.remaining = cfg.focusMin * 60;
-    timer.startedAt = null;
+    timer.startedAt = null; timer.endAt = null;
     updateTimerDisplay(); updateProgressRing();
     updateStartBtnText(); renderCycleBars();
     renderAll();
@@ -3274,7 +3469,10 @@
         startTime, endTime,
         completedAt: now.toISOString()
       });
-      saveData(appData); renderAll();
+      const savedSession = appData.sessions[appData.sessions.length - 1];
+      saveData(appData);
+      markSessionDirty(savedSession);
+      renderAll();
       timer.doneWorks++;
       showToast(`${durationMin}-minute focus session complete`);
 
@@ -3301,7 +3499,7 @@
   function advanceToNextStage(nextMode, nextMin) {
     timer.mode = nextMode;
     timer.duration = nextMin * 60; timer.remaining = nextMin * 60;
-    timer.startedAt = null;
+    timer.startedAt = null; timer.endAt = null;
     updateTimerDisplay(); updateProgressRing();
     updateStartBtnText(); renderCycleBars();
     if (timer.inCycle) setTimeout(() => startTimer(), 500);
@@ -3441,13 +3639,19 @@
   }
 
   function deleteSession(id) {
+    const removed = appData.sessions.find(s => s.id === id);
     appData.sessions = appData.sessions.filter(s => s.id !== id);
-    saveData(appData); renderAll();
+    saveData(appData);
+    if (removed) markSessionDirty(removed, true); // tombstone delete → cloud
+    renderAll();
     showToast('Session deleted');
   }
 
   // ============================================================
-  // HEATMAP
+  // HEATMAP — performance-optimised:
+  //  * minutes-map is cached and only recomputed when sessions change
+  //  * cells are built in a DocumentFragment (single reflow)
+  //  * one delegated click listener instead of one per cell
   // ============================================================
   function getLevelByMinutes(min) {
     if (min <= 0)  return 0;
@@ -3456,18 +3660,47 @@
     if (min < 150) return 3;
     return 4;
   }
-  function aggregateMinutesByDate() {
+
+  let _minutesMapCache = null;
+  function invalidateMinutesCache() { _minutesMapCache = null; }
+
+  function getMinutesMap() {
+    if (_minutesMapCache) return _minutesMapCache;
     const map = {};
-    appData.sessions.forEach(s => {
-      if (s.type !== 'work') return;
+    for (const s of appData.sessions) {
+      if (s.type !== 'work' || s.deleted) continue;
       map[s.date] = (map[s.date] || 0) + s.duration;
-    });
+    }
+    _minutesMapCache = map;
     return map;
+  }
+
+  // Delegated click for calendar cells (bound once)
+  let _heatmapClickBound = false;
+  function bindHeatmapDelegation() {
+    if (_heatmapClickBound) return;
+    const cal = document.getElementById('heatmapCalendar');
+    if (!cal) return;
+    cal.addEventListener('click', (e) => {
+      const cell = e.target.closest('.cal-cell');
+      if (cell && cell.dataset.date) openDateModal(cell.dataset.date);
+    });
+    _heatmapClickBound = true;
   }
 
   // Current displayed month in the heatmap
   let _hmYear = new Date().getFullYear();
   let _hmMonth = new Date().getMonth();
+
+  let _heatmapRafPending = false;
+  function requestHeatmapRender(year, month) {
+    if (_heatmapRafPending) return;
+    _heatmapRafPending = true;
+    requestAnimationFrame(() => {
+      _heatmapRafPending = false;
+      renderHeatmap(year, month);
+    });
+  }
 
   function renderHeatmap(year, month) {
     if (typeof year !== 'number') year = _hmYear;
@@ -3482,27 +3715,30 @@
 
     const cal = document.getElementById('heatmapCalendar');
     if (!cal) return;
-    cal.innerHTML = '';
+    bindHeatmapDelegation();
 
-    // 7 weekday headers (Sun..Sat)
-    const wdNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    wdNames.forEach(n => {
-      const h = document.createElement('div');
-      h.className = 'cal-weekday-header';
-      h.textContent = n;
-      cal.appendChild(h);
-    });
-
-    const minutesMap = aggregateMinutesByDate();
+    const minutesMap = getMinutesMap();
     const todayStr = formatDate(new Date());
     const startWeekday = new Date(year, month, 1).getDay();       // 0=Sun
     const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Build everything off-DOM, then attach once (single reflow)
+    const frag = document.createDocumentFragment();
+
+    // 7 weekday headers (Sun..Sat)
+    const wdNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    for (const n of wdNames) {
+      const h = document.createElement('div');
+      h.className = 'cal-weekday-header';
+      h.textContent = n;
+      frag.appendChild(h);
+    }
 
     // Leading empty cells to align the 1st under its weekday column
     for (let i = 0; i < startWeekday; i++) {
       const e = document.createElement('div');
       e.className = 'cal-cell empty';
-      cal.appendChild(e);
+      frag.appendChild(e);
     }
 
     for (let d = 1; d <= daysInMonth; d++) {
@@ -3516,9 +3752,11 @@
       if (cs === todayStr) cell.classList.add('today');
       cell.textContent = d;
       cell.title = `${cs}: ${min} min`;
-      cell.addEventListener('click', () => openDateModal(cs));
-      cal.appendChild(cell);
+      frag.appendChild(cell);
     }
+
+    cal.innerHTML = '';
+    cal.appendChild(frag);
 
     updateMonthStats(year, month, minutesMap);
   }
@@ -3576,7 +3814,7 @@
     const ms = document.getElementById('monthSelect');
     if (ys) ys.value = String(y);
     if (ms) ms.value = String(m);
-    renderHeatmap(y, m);
+    requestHeatmapRender(y, m); // rAF-scheduled — rapid ‹› taps stay smooth
   }
 
   function initMonthSelector() {
@@ -4009,11 +4247,17 @@
       try { const n = await syncNow(); showToast(n + ' record(s) synced'); }
       catch (e) { showToast('Sync failed (offline?)'); }
     });
+    if (document.getElementById('syncNowBtn2')) {
+      document.getElementById('syncNowBtn2').addEventListener('click', async () => {
+        try { const n = await syncNow(); showToast(n + ' record(s) synced'); renderSyncView(); }
+        catch (e) { showToast('Sync failed (offline?)'); renderSyncView(); }
+      });
+    }
     document.getElementById('genAccountQrBtn').addEventListener('click', generateAccountQr);
 
     // Bottom panel quick links
-    if (document.getElementById('bottomQrSyncBtn')) {
-      document.getElementById('bottomQrSyncBtn').addEventListener('click', () => { closeBottomInfo(); switchView('qr'); });
+    if (document.getElementById('bottomSyncBtn')) {
+      document.getElementById('bottomSyncBtn').addEventListener('click', () => { closeBottomInfo(); switchView('sync'); });
     }
     if (document.getElementById('bottomAccountBtn')) {
       document.getElementById('bottomAccountBtn').addEventListener('click', () => { closeBottomInfo(); switchView('account'); });
@@ -4077,8 +4321,24 @@
     // Boot auth (show login screen or enter app + cloud sync)
     bootAuth();
 
+    // Restore a running timer across page reload / app kill (anti-kill)
+    restoreTimerState();
+
+    // Foreground correction: browsers throttle background timers to ~1/min,
+    // so recompute the countdown the moment the tab becomes visible again.
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && timer.running && timer.endAt) tickTimer();
+    });
+    window.addEventListener('focus', () => {
+      if (timer.running && timer.endAt) tickTimer();
+    });
+    window.addEventListener('pageshow', (e) => {
+      if (e.persisted && timer.running && timer.endAt) tickTimer(); // bfcache restore
+    });
+
     window.addEventListener('beforeunload', () => {
       if (timer.intervalId) clearInterval(timer.intervalId);
+      if (timer.running) persistTimerState(); // last-chance snapshot
     });
   }
 

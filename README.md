@@ -27,6 +27,11 @@ built from whitespace and type.
   session runs, not only after it completes.
 - **Interrupted sessions are saved** — if you Reset mid-session, any focused
   time ≥1 min is recorded as a `partial` session and counts toward your totals.
+- **Anti-kill wall-clock countdown** — the timer is anchored to an absolute
+  end timestamp, so background throttling and device sleep never slow it.
+- **State persistence + restore** — reload the page, kill the tab, or swipe
+  the Android app away; the running timer is restored automatically on next
+  launch and continues from the exact remaining time.
 
 ### Month Heatmap
 - 7-column calendar grid showing one month at a time, with day numbers in
@@ -42,7 +47,9 @@ built from whitespace and type.
 - Conflict resolution uses last-write-wins (by `updated_at`) with tombstone
   deletes, so data is never silently lost.
 - An auto-sync loop runs every 30 seconds; a manual "Sync Now" button is in
-  the Account view.
+  the Sync and Account views.
+- The Sync view shows the online/offline status, last sync time, and a
+  **Pending Upload** counter for the offline queue.
 
 ### QR-Code Login
 - On a logged-in device, open **Account → Generate QR** to create a one-time

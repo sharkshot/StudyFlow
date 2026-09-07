@@ -4,6 +4,52 @@ All notable changes to **StudyFlow** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v3.1.0] — 2026-09-07
+
+Performance and reliability focused release. The P2P sync module is retained
+alongside the cloud dual-mode sync; the heatmap rendering and the Pomodoro
+timer are hardened.
+
+### Added
+
+- **Timer anti-kill (wall-clock countdown).** The countdown is now anchored to
+  an absolute end timestamp (`endAt`) instead of decrementing once per
+  `setInterval` tick. Background-tab throttling, device sleep, or a slow
+  renderer can no longer slow the timer — the remaining time is always
+  recomputed from `Date.now()`.
+- **Timer state persistence + restore.** The running timer is snapshotted to
+  `localStorage` every tick. If the page is reloaded, the tab killed, or the
+  Android app swiped away, the timer is automatically restored on next launch
+  ("Timer restored" toast) and continues from the exact remaining time — even
+  if the deadline already passed while the app was dead, in which case the
+  completion logic fires correctly.
+- **Foreground correction.** `visibilitychange` / `focus` / `pageshow`
+  (bfcache) listeners immediately recompute and repaint the countdown the
+  moment the app returns to the foreground.
+- **Sync view (cloud focus).** A new Cloud Sync section shows the signed-in
+  account, online/offline status, last sync time, device ID, and a
+  **Sync Now** button. The Data Overview now includes a **Pending Upload**
+  counter for the offline queue.
+
+### Changed
+
+- **Incremental sync queue.** Sessions are enqueued for cloud upload only at
+  their mutation points (complete, partial-save, delete) instead of re-queuing
+  the entire dataset on every save — keeping the pending queue small and
+  pushes minimal.
+- **Heatmap rendering performance.** The minutes-per-day aggregation is now
+  cached and only recomputed when sessions change; calendar cells are built in
+  a `DocumentFragment` and attached in a single reflow; cell clicks use one
+  delegated listener instead of one per cell; month switching (`‹` `›`) is
+  scheduled via `requestAnimationFrame`, so rapid taps stay smooth.
+- **Unified QR camera engine.** P2P data sync (QR Sync view) and account QR
+  login now share one camera loop. If the camera is unavailable (permission
+  denied / desktop without camera), the QR login falls back to manual token
+  entry.
+- **P2P sync retained.** The offline peer-to-peer module (shared sync key,
+  AES-256-GCM encrypted `STUDY2:` packets, QR/text export-import, paired
+  device list) remains fully available and complements the online cloud sync.
+
 ## [v3.0.0] — 2026-09-07
 
 A full-architecture rewrite that turns StudyFlow into a cross-platform,
