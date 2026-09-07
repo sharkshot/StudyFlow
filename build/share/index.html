@@ -1857,7 +1857,7 @@
         <li><button class="btn-link" data-view="heatmap">Heatmap</button></li>
         <li><button class="btn-link" data-view="community">Community</button></li>
         <li><button class="btn-link" data-view="sync">Sync</button></li>
-        <li><button class="btn-link" data-view="qr">QR Sync</button></li>
+        <li id="navQrItem"><button class="btn-link" data-view="qr">QR Sync</button></li>
         <li><button class="btn-link" data-view="account">Account</button></li>
       </ul>
     </div>
@@ -1872,11 +1872,11 @@
         </li>
         <li class="info-item">
           <span>Version</span>
-          v1.0
+          v3.10
         </li>
-        <li class="info-item">
+        <li class="info-item" id="navStorageMode">
           <span>Storage</span>
-          Local only · Offline first
+          Cloud + local cache
         </li>
         <li class="info-item">
           <span>Language</span>
@@ -2490,11 +2490,17 @@
   const SYNC_QUEUE_KEY = 'studyflow_sync_queue_v3';
   const LAST_SYNC_KEY = 'studyflow_last_sync_v3';
 
+  // Both keys are account-scoped so pending uploads and the incremental
+  // pull cursor never leak across accounts on a shared device.
+  function syncQueueKey() { return SYNC_QUEUE_KEY + storageSuffix(); }
+  function lastSyncKey()  { return LAST_SYNC_KEY + storageSuffix(); }
+
   function getSyncQueue() {
-    try { return JSON.parse(localStorage.getItem(SYNC_QUEUE_KEY) || '[]'); }
+    adoptLegacy(syncQueueKey(), SYNC_QUEUE_KEY);
+    try { return JSON.parse(localStorage.getItem(syncQueueKey()) || '[]'); }
     catch { return []; }
   }
-  function setSyncQueue(q) { localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify(q)); }
+  function setSyncQueue(q) { localStorage.setItem(syncQueueKey(), JSON.stringify(q)); }
   function enqueueSession(session) {
     const q = getSyncQueue();
     // Replace existing entry with same id
@@ -2502,10 +2508,30 @@
     if (idx >= 0) q[idx] = session; else q.push(session);
     setSyncQueue(q);
   }
-  function getLastSync() { return localStorage.getItem(LAST_SYNC_KEY) || '1970-01-01T00:00:00.000Z'; }
-  function setLastSync(ts) { localStorage.setItem(LAST_SYNC_KEY, ts); }
+  function getLastSync() { return localStorage.getItem(lastSyncKey()) || '1970-01-01T00:00:00.000Z'; }
+  function setLastSync(ts) { localStorage.setItem(lastSyncKey(), ts); }
 
   let syncOnline = false;
+
+  // Map a cloud-format session to the local format. The local UI
+  // (Today list, heatmap, date modal) keys off `s.date`, so it is
+  // derived from `completed_at` here — cloud rows would otherwise be
+  // invisible outside the header totals.
+  function cloudSessionToLocal(s) {
+    const doneAt = s.completed_at ? new Date(s.completed_at) : new Date();
+    return {
+      id: s.id,
+      date: formatDate(doneAt),
+      type: s.type,
+      duration: s.duration,
+      subject: s.subject,
+      startTime: s.completed_at ? formatTime(doneAt) : '',
+      endTime: s.completed_at ? formatTime(doneAt) : '',
+      completedAt: s.completed_at,
+      completed: true,
+      updated_at: s.updated_at
+    };
+  }
 
   async function syncPull() {
     try {
@@ -2520,7 +2546,7 @@
             appData.sessions = appData.sessions.filter(x => x.id !== s.id);
           } else {
             const idx = appData.sessions.findIndex(x => x.id === s.id);
-            const clean = { id: s.id, type: s.type, duration: s.duration, subject: s.subject, completedAt: s.completed_at, updated_at: s.updated_at };
+            const clean = cloudSessionToLocal(s);
             if (idx >= 0) appData.sessions[idx] = clean;
             else appData.sessions.push(clean);
           }
@@ -2551,7 +2577,7 @@
             appData.sessions = appData.sessions.filter(x => x.id !== s.id);
           } else {
             const idx = appData.sessions.findIndex(x => x.id === s.id);
-            const clean = { id: s.id, type: s.type, duration: s.duration, subject: s.subject, completedAt: s.completed_at, updated_at: s.updated_at };
+            const clean = cloudSessionToLocal(s);
             if (idx >= 0) appData.sessions[idx] = clean;
             else appData.sessions.push(clean);
           }
@@ -2595,6 +2621,9 @@
     if (txt) txt.textContent = online ? 'Online' : 'Offline';
     const bs = document.getElementById('bottomInfoSyncStatus');
     if (bs) bs.textContent = online ? 'Cloud synced' : 'Local only';
+    const ns = document.getElementById('navStorageMode');
+    if (ns) ns.innerHTML = '<span>Storage</span> ' +
+      (online ? 'Cloud + local cache' : 'Offline cache · auto upload');
   }
 
   // Auto-sync loop: try push+pull every 30s when online
@@ -2644,22 +2673,62 @@
   // ============================================================
   // DATA STORAGE
   // ============================================================
+  // Account-scoped storage: each signed-in account gets its own data key,
+  // so switching accounts never leaks sessions from one user to another.
+  // Legacy (pre-isolation) data under the bare key is claimed exactly once
+  // by the first real account that signs in on this device.
   const STORAGE_KEY = 'study_tracker_data_v1';
 
-  function loadData() {
+  function storageSuffix() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return { sessions: [] };
+      const auth = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+      if (auth && auth.user && auth.user.username) return ':' + auth.user.username;
+    } catch (e) {}
+    return ':local';
+  }
+
+  function adoptLegacy(scopedKey, legacyKey) {
+    if (storageSuffix() === ':local') return; // only real accounts claim legacy data
+    if (localStorage.getItem(scopedKey) !== null) return;
+    const legacy = localStorage.getItem(legacyKey);
+    if (legacy !== null) {
+      localStorage.setItem(scopedKey, legacy);
+      localStorage.removeItem(legacyKey);
+    }
+  }
+
+  let dataOwner = ':local'; // storage suffix appData was loaded from
+
+  function loadData() {
+    const suffix = storageSuffix();
+    const key = STORAGE_KEY + suffix;
+    adoptLegacy(key, STORAGE_KEY);
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) { dataOwner = suffix; return { sessions: [] }; }
       const data = JSON.parse(raw);
       if (!data.sessions) data.sessions = [];
+      // Migration: backfill `date` for sessions stored without one
+      // (cloud merges written before the fix never get re-delivered
+      // by the incremental pull, so repair them at rest).
+      let migrated = false;
+      for (const s of data.sessions) {
+        if (!s.date && s.completedAt) {
+          s.date = formatDate(new Date(s.completedAt));
+          migrated = true;
+        }
+      }
+      if (migrated) localStorage.setItem(key, JSON.stringify(data));
+      dataOwner = suffix;
       return data;
     } catch (e) {
+      dataOwner = suffix;
       return { sessions: [] };
     }
   }
 
   function saveData(data) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+    try { localStorage.setItem(STORAGE_KEY + storageSuffix(), JSON.stringify(data)); }
     catch (e) { console.error('Save failed', e); }
     invalidateMinutesCache(); // sessions changed → heatmap must re-aggregate
   }
@@ -2736,21 +2805,184 @@
     return Math.abs(h).toString(36);
   }
 
+  // ============================================================
+  // TOMBSTONE REGISTRY — remembers deleted session ids so a P2P
+  // merge never resurrects a session that was deleted locally.
+  // Stored as { sessionId: deletedAtIso }, pruned after 90 days.
+  // ============================================================
+  const TOMBSTONE_KEY = 'studyflow_tombstones_v1';
+  const TOMBSTONE_MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000;
+
+  function getTombstones() {
+    try { return JSON.parse(localStorage.getItem(TOMBSTONE_KEY) || '{}'); }
+    catch { return {}; }
+  }
+
+  function addTombstone(id, deletedAt) {
+    if (!id) return;
+    const ts = deletedAt || new Date().toISOString();
+    const tomb = getTombstones();
+    if (!tomb[id] || ts > tomb[id]) tomb[id] = ts;
+    // Prune entries older than the retention window
+    const cutoff = Date.now() - TOMBSTONE_MAX_AGE_MS;
+    for (const [sid, at] of Object.entries(tomb)) {
+      if (new Date(at).getTime() < cutoff) delete tomb[sid];
+    }
+    try { localStorage.setItem(TOMBSTONE_KEY, JSON.stringify(tomb)); } catch (e) {}
+  }
+
+  // ============================================================
+  // P2P MERGE ENGINE — validate + last-write-wins (by updated_at)
+  // + tombstone-aware delete propagation + cloud queue fan-out.
+  // ============================================================
+
+  // Normalise one incoming session record. Returns a clean local-format
+  // session, or null when the record is malformed / not worth keeping.
+  function sanitizeP2PSession(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+    const id = typeof raw.id === 'string' ? raw.id.trim() : '';
+    if (!id || id.length > 64) return null;
+    const type = raw.type === 'break' ? 'break' : 'work';
+    const duration = Math.max(0, Math.min(24 * 60, Math.round(Number(raw.duration) || 0)));
+    const completedSrc = raw.completedAt || raw.completed_at;
+    const doneAt = completedSrc ? new Date(completedSrc) : new Date();
+    if (isNaN(doneAt.getTime())) return null;
+    const completedAtIso = doneAt.toISOString();
+    // Skip phantom rows: zero-length work sessions carry no information
+    if (type === 'work' && duration === 0 && raw.completed !== false) return null;
+    return {
+      id,
+      type,
+      duration,
+      subject: typeof raw.subject === 'string' ? raw.subject.slice(0, 200) : '',
+      date: raw.date && /^\d{4}-\d{2}-\d{2}$/.test(raw.date) ? raw.date : formatDate(doneAt),
+      startTime: typeof raw.startTime === 'string' ? raw.startTime.slice(0, 8) : '',
+      endTime: typeof raw.endTime === 'string' ? raw.endTime.slice(0, 8) : '',
+      completedAt: completedAtIso,
+      completed: raw.completed !== false,
+      updated_at: raw.updated_at || completedAtIso
+    };
+  }
+
+  /**
+   * Merge a remote P2P payload into the local dataset.
+   *  - new ids            -> inserted
+   *  - same id, newer ts  -> overwritten (last-write-wins)
+   *  - same id, older ts  -> kept local
+   *  - remote tombstones  -> local rows deleted, tombstone adopted
+   *  - local tombstones   -> incoming stale copies skipped (no resurrect)
+   * Sessions that changed are also enqueued for cloud upload, so a
+   * device that comes back online pushes the merged result.
+   * Returns { stats, changed }.
+   */
+  function mergeRemoteSessions(remoteSessions, remoteTombstones) {
+    const stats = { added: 0, updated: 0, deleted: 0, skipped: 0, invalid: 0 };
+    const dirty = []; // changed sessions -> cloud queue
+
+    // --- remote tombstones: { id: deletedAtIso } ---
+    const remoteTomb = {};
+    if (remoteTombstones && typeof remoteTombstones === 'object' && !Array.isArray(remoteTombstones)) {
+      for (const [id, ts] of Object.entries(remoteTombstones)) {
+        if (typeof id === 'string' && typeof ts === 'string' && !isNaN(new Date(ts).getTime())) {
+          remoteTomb[id] = ts;
+        }
+      }
+    }
+    const localTomb = getTombstones();
+
+    // --- pass 1: sessions ---
+    const byId = new Map(appData.sessions.map(s => [s.id, s]));
+    for (const raw of (remoteSessions || [])) {
+      const s = sanitizeP2PSession(raw);
+      if (!s) { stats.invalid++; continue; }
+      // Deleted remotely after this snapshot row was taken -> stale, drop
+      if (remoteTomb[s.id] && remoteTomb[s.id] > s.updated_at) { stats.skipped++; continue; }
+      // Deleted locally after this row was taken -> do not resurrect
+      if (localTomb[s.id] && localTomb[s.id] > s.updated_at) { stats.skipped++; continue; }
+
+      const local = byId.get(s.id);
+      if (!local) {
+        appData.sessions.push(s);
+        byId.set(s.id, s);
+        stats.added++;
+        dirty.push(s);
+      } else {
+        const localTs = local.updated_at || local.completedAt || '';
+        if (s.updated_at > localTs) {
+          const idx = appData.sessions.findIndex(x => x.id === s.id);
+          appData.sessions[idx] = s;
+          stats.updated++;
+          dirty.push(s);
+        } else {
+          stats.skipped++;
+        }
+      }
+    }
+
+    // --- pass 2: apply remote tombstones to surviving local rows ---
+    for (const [id, ts] of Object.entries(remoteTomb)) {
+      const local = byId.get(id);
+      if (!local) continue;
+      const localTs = local.updated_at || local.completedAt || '';
+      if (ts > localTs) {
+        appData.sessions = appData.sessions.filter(x => x.id !== id);
+        byId.delete(id);
+        stats.deleted++;
+      }
+    }
+
+    // --- adopt remote tombstones into the local registry ---
+    for (const [id, ts] of Object.entries(remoteTomb)) {
+      if (!localTomb[id] || ts > localTomb[id]) addTombstone(id, ts);
+    }
+
+    // --- fan changed rows out to the cloud upload queue ---
+    if (getToken()) dirty.forEach(s => markSessionDirty(s, false));
+
+    const changed = stats.added + stats.updated + stats.deleted > 0;
+    return { stats, changed };
+  }
+
   // Build an AES-encrypted P2P export code (STUDY2: prefix).
+  // Payload v3 carries sessions + tombstones so deletes propagate.
+  // Falls back to the legacy STUDY1: format when Web Crypto is
+  // unavailable (plain-HTTP non-localhost = insecure context).
   async function generateExportCode() {
     const key = getSyncKey();
     if (!key) { showToast('Set a sync key first'); return ''; }
     const payload = {
-      v: 2, did: getDeviceId(),
-      ts: Date.now(), sessions: appData.sessions
+      v: 3, did: getDeviceId(),
+      ts: Date.now(),
+      sessions: appData.sessions,
+      tombstones: getTombstones()
     };
     try {
-      const encrypted = await encryptData(key, payload);
-      return 'STUDY2:' + encrypted;
+      if (window.crypto && crypto.subtle) {
+        const encrypted = await encryptData(key, payload);
+        return 'STUDY2:' + encrypted;
+      }
+      // Insecure context — AES unavailable; emit legacy key-hashed code
+      const legacy = { ...payload, v: 1, kh: simpleHash(key) };
+      showToast('Encrypted mode unavailable — using compatible mode', 'warning');
+      return 'STUDY1:' + btoa(unescape(encodeURIComponent(JSON.stringify(legacy))));
     } catch (e) {
       showToast('Export failed: ' + e.message);
       return '';
     }
+  }
+
+  // Safety net: snapshot the dataset before every P2P merge so a bad
+  // merge can be rolled back manually (one rolling backup is kept).
+  const P2P_BACKUP_KEY = 'studyflow_p2p_backup_v1';
+  function backupBeforeP2PMerge() {
+    try {
+      localStorage.setItem(P2P_BACKUP_KEY, JSON.stringify({
+        time: new Date().toISOString(),
+        source: 'pre-merge',
+        count: appData.sessions.length,
+        sessions: appData.sessions
+      }));
+    } catch (e) { /* storage full — proceed without backup */ }
   }
 
   // Decrypt + merge a P2P sync code from another device.
@@ -2774,19 +3006,30 @@
       }
 
       if (!Array.isArray(payload.sessions)) { showToast('No valid data in sync code'); return false; }
+      // Guard against absurdly large / hostile payloads
+      if (payload.sessions.length > 20000) { showToast('Sync code too large'); return false; }
 
       const sourceDeviceId = payload.did || 'Unknown';
-      const localIds = new Set(appData.sessions.map(s => s.id));
-      let added = 0;
-      payload.sessions.forEach(s => {
-        if (!localIds.has(s.id)) { appData.sessions.push(s); added++; }
-      });
-      appData.sessions.sort((a, b) => (a.completedAt || '').localeCompare(b.completedAt || ''));
-      saveData(appData);
+      backupBeforeP2PMerge();
+
+      const { stats, changed } = mergeRemoteSessions(payload.sessions, payload.tombstones);
+
+      if (changed) {
+        appData.sessions.sort((a, b) => (a.completedAt || '').localeCompare(b.completedAt || ''));
+        saveData(appData);
+        renderAll();
+        renderSyncView();
+      }
       addTrustedDevice(sourceDeviceId);
-      renderAll();
-      renderSyncView();
-      showToast(`Synced — added ${added} record(s) from ${sourceDeviceId}`);
+
+      // Human-readable merge summary
+      const parts = [];
+      if (stats.added)   parts.push(`+${stats.added} added`);
+      if (stats.updated) parts.push(`${stats.updated} updated`);
+      if (stats.deleted) parts.push(`-${stats.deleted} removed`);
+      if (!changed)      parts.push('already up to date');
+      if (stats.invalid) parts.push(`${stats.invalid} invalid skipped`);
+      showToast(`Merged from ${sourceDeviceId}: ${parts.join(', ')}`);
       return true;
     } catch (e) {
       showToast('Import parse failed: ' + e.message);
@@ -3006,6 +3249,26 @@
   }
 
   // ============================================================
+  // PLATFORM GATING — QR P2P sync is a camera-to-camera feature.
+  // Phone / tablet keep it; desktop (no camera / no touch input)
+  // has the entry removed and uses cloud sync instead.
+  // ============================================================
+  function isDesktopDevice() {
+    // Electron desktop build — preload always injects this bridge
+    if (typeof window !== 'undefined' && window._ftDesktop) return true;
+    // Touchless environment (typical PC: mouse + keyboard, no camera)
+    const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    const touchPoints = navigator.maxTouchPoints || 0;
+    return !coarsePointer && touchPoints === 0;
+  }
+
+  function applyPlatformGating() {
+    if (!isDesktopDevice()) return;
+    const item = document.getElementById('navQrItem');
+    if (item) item.style.display = 'none';
+  }
+
+  // ============================================================
   // QR LOGIN (auth screen — scans a login QR generated on a
   // device that is already signed in)
   // ============================================================
@@ -3110,6 +3373,11 @@
   if (bottomInfoClose) bottomInfoClose.addEventListener('click', closeBottomInfo);
 
   function switchView(viewName) {
+    // Desktop has no camera for QR P2P — redirect to the cloud Sync view
+    if (viewName === 'qr' && isDesktopDevice()) {
+      showToast('QR sync is available on phone & tablet only');
+      viewName = 'sync';
+    }
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(`view-${viewName}`).classList.add('active');
 
@@ -3302,7 +3570,7 @@
     document.getElementById('timerNum').innerHTML =
       `<span>${m}</span><span class="colon">:</span><span>${s}</span>`;
     const modeTxt = timer.mode === 'work' ? 'Focus Session' : 'Rest Interval';
-    document.title = `${t} · ${modeTxt} | Study Tracker`;
+    document.title = `${t} · ${modeTxt} | StudyFlow`;
 
     const pill = document.getElementById('stagePill');
     const txt  = document.getElementById('stageText');
@@ -3430,6 +3698,7 @@
       startTime: formatTime(startedAt),
       endTime: formatTime(now),
       completedAt: now.toISOString(),
+      updated_at: now.toISOString(), // LWW anchor for P2P/cloud merges
       completed: false // interrupted / partial
     });
     const savedPartial = appData.sessions[appData.sessions.length - 1];
@@ -3467,7 +3736,8 @@
         subject: timer.subject || '',
         duration: durationMin,
         startTime, endTime,
-        completedAt: now.toISOString()
+        completedAt: now.toISOString(),
+        updated_at: now.toISOString() // LWW anchor for P2P/cloud merges
       });
       const savedSession = appData.sessions[appData.sessions.length - 1];
       saveData(appData);
@@ -3642,7 +3912,10 @@
     const removed = appData.sessions.find(s => s.id === id);
     appData.sessions = appData.sessions.filter(s => s.id !== id);
     saveData(appData);
-    if (removed) markSessionDirty(removed, true); // tombstone delete → cloud
+    if (removed) {
+      markSessionDirty(removed, true); // tombstone delete → cloud
+      addTombstone(id, removed.updated_at || new Date().toISOString()); // → P2P peers
+    }
     renderAll();
     showToast('Session deleted');
   }
@@ -4077,6 +4350,12 @@
     const auth = getAuth();
     document.getElementById('accountUsername').textContent = auth.user.username;
     document.getElementById('bottomInfoUser').textContent = auth.user.username;
+    // Account changed -> load THIS account's own local data (isolation:
+    // the previous account's sessions must never leak into this one).
+    if (dataOwner !== storageSuffix()) {
+      appData = loadData();
+      invalidateMinutesCache();
+    }
     // Pull cloud data
     try {
       await syncNow();
@@ -4085,6 +4364,7 @@
       showToast('Logged in (offline mode)');
     }
     startAutoSync();
+    switchView('pomodoro');
     renderAll();
     renderAccount();
   }
@@ -4317,6 +4597,9 @@
     updateStartBtnText();
     renderCycleBars();
     renderAll();
+
+    // Platform gating: hide QR P2P entry on desktop (phone/tablet only)
+    applyPlatformGating();
 
     // Boot auth (show login screen or enter app + cloud sync)
     bootAuth();

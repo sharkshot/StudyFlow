@@ -193,12 +193,13 @@ router.post('/proposals/:proposalId/vote', async (req, res) => {
     );
     if (!membership) return res.status(403).json({ error: 'Not a member' });
 
-    // Upsert vote
-    await db.run(
-      `INSERT INTO proposal_votes (proposal_id, user_id, vote, created_at) VALUES (?, ?, ?, ?)
-       ON CONFLICT(proposal_id, user_id) DO UPDATE SET vote = excluded.vote, created_at = excluded.created_at`,
-      [proposalId, req.user.id, voteVal, now()]
-    );
+    // Upsert vote (dialect-specific: MySQL vs SQLite syntax)
+    const upsertSql = db.driver === 'mysql'
+      ? `INSERT INTO proposal_votes (proposal_id, user_id, vote, created_at) VALUES (?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE vote = VALUES(vote), created_at = VALUES(created_at)`
+      : `INSERT INTO proposal_votes (proposal_id, user_id, vote, created_at) VALUES (?, ?, ?, ?)
+         ON CONFLICT(proposal_id, user_id) DO UPDATE SET vote = excluded.vote, created_at = excluded.created_at`;
+    await db.run(upsertSql, [proposalId, req.user.id, voteVal, now()]);
 
     // Check if passed (>50% of members voted for)
     const memberCountRow = await db.get(

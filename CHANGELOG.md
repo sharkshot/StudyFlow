@@ -4,7 +4,7 @@ All notable changes to **StudyFlow** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v3.1.0] — 2026-09-07
+## [v3.10.0] — 2026-09-07
 
 Performance and reliability focused release. The P2P sync module is retained
 alongside the cloud dual-mode sync; the heatmap rendering and the Pomodoro
@@ -49,6 +49,21 @@ timer are hardened.
 - **P2P sync retained.** The offline peer-to-peer module (shared sync key,
   AES-256-GCM encrypted `STUDY2:` packets, QR/text export-import, paired
   device list) remains fully available and complements the online cloud sync.
+- **QR P2P is now phone/tablet only.** Desktop builds (and touchless PC
+  browsers) no longer show the QR Sync entry — the camera-to-camera flow does
+  not apply there and desktop uses cloud sync exclusively. Direct
+  `switchView('qr')` calls are redirected to the Sync view with a hint.
+- **P2P merge engine rewrite.** Importing a sync code now runs a validated,
+  tombstone-aware, last-write-wins merge: records are sanitised and clamped
+  before entering the dataset; same-id records are overwritten only when the
+  remote `updated_at` is newer; deleted sessions propagate via a 90-day
+  tombstone registry (`STUDY2:` payload v3 carries `tombstones`), so deleted
+  sessions can no longer be resurrected by an old peer snapshot; merged rows
+  fan out to the cloud upload queue so the result reaches the server when
+  either device comes back online. A rolling pre-merge backup is kept in
+  `studyflow_p2p_backup_v1`, and the import toast reports a full summary
+  (added / updated / removed / skipped). See `docs/P2P-DATA-MERGE.md` for the
+  technical specification.
 
 ## [v3.0.0] — 2026-09-07
 

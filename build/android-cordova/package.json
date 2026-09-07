@@ -1,6 +1,6 @@
 {
   "name": "studyflow-android",
-  "version": "1.0.0",
+  "version": "3.10.0",
   "private": true,
   "displayName": "StudyFlow",
   "description": "Pomodoro / Heatmap study tracker — Android build",

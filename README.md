@@ -57,12 +57,17 @@ built from whitespace and type.
 - Scan (or paste) the token on a new device to sign into the same account
   instantly.
 
-### Encrypted Peer-to-Peer Sync
+### Encrypted Peer-to-Peer Sync (phone & tablet)
 - For two devices that are both offline, pair them with a shared sync key.
 - Generate an AES-256-GCM encrypted sync code (or QR) on one device and
   import/scan it on the other.
 - The key is derived via PBKDF2 (100k iterations). Legacy plaintext codes
   (`STUDY1:`) are still accepted.
+- Importing runs a validated, tombstone-aware, last-write-wins merge —
+  deleted sessions never resurrect, and merged rows are queued for cloud
+  upload once back online (technical spec: `docs/P2P-DATA-MERGE.md`).
+- Desktop builds skip the QR entry entirely (no camera) and rely on cloud
+  sync.
 
 ### Community Supervision
 - Create a study community and share its invite code.
