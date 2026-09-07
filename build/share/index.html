@@ -1872,7 +1872,7 @@
         </li>
         <li class="info-item">
           <span>Version</span>
-          v3.10
+          v3.20
         </li>
         <li class="info-item" id="navStorageMode">
           <span>Storage</span>
@@ -2251,9 +2251,10 @@
         <!-- GENERATE -->
         <div class="qr-section active" id="qrGenSection">
           <div class="qr-info-bar">
-            <span><span class="dot"></span>Show this code to another device for scanning</span>
+            <span><span class="dot"></span><span id="qrGenHintText">Show this code to another device for scanning</span></span>
             <span id="qrDataSize">0 KB</span>
           </div>
+          <div id="qrChunkLabel" style="display:none;text-align:center;font-size:var(--text-label);letter-spacing:var(--tracking-wide);text-transform:uppercase;color:var(--color-white);margin-bottom:var(--space-sm);"></div>
           <div class="qr-display-wrap" id="qrDisplayWrap">
             <div class="qr-placeholder">Tap GENERATE QR below to create a sync code</div>
           </div>
@@ -2261,8 +2262,14 @@
             <button class="btn-link" id="qrGenBtn">Generate QR</button>
             <button class="btn-link" id="qrDownloadBtn">Download</button>
           </div>
+          <div class="actions-row" id="qrChunkNav" style="display:none;">
+            <button class="btn-link" id="qrPrevBtn">‹ Prev</button>
+            <button class="btn-link" id="qrAutoBtn">Auto: On</button>
+            <button class="btn-link" id="qrNextBtn">Next ›</button>
+          </div>
           <p class="hint">
-            Large datasets can produce dense QR codes. Scan in bright lighting for best results.
+            Large datasets are gzip-compressed and split into a sequence of codes —
+            scan them all in any order; the receiver merges automatically.
           </p>
         </div>
 
@@ -2280,7 +2287,8 @@
             <button class="btn-link" id="qrScanStopBtn" style="display:none;">Stop</button>
           </div>
           <p class="hint">
-            Data is merged automatically after a successful scan. Both devices must share the same sync key.
+            Multi-code transfers accumulate automatically — keep scanning until every code
+            is received. Both devices must share the same sync key.
           </p>
         </div>
       </section>
@@ -2651,23 +2659,105 @@
     );
   }
 
-  async function encryptData(keyStr, data) {
-    const key = await deriveKey(keyStr);
-    const iv = crypto.getRandomValues(new Uint8Array(12));
-    const enc = new TextEncoder();
-    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(JSON.stringify(data)));
-    const ivB64 = btoa(String.fromCharCode(...iv));
-    const ctB64 = btoa(String.fromCharCode(...new Uint8Array(ct)));
-    return ivB64 + '.' + ctB64;
+  // ============================================================
+  // P2P PAYLOAD CODEC — gzip + AES-GCM + chunked QR transport
+  //
+  // A QR (v40/L) carries ~2.9KB; months of sessions far exceed that,
+  // so the pipeline is:
+  //   JSON payload --gzip--> 'GZ:<b64>' --AES-GCM--> 'STUDY2:<iv>.<ct>'
+  //     --split--> 'STUDY3:<id>.<idx>.<total>.<slice>' × N QR codes
+  // ============================================================
+
+  // Chunk-safe base64 helpers (String.fromCharCode spread overflows on big arrays)
+  function bytesToB64(bytes) {
+    let bin = '';
+    const CH = 0x8000;
+    for (let i = 0; i < bytes.length; i += CH)
+      bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+    return btoa(bin);
+  }
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
   }
 
-  async function decryptData(keyStr, blob) {
+  const GZ_PREFIX = 'GZ:';
+
+  async function gzipCompressText(text) {
+    if (typeof CompressionStream === 'undefined') return null;
+    const stream = new Blob([text]).stream().pipeThrough(new CompressionStream('gzip'));
+    const buf = await new Response(stream).arrayBuffer();
+    return new Uint8Array(buf);
+  }
+
+  async function gzipDecompressText(bytes) {
+    if (typeof DecompressionStream === 'undefined')
+      throw new Error('Decompression unsupported on this device');
+    const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    const buf = await new Response(stream).arrayBuffer();
+    return new TextDecoder().decode(buf);
+  }
+
+  // AES-GCM on an arbitrary string -> 'ivB64.ctB64'
+  async function encryptString(keyStr, plain) {
+    const key = await deriveKey(keyStr);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv }, key, new TextEncoder().encode(plain)
+    );
+    return bytesToB64(iv) + '.' + bytesToB64(new Uint8Array(ct));
+  }
+
+  async function decryptString(keyStr, blob) {
     const [ivB64, ctB64] = blob.split('.');
-    const iv = new Uint8Array(atob(ivB64).split('').map(c => c.charCodeAt(0)));
-    const ct = new Uint8Array(atob(ctB64).split('').map(c => c.charCodeAt(0)));
+    const iv = b64ToBytes(ivB64);
+    const ct = b64ToBytes(ctB64);
     const key = await deriveKey(keyStr);
     const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
-    return JSON.parse(new TextDecoder().decode(pt));
+    return new TextDecoder().decode(pt);
+  }
+
+  // ---- chunked QR transport (STUDY3) ----
+  const QR_CHUNK_PREFIX = 'STUDY3:';
+  const QR_CHUNK_CHARS  = 1500;  // payload chars per QR — keeps module count scannable
+  const QR_SINGLE_MAX   = 2100;  // below this the whole code fits one (dense) QR
+  const QR_CHUNK_MAX_N  = 500;   // sanity cap on chunk count
+
+  // Split a full 'STUDY2:…' code into N self-describing chunk strings.
+  // Chunks are slices of the code STRING, so reassembly = concatenation.
+  function buildQrChunks(code) {
+    const total = Math.min(QR_CHUNK_MAX_N, Math.max(1, Math.ceil(code.length / QR_CHUNK_CHARS)));
+    const id = Array.from(crypto.getRandomValues(new Uint8Array(4)))
+      .map(b => b.toString(16).padStart(2, '0')).join('');
+    const chunks = [];
+    for (let i = 0; i < total; i++) {
+      chunks.push(
+        QR_CHUNK_PREFIX + id + '.' + i + '.' + total + '.' +
+        code.slice(i * QR_CHUNK_CHARS, (i + 1) * QR_CHUNK_CHARS)
+      );
+    }
+    return chunks;
+  }
+
+  // Parse 'STUDY3:<id>.<idx>.<total>.<slice>' -> {id, idx, total, slice} | null
+  function parseQrChunk(text) {
+    const m = text.match(/^STUDY3:([0-9a-f]{8})\.(\d+)\.(\d+)\.([\s\S]+)$/);
+    if (!m) return null;
+    const idx = parseInt(m[2], 10), total = parseInt(m[3], 10);
+    if (total < 1 || total > QR_CHUNK_MAX_N || idx < 0 || idx >= total) return null;
+    return { id: m[1], idx, total, slice: m[4] };
+  }
+
+  // Reassemble ordered slices into the full code string; null if any gap.
+  function assembleQrChunks(parts, total) {
+    let full = '';
+    for (let i = 0; i < total; i++) {
+      if (typeof parts[i] !== 'string') return null;
+      full += parts[i];
+    }
+    return full;
   }
 
   // ============================================================
@@ -2945,6 +3035,8 @@
 
   // Build an AES-encrypted P2P export code (STUDY2: prefix).
   // Payload v3 carries sessions + tombstones so deletes propagate.
+  // The JSON is gzip-compressed first (repetitive record keys compress
+  // ~8-10x) so months of history still fit a manageable QR sequence.
   // Falls back to the legacy STUDY1: format when Web Crypto is
   // unavailable (plain-HTTP non-localhost = insecure context).
   async function generateExportCode() {
@@ -2958,11 +3050,25 @@
     };
     try {
       if (window.crypto && crypto.subtle) {
-        const encrypted = await encryptData(key, payload);
-        return 'STUDY2:' + encrypted;
+        let plain = JSON.stringify(payload);
+        if (plain.length > 1024) {
+          const gz = await gzipCompressText(plain);
+          if (gz) {
+            const gzB64 = GZ_PREFIX + bytesToB64(gz);
+            if (gzB64.length < plain.length) plain = gzB64;
+          }
+        }
+        return 'STUDY2:' + await encryptString(key, plain);
       }
-      // Insecure context — AES unavailable; emit legacy key-hashed code
-      const legacy = { ...payload, v: 1, kh: simpleHash(key) };
+      // Insecure context — AES unavailable; emit legacy key-hashed code.
+      // CompressionStream still works here (no secure-context requirement),
+      // so the v3 payload is gzip'd into the `gz` field to keep the QR
+      // sequence short. Old app versions degrade gracefully (no data).
+      const legacy = { v: 1, kh: simpleHash(key), did: payload.did, ts: payload.ts };
+      const legacyJson = JSON.stringify(payload);
+      const legacyGz = legacyJson.length > 1024 ? await gzipCompressText(legacyJson) : null;
+      if (legacyGz) legacy.gz = bytesToB64(legacyGz);
+      else legacy.sessions = payload.sessions; // too small to be worth compressing
       showToast('Encrypted mode unavailable — using compatible mode', 'warning');
       return 'STUDY1:' + btoa(unescape(encodeURIComponent(JSON.stringify(legacy))));
     } catch (e) {
@@ -2993,14 +3099,34 @@
     try {
       let payload;
       if (code.startsWith('STUDY2:')) {
-        // Encrypted (AES-GCM) payload
-        payload = await decryptData(key, code.slice(7));
+        // Encrypted (AES-GCM) payload — optionally gzip-compressed inside
+        let plain = await decryptString(key, code.slice(7));
+        if (plain.startsWith(GZ_PREFIX)) {
+          try {
+            plain = await gzipDecompressText(b64ToBytes(plain.slice(3)));
+          } catch (e2) {
+            showToast('Compressed data — update this device to import it');
+            return false;
+          }
+        }
+        payload = JSON.parse(plain);
       } else if (code.startsWith('STUDY1:')) {
-        // Legacy plaintext payload (backward compat)
+        // Legacy plaintext payload (backward compat). New exports carry the
+        // gzip'd v3 payload in `gz`; old exports have `sessions` inline.
         const b64 = code.slice(7);
         const json = decodeURIComponent(escape(atob(b64)));
-        payload = JSON.parse(json);
-        if (payload.kh !== simpleHash(key)) { showToast('Sync key mismatch'); return false; }
+        const legacy = JSON.parse(json);
+        if (legacy.kh !== simpleHash(key)) { showToast('Sync key mismatch'); return false; }
+        if (legacy.gz) {
+          try {
+            payload = JSON.parse(await gzipDecompressText(b64ToBytes(legacy.gz)));
+          } catch (e2) {
+            showToast('Compressed data — update this device to import it');
+            return false;
+          }
+        } else {
+          payload = legacy;
+        }
       } else {
         showToast('Invalid sync code format'); return false;
       }
@@ -3088,11 +3214,18 @@
   let qrCanvas = null;
   let qrCtx = null;
   let qrOnResult = null; // callback fired when a QR is detected
+  let qrContinuous = false; // keep scanning after a hit (chunked transfers)
+  let qrLastText = '';       // debounce: same code re-detected within window is skipped
+  let qrLastTextAt = 0;
 
-  /** Start the camera and scan until a QR is found. onResult(code) is called once. */
-  async function startQrCamera(container, onResult) {
+  /** Start the camera and scan until a QR is found. onResult(code) is called
+   *  once — unless opts.continuous, in which case the camera keeps running
+   *  and onResult fires for every newly detected code (chunked QR sync). */
+  async function startQrCamera(container, onResult, opts = {}) {
     if (qrScanning) return false;
     qrOnResult = onResult;
+    qrContinuous = !!opts.continuous;
+    qrLastText = ''; qrLastTextAt = 0;
     container.innerHTML = '';
     try {
       qrStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
@@ -3131,10 +3264,16 @@
         const img = qrCtx.getImageData(0, 0, w, h);
         const res = jsQR(img.data, w, h, { inversionAttempts: 'dontInvert' });
         if (res && res.data) {
-          const cb = qrOnResult;
-          stopQrCamera();
-          if (cb) cb(res.data);
-          return;
+          const now = Date.now();
+          if (res.data === qrLastText && now - qrLastTextAt < 1500) {
+            // Same code still in view — skip duplicate callback
+          } else {
+            qrLastText = res.data; qrLastTextAt = now;
+            const cb = qrOnResult;
+            if (!qrContinuous) stopQrCamera();
+            if (cb) cb(res.data);
+            if (!qrContinuous) return;
+          }
         }
       } catch (e) {}
     }
@@ -3149,7 +3288,69 @@
 
   // ============================================================
   // P2P QR SYNC (QR Sync view — generate/scan encrypted packets)
+  // Large payloads are split into a chunk sequence; the generator
+  // can auto-cycle through the codes while the receiver scans.
   // ============================================================
+  let qrChunks = [];      // current chunk sequence (length 1 = single code)
+  let qrChunkIdx = 0;
+  let qrAutoOn = true;
+  let qrAutoTimer = null;
+
+  function stopQrAutoCycle() {
+    if (qrAutoTimer) { clearInterval(qrAutoTimer); qrAutoTimer = null; }
+  }
+
+  function renderQrCanvas(text, wrap) {
+    const qr = qrcode(0, 'L');
+    qr.addData(text); qr.make();
+    const cellSize = 4; const margin = 0;
+    const moduleCount = qr.getModuleCount();
+    const canvasSize = (moduleCount + margin * 2) * cellSize;
+    const canvas = document.createElement('canvas');
+    canvas.width = canvasSize; canvas.height = canvasSize;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvasSize, canvasSize);
+    ctx.fillStyle = '#000';
+    for (let r = 0; r < moduleCount; r++)
+      for (let c = 0; c < moduleCount; c++)
+        if (qr.isDark(r, c))
+          ctx.fillRect((c + margin) * cellSize, (r + margin) * cellSize, cellSize, cellSize);
+    wrap.appendChild(canvas);
+    return canvas;
+  }
+
+  function updateQrChunkUi() {
+    const multi = qrChunks.length > 1;
+    document.getElementById('qrChunkNav').style.display = multi ? '' : 'none';
+    document.getElementById('qrChunkLabel').style.display = multi ? '' : 'none';
+    document.getElementById('qrGenHintText').textContent = multi
+      ? 'Scan ALL codes on the other device — any order'
+      : 'Show this code to another device for scanning';
+    if (multi) document.getElementById('qrChunkLabel').textContent = `QR ${qrChunkIdx + 1} / ${qrChunks.length}`;
+    document.getElementById('qrAutoBtn').textContent = 'Auto: ' + (qrAutoOn ? 'On' : 'Off');
+  }
+
+  function showQrChunk(idx) {
+    if (!qrChunks.length) return;
+    qrChunkIdx = ((idx % qrChunks.length) + qrChunks.length) % qrChunks.length;
+    const wrap = document.getElementById('qrDisplayWrap');
+    wrap.innerHTML = '';
+    try {
+      renderQrCanvas(qrChunks[qrChunkIdx], wrap);
+    } catch (e) {
+      showToast('QR rendering failed');
+      console.error(e);
+      return;
+    }
+    updateQrChunkUi();
+  }
+
+  function startQrAutoCycle() {
+    stopQrAutoCycle();
+    if (qrChunks.length < 2 || !qrAutoOn) return;
+    qrAutoTimer = setInterval(() => showQrChunk(qrChunkIdx + 1), 2600);
+  }
+
   async function generateQrCode() {
     const key = getSyncKey();
     if (!key) { showToast('Set a sync key on the Sync page first'); return; }
@@ -3158,52 +3359,42 @@
 
     const sizeKB = (code.length / 1024).toFixed(1);
     document.getElementById('qrDataSize').textContent = sizeKB + ' KB';
-    if (sizeKB > 2.5) showToast('Large dataset — QR code may be hard to scan', 'warning');
 
-    try {
-      const qr = qrcode(0, 'L');
-      qr.addData(code); qr.make();
-      const wrap = document.getElementById('qrDisplayWrap');
-      wrap.innerHTML = '';
-      const cellSize = 4; const margin = 0;
-      const moduleCount = qr.getModuleCount();
-      const canvasSize = (moduleCount + margin * 2) * cellSize;
-      const canvas = document.createElement('canvas');
-      canvas.width = canvasSize; canvas.height = canvasSize;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvasSize, canvasSize);
-      ctx.fillStyle = '#000';
-      for (let r = 0; r < moduleCount; r++)
-        for (let c = 0; c < moduleCount; c++)
-          if (qr.isDark(r, c))
-            ctx.fillRect((c + margin) * cellSize, (r + margin) * cellSize, cellSize, cellSize);
-      wrap.appendChild(canvas);
-      showToast('QR code generated');
-    } catch (e) {
-      showToast('QR generation failed — dataset may be too large');
-      console.error(e);
-    }
+    stopQrAutoCycle();
+    // One QR when it fits; otherwise a chunked STUDY3 sequence
+    qrChunks = code.length <= QR_SINGLE_MAX ? [code] : buildQrChunks(code);
+    showQrChunk(0);
+    startQrAutoCycle();
+
+    showToast(qrChunks.length > 1
+      ? `Split into ${qrChunks.length} QR codes — scan all`
+      : 'QR code generated');
   }
 
   function downloadQrCode() {
     const canvas = document.querySelector('#qrDisplayWrap canvas');
     if (!canvas) { showToast('Generate a QR code first'); return; }
     const link = document.createElement('a');
-    link.download = 'study_sync_qr_' + Date.now() + '.png';
+    const suffix = qrChunks.length > 1 ? `_${qrChunkIdx + 1}of${qrChunks.length}` : '';
+    link.download = 'study_sync_qr_' + Date.now() + suffix + '.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
-    showToast('QR image downloaded');
+    showToast(qrChunks.length > 1
+      ? `QR ${qrChunkIdx + 1}/${qrChunks.length} downloaded`
+      : 'QR image downloaded');
   }
 
   async function startQrScanner() {
     const key = getSyncKey();
     if (!key) { showToast('Set a sync key on the Sync page first'); return; }
     const wrap = document.getElementById('qrScanWrap');
+    qrRxState = null; // fresh transfer session
     document.getElementById('qrScanStatus').textContent = 'Scanning';
     document.getElementById('qrScanStartBtn').style.display = 'none';
     document.getElementById('qrScanStopBtn').style.display = '';
     try {
-      await startQrCamera(wrap, handleQrResult);
+      // Continuous mode: chunked transfers span several QR codes
+      await startQrCamera(wrap, handleQrResult, { continuous: true });
     } catch (e) {
       document.getElementById('qrScanStatus').textContent = 'Camera error';
       document.getElementById('qrScanStartBtn').style.display = '';
@@ -3212,16 +3403,28 @@
     }
   }
 
+  /** Restore the scan panel after a finished merge attempt. */
+  function finishQrScan(statusText, placeholderText) {
+    stopQrCamera();
+    qrRxState = null;
+    const wrap = document.getElementById('qrScanWrap');
+    if (wrap) wrap.innerHTML = `<div class="qr-scan-placeholder">${placeholderText}</div>`;
+    document.getElementById('qrScanStatus').textContent = statusText;
+    document.getElementById('qrScanStartBtn').style.display = '';
+    document.getElementById('qrScanStopBtn').style.display = 'none';
+  }
+
   function handleQrResult(code) {
+    const text = (code || '').trim();
+    // Chunked transfer (STUDY3) — accumulate until the sequence is complete
+    if (text.startsWith(QR_CHUNK_PREFIX)) { handleQrChunkResult(text); return; }
+    // Single-code transfer — merge directly
+    stopQrCamera();
     showToast('QR detected — merging data…');
     setTimeout(async () => {
-      const ok = await importSyncCode(code);
-      const wrap = document.getElementById('qrScanWrap');
+      const ok = await importSyncCode(text);
       if (ok) {
-        wrap.innerHTML = '<div class="qr-scan-placeholder">Scan succeeded. You may scan again.</div>';
-        document.getElementById('qrScanStatus').textContent = 'Merged';
-        document.getElementById('qrScanStartBtn').style.display = '';
-        document.getElementById('qrScanStopBtn').style.display = 'none';
+        finishQrScan('Merged', 'Scan succeeded. You may scan again.');
       } else {
         document.getElementById('qrScanStatus').textContent = 'Merge failed';
         startQrScanner();
@@ -3229,8 +3432,38 @@
     }, 300);
   }
 
+  // ---- chunked transfer receiving side ----
+  // Accumulates STUDY3 chunks (any order, duplicates harmless) and
+  // auto-merges once every chunk of the sequence has been seen.
+  let qrRxState = null; // { id, total, parts: { idx: slice } }
+
+  function handleQrChunkResult(text) {
+    const c = parseQrChunk(text);
+    if (!c) { showToast('Malformed QR chunk'); return; }
+    // New transfer session (or regenerated sequence) -> reset accumulator
+    if (!qrRxState || qrRxState.id !== c.id || qrRxState.total !== c.total) {
+      qrRxState = { id: c.id, total: c.total, parts: {} };
+    }
+    qrRxState.parts[c.idx] = c.slice;
+    const got = Object.keys(qrRxState.parts).length;
+    document.getElementById('qrScanStatus').textContent = `Receiving ${got}/${c.total}`;
+    if (got < c.total) return;
+
+    // All chunks received — reassemble into the full STUDY2 code and merge
+    const full = assembleQrChunks(qrRxState.parts, c.total);
+    qrRxState = null;
+    if (!full) { showToast('Chunk reassembly failed'); return; }
+    document.getElementById('qrScanStatus').textContent = 'Merging…';
+    showToast('All codes received — merging…');
+    importSyncCode(full).then(ok => {
+      if (ok) finishQrScan('Merged', 'Scan succeeded. You may scan again.');
+      else finishQrScan('Merge failed', 'Merge failed — tap START CAMERA to retry.');
+    });
+  }
+
   function stopQrScanner() {
     stopQrCamera();
+    qrRxState = null;
     const wrap = document.getElementById('qrScanWrap');
     if (wrap) wrap.innerHTML = '<div class="qr-scan-placeholder">Tap START CAMERA to begin scanning</div>';
     const startBtn = document.getElementById('qrScanStartBtn');
@@ -3246,6 +3479,7 @@
     document.getElementById('qrGenSection').classList.toggle('active', mode === 'generate');
     document.getElementById('qrScanSection').classList.toggle('active', mode === 'scan');
     if (mode !== 'scan') stopQrScanner();
+    if (mode !== 'generate') stopQrAutoCycle();
   }
 
   // ============================================================
@@ -3399,7 +3633,7 @@
     if (viewName === 'sync') renderSyncView();
     if (viewName === 'community') loadCommunities();
     if (viewName === 'account') renderAccount();
-    if (viewName !== 'qr') stopQrScanner();
+    if (viewName !== 'qr') { stopQrScanner(); stopQrAutoCycle(); }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -4477,6 +4711,17 @@
     });
     document.getElementById('qrGenBtn').addEventListener('click', generateQrCode);
     document.getElementById('qrDownloadBtn').addEventListener('click', downloadQrCode);
+    document.getElementById('qrPrevBtn').addEventListener('click', () => {
+      qrAutoOn = false; stopQrAutoCycle(); showQrChunk(qrChunkIdx - 1);
+    });
+    document.getElementById('qrNextBtn').addEventListener('click', () => {
+      qrAutoOn = false; stopQrAutoCycle(); showQrChunk(qrChunkIdx + 1);
+    });
+    document.getElementById('qrAutoBtn').addEventListener('click', () => {
+      qrAutoOn = !qrAutoOn;
+      if (qrAutoOn) startQrAutoCycle(); else stopQrAutoCycle();
+      updateQrChunkUi();
+    });
     document.getElementById('qrScanStartBtn').addEventListener('click', startQrScanner);
     document.getElementById('qrScanStopBtn').addEventListener('click', stopQrScanner);
 

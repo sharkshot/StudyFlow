@@ -61,6 +61,9 @@ built from whitespace and type.
 - For two devices that are both offline, pair them with a shared sync key.
 - Generate an AES-256-GCM encrypted sync code (or QR) on one device and
   import/scan it on the other.
+- Large histories are gzip-compressed and split into a sequence of QR codes
+  (auto-cycling, any scan order) — no practical size limit for months of
+  records.
 - The key is derived via PBKDF2 (100k iterations). Legacy plaintext codes
   (`STUDY1:`) are still accepted.
 - Importing runs a validated, tombstone-aware, last-write-wins merge —

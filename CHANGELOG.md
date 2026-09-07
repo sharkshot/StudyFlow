@@ -4,7 +4,7 @@ All notable changes to **StudyFlow** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v3.10.0] — 2026-09-07
+## [v3.20.0] — 2026-09-07
 
 Performance and reliability focused release. The P2P sync module is retained
 alongside the cloud dual-mode sync; the heatmap rendering and the Pomodoro
@@ -53,6 +53,20 @@ timer are hardened.
   browsers) no longer show the QR Sync entry — the camera-to-camera flow does
   not apply there and desktop uses cloud sync exclusively. Direct
   `switchView('qr')` calls are redirected to the Sync view with a hint.
+- **Chunked multi-QR transfers (STUDY3).** A single QR code caps at ~2.9KB,
+  so months of records no longer fit. Exported payloads are now
+  gzip-compressed (repetitive record keys shrink ~8-10x via
+  `CompressionStream`) and, when still too large, split into a
+  self-describing chunk sequence `STUDY3:<id>.<idx>.<total>.<slice>`. The
+  generator shows a `QR 1/N` label with Prev/Next paging and a default-on
+  Auto cycle (2.6s per code); the scanner runs continuously, accepts chunks
+  in any order (duplicates are idempotent, 1.5s debounce), shows
+  `Receiving x/N` progress, and auto-merges once the sequence is complete.
+  Security is unchanged — chunks are ciphertext slices, integrity is
+  verified by the AES-GCM tag at decryption time. The legacy `STUDY1:`
+  insecure-context path also compresses now (via a `gz` field). Measured:
+  3 months ≈ 900 sessions → 19 codes; 500 sessions that needed 95
+  uncompressed codes now take 12.
 - **P2P merge engine rewrite.** Importing a sync code now runs a validated,
   tombstone-aware, last-write-wins merge: records are sanitised and clamped
   before entering the dataset; same-id records are overwritten only when the
