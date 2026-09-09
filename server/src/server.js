@@ -69,19 +69,39 @@ app.get('*', (req, res, next) => {
   res.sendFile(path.join(__dirname, '..', '..', 'build', 'share', 'index.html'));
 });
 
-(async () => {
+/**
+ * Start the StudyFlow server on PORT.
+ * Returns the `http.Server` instance once it's listening.
+ * Safe to import multiple times — the auto-start only runs when this file is
+ * the entry point (`node src/server.js`), not when it's `require()`'d (e.g.
+ * by the Electron desktop main process, which starts the server in-process).
+ */
+async function start() {
   try {
     const driver = await db.init();
-    app.listen(PORT, () => {
-      console.log(`\n  StudyFlow server running on http://localhost:${PORT}`);
-      console.log(`  Database driver: ${driver}`);
-      console.log(`  Frontend: http://localhost:${PORT}\n`);
+    return await new Promise((resolve, reject) => {
+      const server = app.listen(PORT, () => {
+        console.log(`\n  StudyFlow server running on http://localhost:${PORT}`);
+        console.log(`  Database driver: ${driver}`);
+        console.log(`  Frontend: http://localhost:${PORT}\n`);
+        resolve(server);
+      });
+      server.on('error', reject);
     });
   } catch (e) {
     console.error('Failed to start server:', e);
     if (e && /ECONNREFUSED|ER_ACCESS_DENIED|ETIMEDOUT|ENOTFOUND/.test(e.message || '')) {
       console.error('Hint: check MYSQL_* env vars, or set DB_STRICT=0 to allow the SQLite fallback.');
     }
-    process.exit(1);
+    throw e;
   }
-})();
+}
+
+// Auto-start only when run directly (`node src/server.js`).
+// When required by another module (e.g. the Electron desktop main process),
+// the importer calls `start()` itself.
+if (require.main === module) {
+  start().catch((e) => { console.error(e); process.exit(1); });
+}
+
+module.exports = { app, start };

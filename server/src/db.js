@@ -53,7 +53,9 @@ function initSqlite() {
   // Node 22's built-in `node:sqlite` when the binding can't be resolved
   // (e.g. GitHub-blocked npm prebuild + no node-gyp). The subset of the API
   // db.js uses (prepare/all/get/run/exec/pragma) is compatible.
-  const dbPath = path.join(__dirname, '..', 'data.sqlite');
+  const dbPath = process.env.SF_DATA_DIR
+    ? path.join(process.env.SF_DATA_DIR, 'data.sqlite')
+    : path.join(__dirname, '..', 'data.sqlite');
   let Better;
   try { Better = require('better-sqlite3'); } catch (_) { Better = null; }
   if (Better) {

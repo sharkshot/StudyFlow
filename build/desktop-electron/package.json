@@ -1,7 +1,7 @@
 {
   "name": "studyflow-desktop",
   "productName": "StudyFlow",
-  "version": "3.22.0",
+  "version": "3.22.1",
   "description": "Brutalist black & white study time tracker (Pomodoro + Heatmap) — desktop build",
   "main": "main.js",
   "private": true,
@@ -29,7 +29,11 @@
       "main.js",
       "preload.js",
       "app-web/**",
+      "server/**",
       "package.json"
+    ],
+    "asarUnpack": [
+      "server/node_modules/better-sqlite3/build/Release/*.node"
     ],
     "directories": {
       "output": "dist",

@@ -4,6 +4,34 @@ All notable changes to **StudyFlow** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v3.22.1] — 2026-09-09
+
+Self-contained desktop build and SQLite fallback for restricted environments.
+
+### Added
+
+- **Self-contained desktop installers.** `build/desktop-electron/main.js`
+  now starts the StudyFlow backend server in-process inside the Electron
+  main process — no extra `node` binary, no manual `localhost:3000` setup
+  by the user. Double-click the `.exe` / `.AppImage` / `.dmg` and the app
+  is immediately ready for register / log in and cloud sync.
+- **`node:sqlite` fallback.** `server/src/db.js` falls back to Node 22's
+  built-in `node:sqlite` (experimental) when the `better-sqlite3` native
+  binding can't be loaded — e.g. when the GitHub prebuild download is
+  blocked and no local `node-gyp` is available. Lets the server run on
+  any Node 22+ machine with no native build tools.
+- **`SF_DATA_DIR` env var.** `server/src/db.js` respects `SF_DATA_DIR` for
+  the SQLite file location, so the bundled desktop app writes to Electron's
+  writable `userData` directory instead of the asar's read-only filesystem.
+
+### Changed
+
+- Desktop CI jobs (`build.yml`) copy `server/` into `build/desktop-electron/`
+  and install its dependencies. The electron-builder `files` array now
+  includes `server/**` with `better-sqlite3`'s native `.node` unpacked.
+- Version bumped to **3.22.1** across `server/`, `build/android-cordova/`
+  (package + `config.xml`) and `build/desktop-electron/`.
+
 ## [v3.22.0] — 2026-09-09
 
 Security and community-lifecycle release, plus automated packaging.

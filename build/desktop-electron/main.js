@@ -1,11 +1,36 @@
 // Electron main process for StudyFlow
 // Designed to mimic the 1280x800 Android tablet (landscape) canvas.
+//
+// Also starts the StudyFlow backend server in-process so the desktop build
+// is self-contained: double-click the installer, get a working Pomodoro +
+// multi-device sync app, no separate server setup needed. The server runs
+// on http://localhost:3000 and writes its SQLite file to Electron's
+// userData dir (writable across versions), with a stable JWT signing
+// secret persisted next to it so tokens survive restarts.
 const { app, BrowserWindow, screen, Menu, shell, nativeTheme, ipcMain } = require('electron');
 const path = require('path');
+const fs = require('fs');
+const crypto = require('crypto');
 
 nativeTheme.themeSource = 'dark';
 
 const DEV = process.env.SF_DEV === '1';
+
+// Persistent JWT signing secret for the bundled server. Generated on first
+// launch and stored in userData so existing login tokens keep working after
+// the app restarts.
+function getJwtSecret() {
+  const userData = app.getPath('userData');
+  const secretFile = path.join(userData, 'jwt-secret.key');
+  try {
+    return fs.readFileSync(secretFile, 'utf8').trim();
+  } catch {
+    fs.mkdirSync(userData, { recursive: true });
+    const secret = crypto.randomBytes(32).toString('hex');
+    fs.writeFileSync(secretFile, secret, { mode: 0o600 });
+    return secret;
+  }
+}
 
 function createWindow() {
   const disp = screen.getPrimaryDisplay().workAreaSize;
@@ -63,7 +88,28 @@ function createWindow() {
   }
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  // Point the bundled server at a writable directory and give it a stable
+  // signing secret BEFORE we load it (server.js reads both at module init).
+  process.env.SF_DATA_DIR = app.getPath('userData');
+  process.env.JWT_SECRET = getJwtSecret();
+
+  let serverModule;
+  try {
+    serverModule = require('./server/src/server');
+  } catch (e) {
+    console.error('[StudyFlow] Failed to load bundled server:', e);
+    app.quit();
+    return;
+  }
+  try {
+    await serverModule.start();
+  } catch (e) {
+    console.error('[StudyFlow] Bundled server failed to start:', e);
+    app.quit();
+    return;
+  }
+
   createWindow();
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
