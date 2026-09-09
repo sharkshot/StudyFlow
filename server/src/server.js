@@ -22,6 +22,20 @@ const syncRouter = require('./sync');
 const communityRouter = require('./community');
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const DEFAULT_JWT_SECRET = 'studyflow-dev-secret-change-me';
+
+// Refuse to start with the well-known default signing key: anyone who knows it
+// can mint a valid token for any user.
+if (NODE_ENV === 'production' && (!process.env.JWT_SECRET || process.env.JWT_SECRET === DEFAULT_JWT_SECRET)) {
+  console.error('\n  FATAL: JWT_SECRET must be set to a strong random value in production.');
+  console.error('  Refusing to start — the default secret is publicly known.\n');
+  process.exit(1);
+}
+if (!process.env.JWT_SECRET) {
+  console.warn('\n  WARNING: JWT_SECRET is not set; using the insecure default.');
+  console.warn('  Set JWT_SECRET=<random string> before exposing this server.\n');
+}
 
 const app = express();
 app.use(cors());
@@ -56,6 +70,9 @@ app.get('*', (req, res, next) => {
     });
   } catch (e) {
     console.error('Failed to start server:', e);
+    if (e && /ECONNREFUSED|ER_ACCESS_DENIED|ETIMEDOUT|ENOTFOUND/.test(e.message || '')) {
+      console.error('Hint: check MYSQL_* env vars, or set DB_STRICT=0 to allow the SQLite fallback.');
+    }
     process.exit(1);
   }
 })();
