@@ -48,12 +48,35 @@ async function initMysql() {
 }
 
 function initSqlite() {
-  const Database = require('better-sqlite3');
+  // Prefer the original `better-sqlite3` (sync API, very fast). Its native
+  // binding only loads at `new Database()`, so we probe there and fall back to
+  // Node 22's built-in `node:sqlite` when the binding can't be resolved
+  // (e.g. GitHub-blocked npm prebuild + no node-gyp). The subset of the API
+  // db.js uses (prepare/all/get/run/exec/pragma) is compatible.
   const dbPath = path.join(__dirname, '..', 'data.sqlite');
-  sqliteDb = new Database(dbPath);
+  let Better;
+  try { Better = require('better-sqlite3'); } catch (_) { Better = null; }
+  if (Better) {
+    try {
+      sqliteDb = new Better(dbPath);
+      sqliteDb.pragma('journal_mode = WAL');
+      driver = 'sqlite';
+      console.log('[db] SQLite (better-sqlite3) opened:', dbPath);
+      return;
+    } catch (e) {
+      console.warn('[db] better-sqlite3 init failed (' + e.message.split('\n')[0] + '), falling back to built-in node:sqlite.');
+    }
+  }
+  const { DatabaseSync } = require('node:sqlite');
+  sqliteDb = {
+    _d: new DatabaseSync(dbPath),
+    pragma(s) { this._d.exec('PRAGMA ' + s); return this._d; },
+    prepare(sql) { return this._d.prepare(sql); },
+    exec(sql) { this._d.exec(sql); },
+  };
   sqliteDb.pragma('journal_mode = WAL');
   driver = 'sqlite';
-  console.log('[db] SQLite fallback opened:', dbPath);
+  console.log('[db] SQLite (node:sqlite built-in) opened:', dbPath);
 }
 
 // Convert MySQL ? placeholders to SQLite-compatible (they already use ?)
