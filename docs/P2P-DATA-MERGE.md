@@ -1,7 +1,7 @@
 # StudyFlow P2P 数据合并与 QR 同步 — 技术说明
 
-> 版本：v3.10 · 更新日期：2026-09-07
-> 适用范围：`build/share/index.html`（P2P 合并引擎 + 平台门控），本文档面向开发与维护者。
+> 版本：v3.21 · 更新日期：2026-09-09
+> 适用范围：`build/share/index.html`（P2P 合并引擎 + 平台门控 + 摄像头前置检查），本文档面向开发与维护者。
 
 ***
 
@@ -203,6 +203,43 @@ renderAll();
    `Merged from <设备ID>: +3 added, 1 updated, -1 removed`；
 5. A、B 互换角色重复一次即可完成双向同步（每次合并只传输"生成端"的数据集）。
 
+### 4.1 摄像头前置条件（v3.21 新增）
+
+扫码依赖 `getUserMedia`，它有三个硬性前提，任缺其一摄像头都不会启动：
+
+| 前提                 | 说明                                                                                                 | 缺失时的表现                                             |
+| ------------------ | -------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| **安全上下文**          | 必须是 HTTPS、`localhost` 或 `file://`。手机通过 `http://192.168.x.x:3000` 访问属于非安全上下文            | `navigator.mediaDevices` 为 `undefined`，旧版直接抛 TypeError |
+| **Android 运行时权限**  | Android 6+（minSdk 24）光在 `AndroidManifest.xml` 声明 `CAMERA` **不够**，还必须在运行时向用户申请                 | `NotAllowedError`，且**系统不弹任何权限框** —— 表现为"点了没反应"      |
+| **WebView 授权**     | Cordova 的 `SystemWebChromeClient` 需放行 `onPermissionRequest`（`config.xml` 已 `allow-navigation="*"`） | `NotAllowedError`                                   |
+
+**历史缺陷**：v3.20 及之前，Cordova 工程（`build/android-cordova/package.json`）的 `plugins` 为空 —— 从未引入任何权限插件，因此**运行时权限永远没人申请**，`getUserMedia` 在 APK 上必然瞬间失败。这正是"手机和平板点击扫码没反应"的根因。
+
+**修复措施**（`ensureCameraReady()`，位于 `startQrCamera()` 之前）：
+
+1. **能力探测** —— `navigator.mediaDevices` 不存在时，按 `window.isSecureContext` 给出不同提示（非安全上下文提示"需要 HTTPS"）；
+2. **主动申请运行时权限** —— 检测到 `cordova-plugin-android-permissions` 时，先 `checkPermission`，未授权则 `requestPermission`，成功后才调用 `getUserMedia`；
+3. **错误可读化** —— `describeCameraError()` 把 `NotAllowedError` / `NotFoundError` / `NotReadableError` 等映射为具体中文可行动文案，不再抛原始 TypeError；
+4. **兜底通道** —— 扫码失败时在扫描面板内渲染错误说明 + "Paste sync code instead" 按钮，一键跳到 Sync 页粘贴同步码（P2P 同步不依赖摄像头也能完成）；
+5. **清理僵尸状态** —— `startQrScanner()` 启动前先 `stopQrCamera()`，避免 `qrScanning` 卡在 `true` 导致 `startQrCamera()` 静默返回 `false`；
+6. **播放兜底** —— `video.play()` 的 Promise 显式 catch，并在 1.5s 后补一次 kick，防止部分 WebView 不触发 `loadedmetadata` 而卡在 "Scanning"。
+
+**重新打包时必须执行**：
+
+```bash
+cd build/android-cordova
+npm run plugins:restore   # 安装 cordova-plugin-android-permissions
+npm run build:apk
+```
+
+### 4.2 手动兜底（无摄像头也能同步）
+
+扫描不可用时，仍可完成 P2P 同步：
+
+1. 设备 A：**QR Sync → Generate QR**，或 Sync 页复制同步码；
+2. 设备 B：Sync 页粘贴到 `Import` 文本框 → `Import`；
+3. 合并引擎与扫码路径完全相同，行为一致。
+
 ***
 
 ## 5. 关键存储键一览
@@ -218,13 +255,26 @@ renderAll();
 
 ***
 
-## 6. 测试记录（2026-09-07）
+## 6. 测试记录（2026-09-07，2026-09-09 补充）
 
 - **单元测试**：合并引擎 28/28 通过，覆盖数据清洗（11 项）、新增/LWW 覆盖/过期跳过、远端墓碑删除、本地墓碑防复活、载荷内自洽、非法行计数、空载荷幂等、A↔B 全链路模拟（含云端队列扇出验证）；
 
 - **浏览器 E2E**：桌面视口 6/6 通过——`isDesktopDevice()` 返回 `true`、菜单无 QR Sync 项、`navQrItem` 存在但隐藏、`switchView('qr')` 重定向至 Sync 页并提示、控制台无报错；
 
-- **回归**：手机端底部 QR 标签不受影响（门控仅作用于桌面判定路径）。
+- **回归**：手机端底部 QR 标签不受影响（门控仅作用于桌面判定路径）；
+
+- **2026-09-09 补充（移动视口 CDP 实测）**：补做了手机视口（412×915、`pointer: coarse`、`maxTouchPoints: 5`）的端到端验证，覆盖四种摄像头场景——
+
+  | 场景                      | 修复前                                                    | 修复后                                        |
+  | ----------------------- | ------------------------------------------------------ | ------------------------------------------ |
+  | 摄像头可用                   | 正常                                                      | 正常（`getUserMedia` 调用 1 次，视频 `readyState=4`） |
+  | 权限被拒 `NotAllowedError` | 提示 `Camera access denied: Permission denied`            | "Camera permission denied — 请在系统设置中授权后重试"  |
+  | 无摄像头 `NotFoundError`   | 提示 `Camera access denied: Requested device not found`   | "No usable camera found on this device."    |
+  | 非安全上下文（无 `mediaDevices`） | 提示 `Cannot read properties of undefined (reading 'getUserMedia')` | "Camera needs HTTPS (or localhost)." + 粘贴兜底按钮 |
+
+  四种场景均不再抛未捕获异常，失败时 Start 按钮恢复可点，兜底按钮可正常渲染。
+
+> ⚠️ 原测试记录只覆盖了**桌面视口**，移动端"不受影响"属于推断而非实测 —— 摄像头缺陷正是由此漏网。移动链路必须真机或移动视口验证。
 
 ***
 
