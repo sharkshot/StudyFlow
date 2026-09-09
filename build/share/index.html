@@ -3218,6 +3218,51 @@
   let qrLastText = '';       // debounce: same code re-detected within window is skipped
   let qrLastTextAt = 0;
 
+  /** Turn a raw camera exception into something a human can act on. */
+  function describeCameraError(e) {
+    const n = e && e.name;
+    if (e && e.code === 'NO_API') return e.message;
+    if (n === 'NotAllowedError' || n === 'SecurityError' || n === 'PermissionDeniedError')
+      return 'Camera permission denied — grant it in system settings, then try again.';
+    if (n === 'NotFoundError' || n === 'DevicesNotFoundError' || n === 'OverconstrainedError')
+      return 'No usable camera found on this device.';
+    if (n === 'NotReadableError' || n === 'TrackStartError')
+      return 'Camera is busy — close other camera apps and retry.';
+    return (e && e.message) ? e.message : 'Unknown camera error';
+  }
+
+  /** Preflight: is there a camera API at all, and may we use it?
+   *  On Cordova/Android the WebView needs the *runtime* permission granted
+   *  before getUserMedia is called — otherwise it rejects instantly with
+   *  NotAllowedError and the user never sees a permission dialog. */
+  async function ensureCameraReady() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      const msg = !window.isSecureContext
+        ? 'Camera needs HTTPS (or localhost). This page is not in a secure context.'
+        : 'This browser does not expose the camera API.';
+      throw Object.assign(new Error(msg), { code: 'NO_API' });
+    }
+    const perms = window.cordova && window.cordova.plugins && window.cordova.plugins.permissions;
+    if (perms && perms.CAMERA) {
+      await new Promise((resolve, reject) => {
+        const settle = (ok) => ok
+          ? resolve()
+          : reject(Object.assign(new Error('Camera permission denied'), { code: 'DENIED' }));
+        const request = () => perms.requestPermission(
+          perms.CAMERA,
+          (s) => settle(!!(s && s.hasPermission)),
+          (err) => reject(err)
+        );
+        try {
+          perms.checkPermission(perms.CAMERA, (s) => {
+            if (s && s.hasPermission) return resolve();
+            request();
+          }, request);
+        } catch (err) { request(); }
+      });
+    }
+  }
+
   /** Start the camera and scan until a QR is found. onResult(code) is called
    *  once — unless opts.continuous, in which case the camera keeps running
    *  and onResult fires for every newly detected code (chunked QR sync). */
@@ -3228,7 +3273,10 @@
     qrLastText = ''; qrLastTextAt = 0;
     container.innerHTML = '';
     try {
-      qrStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      await ensureCameraReady();
+      qrStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' } }
+      });
       const video = document.createElement('video');
       video.setAttribute('playsinline', 'true');
       video.muted = true;
@@ -3240,11 +3288,15 @@
       const line = document.createElement('div');
       line.className = 'qr-scan-line';
       container.appendChild(line);
-      video.addEventListener('loadedmetadata', () => {
-        video.play();
-        qrScanning = true;
-        qrScanLoop(video);
-      });
+      const kick = () => {
+        const p = video.play();
+        if (p && p.catch) p.catch(() => {}); // autoplay policy — never fatal here
+        if (!qrScanning) { qrScanning = true; qrScanLoop(video); }
+      };
+      video.addEventListener('loadedmetadata', kick);
+      // Safety net: some Android WebViews never fire loadedmetadata for a
+      // MediaStream, which used to leave the panel stuck on "Scanning".
+      setTimeout(() => { if (!qrScanning && video.srcObject) kick(); }, 1500);
       return true;
     } catch (e) {
       qrOnResult = null;
@@ -3386,8 +3438,11 @@
 
   async function startQrScanner() {
     const key = getSyncKey();
-    if (!key) { showToast('Set a sync key on the Sync page first'); return; }
+    if (!key) { showToast('Set a sync key on the Sync page first', 'warning'); return; }
     const wrap = document.getElementById('qrScanWrap');
+    // Clear any stale scan state — otherwise startQrCamera() bails out early
+    // and the button appears to do nothing at all.
+    stopQrCamera();
     qrRxState = null; // fresh transfer session
     document.getElementById('qrScanStatus').textContent = 'Scanning';
     document.getElementById('qrScanStartBtn').style.display = 'none';
@@ -3396,11 +3451,45 @@
       // Continuous mode: chunked transfers span several QR codes
       await startQrCamera(wrap, handleQrResult, { continuous: true });
     } catch (e) {
+      const msg = describeCameraError(e);
+      stopQrCamera();
+      renderQrScanFallback(wrap, msg);
       document.getElementById('qrScanStatus').textContent = 'Camera error';
       document.getElementById('qrScanStartBtn').style.display = '';
       document.getElementById('qrScanStopBtn').style.display = 'none';
-      showToast('Camera access denied: ' + e.message);
+      showToast(msg, 'warning');
+      console.warn('[StudyFlow] camera start failed:', e);
     }
+  }
+
+  /** Show why the camera failed, plus a way to finish the sync without it. */
+  function renderQrScanFallback(wrap, message) {
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    const box = document.createElement('div');
+    box.className = 'qr-scan-placeholder';
+    const text = document.createElement('div');
+    text.textContent = message;
+    text.style.marginBottom = 'var(--space-sm)';
+    box.appendChild(text);
+    const hint = document.createElement('div');
+    hint.textContent = 'You can still sync by pasting the code on the Sync page.';
+    hint.style.marginBottom = 'var(--space-sm)';
+    hint.style.opacity = '0.7';
+    box.appendChild(hint);
+    const btn = document.createElement('button');
+    btn.className = 'btn-link';
+    btn.id = 'qrScanPasteBtn';
+    btn.textContent = 'Paste sync code instead';
+    btn.addEventListener('click', () => {
+      switchView('sync');
+      setTimeout(() => {
+        const ta = document.getElementById('importCodeArea');
+        if (ta) { ta.scrollIntoView({ block: 'center', behavior: 'smooth' }); ta.focus(); }
+      }, 350);
+    });
+    box.appendChild(btn);
+    wrap.appendChild(box);
   }
 
   /** Restore the scan panel after a finished merge attempt. */
@@ -3507,25 +3596,27 @@
   // device that is already signed in)
   // ============================================================
   async function startAuthQrScanner() {
-    if (qrScanning) return;
+    stopQrCamera(); // clear stale state so the button never silently no-ops
     const box = document.getElementById('authQrBox');
     try {
       await startQrCamera(box, handleAuthQrResult);
     } catch (e) {
+      const msg = describeCameraError(e);
       // Camera unavailable (permission / no camera) — manual token entry fallback
       box.innerHTML = `
         <div style="margin-bottom:var(--space-sm);">
           <input type="text" id="qrTokenInput" placeholder="Paste QR token here" style="width:100%;background:transparent;border:none;border-bottom:1px solid var(--color-divider-dark);color:var(--color-white);font-family:inherit;font-size:var(--text-body);padding:var(--space-xs) 0;outline:none;text-align:center;">
         </div>
         <button class="auth-submit" id="qrTokenSubmitBtn">Sign In</button>
-        <p class="auth-qr-hint">Camera unavailable — enter the token shown under the QR code manually.</p>`;
+        <p class="auth-qr-hint">${msg} — enter the token shown under the QR code manually.</p>`;
       document.getElementById('qrTokenSubmitBtn').addEventListener('click', async () => {
         const token = document.getElementById('qrTokenInput').value.trim();
         if (!token) { showToast('Enter a token'); return; }
         try { await doQrLogin(token); onAuthSuccess(); }
         catch (e2) { showToast('QR login failed: ' + e2.message); }
       });
-      if (e && e.name === 'NotAllowedError') showToast('Camera permission denied', 'warning');
+      showToast(msg, 'warning');
+      console.warn('[StudyFlow] auth camera start failed:', e);
     }
   }
 
