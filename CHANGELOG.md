@@ -4,6 +4,69 @@ All notable changes to **StudyFlow** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v3.21.0] — 2026-09-09
+
+Correctness and reliability release. Fixes a MySQL transaction bug that could
+leave `/api/sync/push` partially written, makes proposal expiry actually take
+effect, and fixes QR scanning doing nothing at all on phone and tablet.
+
+### Fixed
+
+- **MySQL transactions now pin a single connection.** `db.begin()` previously
+  issued `pool.query('START TRANSACTION')`, but a connection pool may hand a
+  different connection to each subsequent query — so the statements in
+  `/api/sync/push` were never really in one transaction, and a mid-batch
+  failure could leave a partially merged dataset that `rollback()` could not
+  undo. `begin()` now acquires a dedicated connection (`pool.getConnection()`
+  + `beginTransaction()`) that all queries reuse until `commit()`/`rollback()`,
+  which also releases it. A new `db.transaction(fn)` helper wraps the
+  commit/rollback/error-propagation dance.
+- **Proposal expiry is enforced.** `expires_at` was written but never read, so a
+  proposal from 7 days ago could still be voted on. `expireStaleProposals()`
+  now runs before listing and before voting: proposals past their window are
+  closed as `passed` (if a majority voted for) or `expired`, and voting on a
+  non-active proposal reports its actual status.
+- **QR scan is fixed on phone and tablet.** Tapping *Start Camera* did nothing
+  because the Cordova project declared `CAMERA` in the manifest but never
+  requested the Android **runtime** permission — `getUserMedia` rejected
+  instantly with `NotAllowedError` and no system dialog ever appeared. See
+  `docs/P2P-DATA-MERGE.md` §4.1 for the full analysis. Changes:
+  - `ensureCameraReady()` runs before `getUserMedia`: detects a missing camera
+    API (and reports "needs HTTPS" when `isSecureContext` is false) and, when
+    `cordova-plugin-android-permissions` is present, checks and requests the
+    runtime permission first.
+  - `describeCameraError()` maps `NotAllowedError` / `NotFoundError` /
+    `NotReadableError` / `OverconstrainedError` to actionable messages instead
+    of surfacing a raw `TypeError`.
+  - Camera failures now render an inline explanation plus a **Paste sync code
+    instead** button, so P2P sync still completes without a camera.
+  - `startQrScanner()` clears stale state with `stopQrCamera()` first — a stuck
+    `qrScanning` flag made every later tap a silent no-op.
+  - `video.play()` rejections are caught, with a 1.5s safety kick for WebViews
+    that never fire `loadedmetadata` (previously stuck on "Scanning").
+  - `facingMode` is now a soft `{ ideal: 'environment' }` constraint.
+- **`POST /api/sync/push` no longer returns the user's entire history.** It
+  echoed every session row back on every push; it now returns only the rows
+  touched by that push, plus an `applied` count. Payloads over 5000 sessions
+  are rejected with `413`.
+
+### Security
+
+- **The server refuses to start in production with the default JWT secret.**
+  `NODE_ENV=production` with `JWT_SECRET` unset or left at
+  `studyflow-dev-secret-change-me` is now a fatal startup error; otherwise it
+  logs a warning.
+- **SQLite fallback can be disabled.** `DB_STRICT=1` makes an unreachable MySQL
+  a hard failure instead of silently writing to a local `data.sqlite` (which
+  risks splitting data across two databases). Defaults to strict when
+  `NODE_ENV=production`.
+
+### Changed
+
+- `build/android-cordova/package.json` now declares
+  `cordova-plugin-android-permissions`; `npm run build:apk` restores it
+  automatically via `npm run plugins:restore`.
+
 ## [v3.20.0] — 2026-09-07
 
 Performance and reliability focused release. The P2P sync module is retained
