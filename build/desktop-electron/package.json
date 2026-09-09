@@ -1,1 +1,56 @@
-ewogICJuYW1lIjogInN0dWR5Zmxvdy1kZXNrdG9wIiwKICAicHJvZHVjdE5hbWUiOiAiU3R1ZHlGbG93IiwKICAidmVyc2lvbiI6ICIzLjIyLjAiLAogICJkZXNjcmlwdGlvbiI6ICJCcnV0YWxpc3QgYmxhY2sgJiB3aGl0ZSBzdHVkeSB0aW1lIHRyYWNrZXIgKFBvbW9kb3JvICsgSGVhdG1hcCkg4oCUIGRlc2t0b3AgYnVpbGQiLAogICJtYWluIjogIm1haW4uanMiLAogICJwcml2YXRlIjogdHJ1ZSwKICAiYXV0aG9yIjogIm5pbmUtdG8tZml2ZS1zdHVkaW8iLAogICJyZXBvc2l0b3J5IjogewogICAgInR5cGUiOiAiZ2l0IiwKICAgICJ1cmwiOiAiaHR0cHM6Ly9naXRodWIuY29tL3NoYXJrc2hvdC9TdHVkeUZsb3cuZ2l0IgogIH0sCiAgInNjcmlwdHMiOiB7CiAgICAicHJlcGFyZSI6ICJub2RlIHNjcmlwdHMvc3luYy13ZWItYXNzZXRzLmpzIiwKICAgICJzdGFydCI6ICJub2RlIHNjcmlwdHMvc3luYy13ZWItYXNzZXRzLmpzICYmIGVsZWN0cm9uIC4iLAogICAgImRpc3QiOiAibm9kZSBzY3JpcHRzL3N5bmMtd2ViLWFzc2V0cy5qcyAmJiBlbGVjdHJvbi1idWlsZGVyIC0tbGludXggLS14NjQiLAogICAgImRpc3Q6d2luIjogIm5vZGUgc2NyaXB0cy9zeW5jLXdlYi1hc3NldHMuanMgJiYgZWxlY3Ryb24tYnVpbGRlciAtLXdpbiAtLXg2NCIsCiAgICAiZGlzdDptYWMiOiAibm9kZSBzY3JpcHRzL3N5bmMtd2ViLWFzc2V0cy5qcyAmJiBlbGVjdHJvbi1idWlsZGVyIC0tbWFjIC0teDY0IgogIH0sCiAgImRldkRlcGVuZGVuY2llcyI6IHsKICAgICJlbGVjdHJvbiI6ICJeMzIuMC4wIiwKICAgICJlbGVjdHJvbi1idWlsZGVyIjogIl4yNC4xMy4zIgogIH0sCiAgImJ1aWxkIjogewogICAgImFwcElkIjogInN0dWRpby5uaW5ldG9maXZlLnN0dWR5ZmxvdyIsCiAgICAicHJvZHVjdE5hbWUiOiAiU3R1ZHlGbG93IiwKICAgICJhc2FyIjogdHJ1ZSwKICAgICJmaWxlcyI6IFsKICAgICAgIm1haW4uanMiLAogICAgICAicHJlbG9hZC5qcyIsCiAgICAgICJhcHAtd2ViLyoqIiwKICAgICAgInBhY2thZ2UuanNvbiIKICAgIF0sCiAgICAiZGlyZWN0b3JpZXMiOiB7CiAgICAgICJvdXRwdXQiOiAiZGlzdCIsCiAgICAgICJidWlsZFJlc291cmNlcyI6ICJidWlsZC1yZXMiCiAgICB9LAogICAgInB1Ymxpc2giOiBudWxsLAogICAgImxpbnV4IjogewogICAgICAidGFyZ2V0IjogWwogICAgICAgIHsgInRhcmdldCI6ICJBcHBJbWFnZSIsICJhcmNoIjogWyJ4NjQiXSB9LAogICAgICAgIHsgInRhcmdldCI6ICJ0YXIuZ3oiLCAgICJhcmNoIjogWyJ4NjQiXSB9CiAgICAgIF0sCiAgICAgICJjYXRlZ29yeSI6ICJQcm9kdWN0aXZpdHkiCiAgICB9LAogICAgIndpbiI6IHsKICAgICAgInRhcmdldCI6ICJuc2lzIiwKICAgICAgImFydGlmYWN0TmFtZSI6ICJTdHVkeUZsb3ctJHt2ZXJzaW9ufS1zZXR1cC4ke2V4dH0iLAogICAgICAic2lnbkFuZEVkaXRFeGVjdXRhYmxlIjogZmFsc2UKICAgIH0sCiAgICAibWFjIjogewogICAgICAidGFyZ2V0IjogImRtZyIsCiAgICAgICJjYXRlZ29yeSI6ICJwdWJsaWMuYXBwLWNhdGVnb3J5LnByb2R1Y3Rpdml0eSIKICAgIH0KICB9Cn0K
+{
+  "name": "studyflow-desktop",
+  "productName": "StudyFlow",
+  "version": "3.22.0",
+  "description": "Brutalist black & white study time tracker (Pomodoro + Heatmap) — desktop build",
+  "main": "main.js",
+  "private": true,
+  "author": "nine-to-five-studio",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sharkshot/StudyFlow.git"
+  },
+  "scripts": {
+    "prepare": "node scripts/sync-web-assets.js",
+    "start": "node scripts/sync-web-assets.js && electron .",
+    "dist": "node scripts/sync-web-assets.js && electron-builder --linux --x64",
+    "dist:win": "node scripts/sync-web-assets.js && electron-builder --win --x64",
+    "dist:mac": "node scripts/sync-web-assets.js && electron-builder --mac --x64"
+  },
+  "devDependencies": {
+    "electron": "^32.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "studio.ninetofive.studyflow",
+    "productName": "StudyFlow",
+    "asar": true,
+    "files": [
+      "main.js",
+      "preload.js",
+      "app-web/**",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build-res"
+    },
+    "publish": null,
+    "linux": {
+      "target": [
+        { "target": "AppImage", "arch": ["x64"] },
+        { "target": "tar.gz",   "arch": ["x64"] }
+      ],
+      "category": "Productivity"
+    },
+    "win": {
+      "target": "nsis",
+      "artifactName": "StudyFlow-${version}-setup.${ext}",
+      "signAndEditExecutable": false
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.productivity"
+    }
+  }
+}

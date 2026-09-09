@@ -1,1 +1,61 @@
-PD94bWwgdmVyc2lvbj0nMS4wJyBlbmNvZGluZz0ndXRmLTgnPz4KPHdpZGdldCBpZD0ic3R1ZGlvLm5pbmV0b2ZpdmUuc3R1ZHlmbG93IiB2ZXJzaW9uPSIzLjIyLjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy9ucy93aWRnZXRzIiB4bWxuczpjZHY9Imh0dHA6Ly9jb3Jkb3ZhLmFwYWNoZS5vcmcvbnMvMS4wIiB4bWxuczphbmRyb2lkPSJodHRwOi8vc2NoZW1hcy5hbmRyb2lkLmNvbS9hcGsvcmVzL2FuZHJvaWQiPgogIDxuYW1lPlN0dWR5RmxvdzwvbmFtZT4KICA8ZGVzY3JpcHRpb24+CiAgICBBIGJydXRhbGlzdCwgYmxhY2sgJmFtcDsgd2hpdGUgZm9jdXMgJmFtcDsgc3R1ZHkgdGltZSB0cmFja2VyLiBQb21vZG9ybywgaGVhdG1hcCwgb2ZmbGluZS1maXJzdC4KICA8L2Rlc2NyaXB0aW9uPgogIDxhdXRob3IgZW1haWw9ImRldkA5dG81c3R1ZGlvLml0IiBocmVmPSJodHRwczovLzl0bzVzdHVkaW8uaXQiPm5pbmUtdG8tZml2ZS1zdHVkaW88L2F1dGhvcj4KICA8Y29udGVudCBzcmM9ImluZGV4Lmh0bWwiIC8+CgogIDwhLS0gPT09IFRhYmxldCAvIEFuZHJvaWQgV2ViVmlldyB0dW5pbmcgPT09IC0tPgogIDxwcmVmZXJlbmNlIG5hbWU9IldlYlZpZXdFbmdpbmUiICAgICAgICAgICAgICAgIHZhbHVlPSJzeXN0ZW0iIC8+CiAgPHByZWZlcmVuY2UgbmFtZT0iQW5kcm9pZEluc2VjdXJlRmlsZU1vZGVFbmFibGVkIiB2YWx1ZT0idHJ1ZSIgLz4KICA8cHJlZmVyZW5jZSBuYW1lPSJPcmllbnRhdGlvbiIgICAgICAgICAgICAgICAgIHZhbHVlPSJwb3J0cmFpdCIgLz4KICA8cHJlZmVyZW5jZSBuYW1lPSJGdWxsc2NyZWVuIiAgICAgICAgICAgICAgICAgIHZhbHVlPSJmYWxzZSIgLz4KICA8cHJlZmVyZW5jZSBuYW1lPSJEaXNhbGxvd092ZXJzY3JvbGwiICAgICAgICAgIHZhbHVlPSJ0cnVlIiAvPgogIDxwcmVmZXJlbmNlIG5hbWU9IkJhY2tncm91bmRDb2xvciIgICAgICAgICAgICAgdmFsdWU9IiMwMDAwMDAiIC8+CiAgPHByZWZlcmVuY2UgbmFtZT0iU3RhdHVzQmFyU3R5bGUiICAgICAgICAgICAgICB2YWx1ZT0iYmxhY2t0cmFuc2x1Y2VudCIgLz4KICA8cHJlZmVyZW5jZSBuYW1lPSJTdGF0dXNCYXJCYWNrZ3JvdW5kQ29sb3IiICAgIHZhbHVlPSIjMDAwMDAwIiAvPgogIDxwcmVmZXJlbmNlIG5hbWU9IlN0YXR1c0Jhck92ZXJsYXlzV2ViVmlldyIgICAgdmFsdWU9InRydWUiIC8+CiAgPHByZWZlcmVuY2UgbmFtZT0iQW5kcm9pZFdpbmRvd1NwbGFzaFNjcmVlbkJhY2tncm91bmQiIHZhbHVlPSIjMDAwMDAwIiAvPgogIDxwcmVmZXJlbmNlIG5hbWU9IktlZXBSdW5uaW5nIiAgICAgICAgICAgICAgICAgdmFsdWU9InRydWUiIC8+CiAgPHByZWZlcmVuY2UgbmFtZT0iQW5kcm9pZExhdW5jaE1vZGUiICAgICAgICAgICB2YWx1ZT0ic2luZ2xlVGFzayIgLz4KICA8cHJlZmVyZW5jZSBuYW1lPSJTdXBwb3J0c1J0bCIgICAgICAgICAgICAgICAgIHZhbHVlPSJmYWxzZSIgLz4KICA8cHJlZmVyZW5jZSBuYW1lPSJMb2FkVXJsVGltZW91dFZhbHVlIiAgICAgICAgIHZhbHVlPSI3MDAwMCIgLz4KCiAgPCEtLSBtaW5TZGsgMjQgKEFuZHJvaWQgNyspICB+OTglIGRldmljZSBjb3ZlcmFnZTsgdGFyZ2V0U2RrIDM0IHBlciBHb29nbGUgUGxheSAtLT4KICA8cHJlZmVyZW5jZSBuYW1lPSJhbmRyb2lkLW1pblNka1ZlcnNpb24iICAgICAgIHZhbHVlPSIyNCIgLz4KICA8cHJlZmVyZW5jZSBuYW1lPSJhbmRyb2lkLXRhcmdldFNka1ZlcnNpb24iICAgIHZhbHVlPSIzNCIgLz4KICA8cHJlZmVyZW5jZSBuYW1lPSJhbmRyb2lkLWNvbXBpbGVTZGtWZXJzaW9uIiAgIHZhbHVlPSIzNCIgLz4KICA8cHJlZmVyZW5jZSBuYW1lPSJhbmRyb2lkLWJ1aWxkVG9vbHNWZXJzaW9uIiAgIHZhbHVlPSIzNC4wLjAiIC8+CiAgPHByZWZlcmVuY2UgbmFtZT0iR3JhZGxlUGx1Z2luS290bGluRW5hYmxlZCIgICB2YWx1ZT0iZmFsc2UiIC8+CgogIDxhY2Nlc3Mgb3JpZ2luPSIqIiAvPgogIDxhbGxvdy1uYXZpZ2F0aW9uIGhyZWY9IioiIC8+CiAgPGFsbG93LWludGVudCBocmVmPSJodHRwOi8vKi8qIiAvPgogIDxhbGxvdy1pbnRlbnQgaHJlZj0iaHR0cHM6Ly8qLyoiIC8+CgogIDwhLS0gUmVxdWlyZWQgZm9yIHBvbW9kb3JvIGtlZXAtYXdha2UgYW5kIGF1ZGlvIGN1ZXMgLS0+CiAgPGVkaXQtY29uZmlnIGZpbGU9IkFuZHJvaWRNYW5pZmVzdC54bWwiIG1vZGU9Im1lcmdlIiB0YXJnZXQ9Ii9tYW5pZmVzdC91c2VzLXBlcm1pc3Npb24iPgogICAgPHVzZXMtcGVybWlzc2lvbiBhbmRyb2lkOm5hbWU9ImFuZHJvaWQucGVybWlzc2lvbi5XQUtFX0xPQ0siIC8+CiAgICA8dXNlcy1wZXJtaXNzaW9uIGFuZHJvaWQ6bmFtZT0iYW5kcm9pZC5wZXJtaXNzaW9uLlZJQlJBVEUiIC8+CiAgICA8dXNlcy1wZXJtaXNzaW9uIGFuZHJvaWQ6bmFtZT0iYW5kcm9pZC5wZXJtaXNzaW9uLk1PRElGWV9BVURJT19TRVRUSU5HUyIgLz4KICAgIDx1c2VzLXBlcm1pc3Npb24gYW5kcm9pZDpuYW1lPSJhbmRyb2lkLnBlcm1pc3Npb24uUkVDRUlWRV9CT09UX0NPTVBMRVRFRCIgLz4KICA8L2VkaXQtY29uZmlnPgoKICA8IS0tIENhbWVyYSAvIE1lZGlhIGZvciBRUiBzY2FubmVyIC0tPgogIDxlZGl0LWNvbmZpZyBmaWxlPSJBbmRyb2lkTWFuaWZlc3QueG1sIiBtb2RlPSJtZXJnZSIgdGFyZ2V0PSIvbWFuaWZlc3QvdXNlcy1wZXJtaXNzaW9uIiB4bWxuczphbmRyb2lkPSJodHRwOi8vc2NoZW1hcy5hbmRyb2lkLmNvbS9hcGsvcmVzL2FuZHJvaWQiPgogICAgPHVzZXMtcGVybWlzc2lvbiBhbmRyb2lkOm5hbWU9ImFuZHJvaWQucGVybWlzc2lvbi5DQU1FUkEiIC8+CiAgICA8dXNlcy1mZWF0dXJlIGFuZHJvaWQ6bmFtZT0iYW5kcm9pZC5oYXJkd2FyZS5jYW1lcmEiIGFuZHJvaWQ6cmVxdWlyZWQ9ImZhbHNlIiAvPgogIDwvZWRpdC1jb25maWc+CgogIDwhLS0gRm9yY2UgdGFibGV0LXN0eWxlIGxhcmdlLXNjcmVlbiBzdXBwb3J0IChubyBzdHJldGNoKSAtLT4KICA8ZWRpdC1jb25maWcgZmlsZT0iQW5kcm9pZE1hbmlmZXN0LnhtbCIgbW9kZT0ibWVyZ2UiIHRhcmdldD0iL21hbmlmZXN0L2FwcGxpY2F0aW9uIiB4bWxuczphbmRyb2lkPSJodHRwOi8vc2NoZW1hcy5hbmRyb2lkLmNvbS9hcGsvcmVzL2FuZHJvaWQiPgogICAgPGFwcGxpY2F0aW9uIGFuZHJvaWQ6aGFyZHdhcmVBY2NlbGVyYXRlZD0idHJ1ZSIgYW5kcm9pZDpsYXJnZUhlYXA9InRydWUiPgogICAgICA8bWV0YS1kYXRhIGFuZHJvaWQ6bmFtZT0iYW5kcm9pZC5tYXhfYXNwZWN0IiBhbmRyb2lkOnZhbHVlPSIyLjQiIC8+CiAgICA8L2FwcGxpY2F0aW9uPgogIDwvZWRpdC1jb25maWc+CgogIDxwbGF0Zm9ybSBuYW1lPSJhbmRyb2lkIj4KICA8L3BsYXRmb3JtPgo8L3dpZGdldD4K
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="studio.ninetofive.studyflow" version="3.22.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+  <name>StudyFlow</name>
+  <description>
+    A brutalist, black &amp; white focus &amp; study time tracker. Pomodoro, heatmap, offline-first.
+  </description>
+  <author email="dev@9to5studio.it" href="https://9to5studio.it">nine-to-five-studio</author>
+  <content src="index.html" />
+
+  <!-- === Tablet / Android WebView tuning === -->
+  <preference name="WebViewEngine"                value="system" />
+  <preference name="AndroidInsecureFileModeEnabled" value="true" />
+  <preference name="Orientation"                 value="portrait" />
+  <preference name="Fullscreen"                  value="false" />
+  <preference name="DisallowOverscroll"          value="true" />
+  <preference name="BackgroundColor"             value="#000000" />
+  <preference name="StatusBarStyle"              value="blacktranslucent" />
+  <preference name="StatusBarBackgroundColor"    value="#000000" />
+  <preference name="StatusBarOverlaysWebView"    value="true" />
+  <preference name="AndroidWindowSplashScreenBackground" value="#000000" />
+  <preference name="KeepRunning"                 value="true" />
+  <preference name="AndroidLaunchMode"           value="singleTask" />
+  <preference name="SupportsRtl"                 value="false" />
+  <preference name="LoadUrlTimeoutValue"         value="70000" />
+
+  <!-- minSdk 24 (Android 7+)  ~98% device coverage; targetSdk 34 per Google Play -->
+  <preference name="android-minSdkVersion"       value="24" />
+  <preference name="android-targetSdkVersion"    value="34" />
+  <preference name="android-compileSdkVersion"   value="34" />
+  <preference name="android-buildToolsVersion"   value="34.0.0" />
+  <preference name="GradlePluginKotlinEnabled"   value="false" />
+
+  <access origin="*" />
+  <allow-navigation href="*" />
+  <allow-intent href="http://*/*" />
+  <allow-intent href="https://*/*" />
+
+  <!-- Required for pomodoro keep-awake and audio cues -->
+  <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/uses-permission">
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+  </edit-config>
+
+  <!-- Camera / Media for QR scanner -->
+  <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/uses-permission" xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+  </edit-config>
+
+  <!-- Force tablet-style large-screen support (no stretch) -->
+  <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:hardwareAccelerated="true" android:largeHeap="true">
+      <meta-data android:name="android.max_aspect" android:value="2.4" />
+    </application>
+  </edit-config>
+
+  <platform name="android">
+  </platform>
+</widget>

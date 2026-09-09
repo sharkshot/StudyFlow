@@ -1,1 +1,299 @@
-IyBDaGFuZ2Vsb2cKCkFsbCBub3RhYmxlIGNoYW5nZXMgdG8gKipTdHVkeUZsb3cqKiBhcmUgZG9jdW1lbnRlZCBoZXJlLgpUaGUgZm9ybWF0IGlzIGJhc2VkIG9uIFtLZWVwIGEgQ2hhbmdlbG9nXShodHRwczovL2tlZXBhY2hhbmdlbG9nLmNvbS9lbi8xLjEuMC8pLAphbmQgdGhpcyBwcm9qZWN0IGFkaGVyZXMgdG8gW1NlbWFudGljIFZlcnNpb25pbmddKGh0dHBzOi8vc2VtdmVyLm9yZy9zcGVjL3YyLjAuMC5odG1sKS4KCiMjIFt2My4yMi4wXSDigJQgMjAyNi0wOS0wOQoKU2VjdXJpdHkgYW5kIGNvbW11bml0eS1saWZlY3ljbGUgcmVsZWFzZSwgcGx1cyBhdXRvbWF0ZWQgcGFja2FnaW5nLgoKIyMjIEFkZGVkCgotICoqQnJ1dGUtZm9yY2UgcHJvdGVjdGlvbiBvbiBhdXRoIGVuZHBvaW50cy4qKiBBIHplcm8tZGVwZW5kZW5jeSBpbi1tZW1vcnkKICByYXRlIGxpbWl0ZXIgKGBzZXJ2ZXIvc3JjL3JhdGVsaW1pdC5qc2ApOiByZWdpc3RyYXRpb24gaXMgY2FwcGVkIGF0IDUgYWNjb3VudHMKICBwZXIgSVAgcGVyIGhvdXI7IHBhc3N3b3JkIGxvZ2luIGFsbG93cyAyMCBhdHRlbXB0cyBwZXIgMTUgbWludXRlcyAob25seQogIGZhaWx1cmVzIGNvdW50KSBhbmQgbG9ja3MgYW4gYWNjb3VudCtJUCBwYWlyIGZvciAxNSBtaW51dGVzIGFmdGVyIDUgd3JvbmcKICBwYXNzd29yZHMuIEV2ZXJ5IGAvYXBpYCByb3V0ZSBhbHNvIGhhcyBhIGJhc2VsaW5lIDYwMC1yZXF1ZXN0IC8gMTUtbWludXRlCiAgY2VpbGluZyAoYFJBVEVfTElNSVRfTUFYYCB0byB0dW5lKS4KLSAqKkNvbW11bml0eSBsaWZlY3ljbGUgZW5kcG9pbnRzLioqCiAgLSBgREVMRVRFIC9hcGkvY29tbXVuaXR5LzppZC9sZWF2ZWAg4oCUIGEgbWVtYmVyIGxlYXZlcyBhIGNvbW11bml0eSAodGhlIG93bmVyCiAgICBtdXN0IGRpc3NvbHZlIGluc3RlYWQpLgogIC0gYFBPU1QgL2FwaS9jb21tdW5pdHkvOmlkL2tpY2tgIOKAlCB0aGUgb3duZXIgcmVtb3ZlcyBhbm90aGVyIG1lbWJlcjsgdGhlCiAgICByZW1vdmVkIG1lbWJlcidzIHZvdGVzIGFyZSBwdXJnZWQgc28gdGFsbGllcyBzdGF5IGFjY3VyYXRlLgogIC0gYERFTEVURSAvYXBpL2NvbW11bml0eS86aWRgIOKAlCB0aGUgb3duZXIgZGlzc29sdmVzIGEgY29tbXVuaXR5OyBwcm9wb3NhbHMsCiAgICB2b3RlcyBhbmQgbWVtYmVyc2hpcHMgYXJlIGRlbGV0ZWQgYXRvbWljYWxseSBpbnNpZGUgYSB0cmFuc2FjdGlvbi4KLSAqKkF1dG9tYXRlZCBwYWNrYWdpbmcuKiogYC5naXRodWIvd29ya2Zsb3dzL2J1aWxkLnltbGAgYnVpbGRzIHRoZSBBbmRyb2lkCiAgZGVidWcgQVBLIGFuZCB0aGUgTGludXggLyBXaW5kb3dzIC8gbWFjT1MgZGVza3RvcCBpbnN0YWxsZXJzIG9uIGV2ZXJ5IGB2KmAKICB0YWcgcHVzaCBhbmQgYXR0YWNoZXMgdGhlbSB0byB0aGUgcmVsZWFzZS4KCiMjIyBDaGFuZ2VkCgotIFZlcnNpb24gYnVtcGVkIHRvICoqMy4yMi4wKiogYWNyb3NzIGBzZXJ2ZXIvYCwgYGJ1aWxkL2FuZHJvaWQtY29yZG92YS9gCiAgKHBhY2thZ2UgKyBgY29uZmlnLnhtbGApIGFuZCBgYnVpbGQvZGVza3RvcC1lbGVjdHJvbi9gLgoKIyMgW3YzLjIxLjBdIOKAlCAyMDI2LTA5LTA5CgpDb3JyZWN0bmVzcyBhbmQgcmVsaWFiaWxpdHkgcmVsZWFzZS4gRml4ZXMgYSBNeVNRTCB0cmFuc2FjdGlvbiBidWcgdGhhdCBjb3VsZApsZWF2ZSBgL2FwaS9zeW5jL3B1c2hgIHBhcnRpYWxseSB3cml0dGVuLCBtYWtlcyBwcm9wb3NhbCBleHBpcnkgYWN0dWFsbHkgdGFrZQplZmZlY3QsIGFuZCBmaXhlcyBRUiBzY2FubmluZyBkb2luZyBub3RoaW5nIGF0IGFsbCBvbiBwaG9uZSBhbmQgdGFibGV0LgoKIyMjIEZpeGVkCgotICoqTXlTUUwgdHJhbnNhY3Rpb25zIG5vdyBwaW4gYSBzaW5nbGUgY29ubmVjdGlvbi4qKiBgZGIuYmVnaW4oKWAgcHJldmlvdXNseQogIGlzc3VlZCBgcG9vbC5xdWVyeSgnU1RBUlQgVFJBTlNBQ1RJT04nKWAsIGJ1dCBhIGNvbm5lY3Rpb24gcG9vbCBtYXkgaGFuZCBhCiAgZGlmZmVyZW50IGNvbm5lY3Rpb24gdG8gZWFjaCBzdWJzZXF1ZW50IHF1ZXJ5IOKAlCBzbyB0aGUgc3RhdGVtZW50cyBpbgogIGAvYXBpL3N5bmMvcHVzaGAgd2VyZSBuZXZlciByZWFsbHkgaW4gb25lIHRyYW5zYWN0aW9uLCBhbmQgYSBtaWQtYmF0Y2gKICBmYWlsdXJlIGNvdWxkIGxlYXZlIGEgcGFydGlhbGx5IG1lcmdlZCBkYXRhc2V0IHRoYXQgYHJvbGxiYWNrKClgIGNvdWxkIG5vdAogIHVuZG8uIGBiZWdpbigpYCBub3cgYWNxdWlyZXMgYSBkZWRpY2F0ZWQgY29ubmVjdGlvbiAoYHBvb2wuZ2V0Q29ubmVjdGlvbigpYAogICsgYGJlZ2luVHJhbnNhY3Rpb24oKWApIHRoYXQgYWxsIHF1ZXJpZXMgcmV1c2UgdW50aWwgYGNvbW1pdCgpYC9gcm9sbGJhY2soKWAsCiAgd2hpY2ggYWxzbyByZWxlYXNlcyBpdC4gQSBuZXcgYGRiLnRyYW5zYWN0aW9uKGZuKWAgaGVscGVyIHdyYXBzIHRoZQogIGNvbW1pdC9yb2xsYmFjay9lcnJvci1wcm9wYWdhdGlvbiBkYW5jZS4KLSAqKlByb3Bvc2FsIGV4cGlyeSBpcyBlbmZvcmNlZC4qKiBgZXhwaXJlc19hdGAgd2FzIHdyaXR0ZW4gYnV0IG5ldmVyIHJlYWQsIHNvIGEKICBwcm9wb3NhbCBmcm9tIDcgZGF5cyBhZ28gY291bGQgc3RpbGwgYmUgdm90ZWQgb24uIGBleHBpcmVTdGFsZVByb3Bvc2FscygpYAogIG5vdyBydW5zIGJlZm9yZSBsaXN0aW5nIGFuZCBiZWZvcmUgdm90aW5nOiBwcm9wb3NhbHMgcGFzdCB0aGVpciB3aW5kb3cgYXJlCiAgY2xvc2VkIGFzIGBwYXNzZWRgIChpZiBhIG1ham9yaXR5IHZvdGVkIGZvcikgb3IgYGV4cGlyZWRgLCBhbmQgdm90aW5nIG9uIGEKICBub24tYWN0aXZlIHByb3Bvc2FsIHJlcG9ydHMgaXRzIGFjdHVhbCBzdGF0dXMuCi0gKipRUiBzY2FuIGlzIGZpeGVkIG9uIHBob25lIGFuZCB0YWJsZXQuKiogVGFwcGluZyAqU3RhcnQgQ2FtZXJhKiBkaWQgbm90aGluZwogIGJlY2F1c2UgdGhlIENvcmRvdmEgcHJvamVjdCBkZWNsYXJlZCBgQ0FNRVJBYCBpbiB0aGUgbWFuaWZlc3QgYnV0IG5ldmVyCiAgcmVxdWVzdGVkIHRoZSBBbmRyb2lkICoqcnVudGltZSoqIHBlcm1pc3Npb24g4oCUIGBnZXRVc2VyTWVkaWFgIHJlamVjdGVkCiAgaW5zdGFudGx5IHdpdGggYE5vdEFsbG93ZWRFcnJvcmAgYW5kIG5vIHN5c3RlbSBkaWFsb2cgZXZlciBhcHBlYXJlZC4gU2VlCiAgYGRvY3MvUDJQLURBVEEtTUVSR0UubWRgIMKnNC4xIGZvciB0aGUgZnVsbCBhbmFseXNpcy4gQ2hhbmdlczoKICAtIGBlbnN1cmVDYW1lcmFSZWFkeSgpYCBydW5zIGJlZm9yZSBgZ2V0VXNlck1lZGlhYDogZGV0ZWN0cyBhIG1pc3NpbmcgY2FtZXJhCiAgICBBUEkgKGFuZCByZXBvcnRzICJuZWVkcyBIVFRQUyIgd2hlbiBgaXNTZWN1cmVDb250ZXh0YCBpcyBmYWxzZSkgYW5kLCB3aGVuCiAgICBgY29yZG92YS1wbHVnaW4tYW5kcm9pZC1wZXJtaXNzaW9uc2AgaXMgcHJlc2VudCwgY2hlY2tzIGFuZCByZXF1ZXN0cyB0aGUKICAgIHJ1bnRpbWUgcGVybWlzc2lvbiBmaXJzdC4KICAtIGBkZXNjcmliZUNhbWVyYUVycm9yKClgIG1hcHMgYE5vdEFsbG93ZWRFcnJvcmAgLyBgTm90Rm91bmRFcnJvcmAgLwogICAgYE5vdFJlYWRhYmxlRXJyb3JgIC8gYE92ZXJjb25zdHJhaW5lZEVycm9yYCB0byBhY3Rpb25hYmxlIG1lc3NhZ2VzIGluc3RlYWQKICAgIG9mIHN1cmZhY2luZyBhIHJhdyBgVHlwZUVycm9yYC4KICAtIENhbWVyYSBmYWlsdXJlcyBub3cgcmVuZGVyIGFuIGlubGluZSBleHBsYW5hdGlvbiBwbHVzIGEgKipQYXN0ZSBzeW5jIGNvZGUKICAgIGluc3RlYWQqKiBidXR0b24sIHNvIFAyUCBzeW5jIHN0aWxsIGNvbXBsZXRlcyB3aXRob3V0IGEgY2FtZXJhLgogIC0gYHN0YXJ0UXJTY2FubmVyKClgIGNsZWFycyBzdGFsZSBzdGF0ZSB3aXRoIGBzdG9wUXJDYW1lcmEoKWAgZmlyc3Qg4oCUIGEgc3R1Y2sKICAgIGBxclNjYW5uaW5nYCBmbGFnIG1hZGUgZXZlcnkgbGF0ZXIgdGFwIGEgc2lsZW50IG5vLW9wLgogIC0gYHZpZGVvLnBsYXkoKWAgcmVqZWN0aW9ucyBhcmUgY2F1Z2h0LCB3aXRoIGEgMS41cyBzYWZldHkga2ljayBmb3IgV2ViVmlld3MKICAgIHRoYXQgbmV2ZXIgZmlyZSBgbG9hZGVkbWV0YWRhdGFgIChwcmV2aW91c2x5IHN0dWNrIG9uICJTY2FubmluZyIpLgogIC0gYGZhY2luZ01vZGVgIGlzIG5vdyBhIHNvZnQgYHsgaWRlYWw6ICdlbnZpcm9ubWVudCcgfWAgY29uc3RyYWludC4KLSAqKmBQT1NUIC9hcGkvc3luYy9wdXNoYCBubyBsb25nZXIgcmV0dXJucyB0aGUgdXNlcidzIGVudGlyZSBoaXN0b3J5LioqIEl0CiAgZWNob2VkIGV2ZXJ5IHNlc3Npb24gcm93IGJhY2sgb24gZXZlcnkgcHVzaDsgaXQgbm93IHJldHVybnMgb25seSB0aGUgcm93cwogIHRvdWNoZWQgYnkgdGhhdCBwdXNoLCBwbHVzIGFuIGBhcHBsaWVkYCBjb3VudC4gUGF5bG9hZHMgb3ZlciA1MDAwIHNlc3Npb25zCiAgYXJlIHJlamVjdGVkIHdpdGggYDQxM2AuCgojIyMgU2VjdXJpdHkKCi0gKipUaGUgc2VydmVyIHJlZnVzZXMgdG8gc3RhcnQgaW4gcHJvZHVjdGlvbiB3aXRoIHRoZSBkZWZhdWx0IEpXVCBzZWNyZXQuKioKICBgTk9ERV9FTlY9cHJvZHVjdGlvbmAgd2l0aCBgSldUX1NFQ1JFVGAgdW5zZXQgb3IgbGVmdCBhdAogIGBzdHVkeWZsb3ctZGV2LXNlY3JldC1jaGFuZ2UtbWVgIGlzIG5vdyBhIGZhdGFsIHN0YXJ0dXAgZXJyb3I7IG90aGVyd2lzZSBpdAogIGxvZ3MgYSB3YXJuaW5nLgotICoqU1FMaXRlIGZhbGxiYWNrIGNhbiBiZSBkaXNhYmxlZC4qKiBgREJfU1RSSUNUPTFgIG1ha2VzIGFuIHVucmVhY2hhYmxlIE15U1FMCiAgYSBoYXJkIGZhaWx1cmUgaW5zdGVhZCBvZiBzaWxlbnRseSB3cml0aW5nIHRvIGEgbG9jYWwgYGRhdGEuc3FsaXRlYCAod2hpY2gKICByaXNrcyBzcGxpdHRpbmcgZGF0YSBhY3Jvc3MgdHdvIGRhdGFiYXNlcykuIERlZmF1bHRzIHRvIHN0cmljdCB3aGVuCiAgYE5PREVfRU5WPXByb2R1Y3Rpb25gLgoKIyMjIENoYW5nZWQKCi0gYGJ1aWxkL2FuZHJvaWQtY29yZG92YS9wYWNrYWdlLmpzb25gIG5vdyBkZWNsYXJlcwogIGBjb3Jkb3ZhLXBsdWdpbi1hbmRyb2lkLXBlcm1pc3Npb25zYDsgYG5wbSBydW4gYnVpbGQ6YXBrYCByZXN0b3JlcyBpdAogIGF1dG9tYXRpY2FsbHkgdmlhIGBucG0gcnVuIHBsdWdpbnM6cmVzdG9yZWAuCgojIyBbdjMuMjAuMF0g4oCUIDIwMjYtMDktMDcKClBlcmZvcm1hbmNlIGFuZCByZWxpYWJpbGl0eSBmb2N1c2VkIHJlbGVhc2UuIFRoZSBQMlAgc3luYyBtb2R1bGUgaXMgcmV0YWluZWQKYWxvbmdzaWRlIHRoZSBjbG91ZCBkdWFsLW1vZGUgc3luYzsgdGhlIGhlYXRtYXAgcmVuZGVyaW5nIGFuZCB0aGUgUG9tb2Rvcm8KdGltZXIgYXJlIGhhcmRlbmVkLgoKIyMjIEFkZGVkCgotICoqVGltZXIgYW50aS1raWxsICh3YWxsLWNsb2NrIGNvdW50ZG93bikuKiogVGhlIGNvdW50ZG93biBpcyBub3cgYW5jaG9yZWQgdG8KICBhbiBhYnNvbHV0ZSBlbmQgdGltZXN0YW1wIChgZW5kQXRgKSBpbnN0ZWFkIG9mIGRlY3JlbWVudGluZyBvbmNlIHBlcgogIGBzZXRJbnRlcnZhbGAgdGljay4gQmFja2dyb3VuZC10YWIgdGhyb3R0bGluZywgZGV2aWNlIHNsZWVwLCBvciBhIHNsb3cKICByZW5kZXJlciBjYW4gbm8gbG9uZ2VyIHNsb3cgdGhlIHRpbWVyIOKAlCB0aGUgcmVtYWluaW5nIHRpbWUgaXMgYWx3YXlzCiAgcmVjb21wdXRlZCBmcm9tIGBEYXRlLm5vdygpYC4KLSAqKlRpbWVyIHN0YXRlIHBlcnNpc3RlbmNlICsgcmVzdG9yZS4qKiBUaGUgcnVubmluZyB0aW1lciBpcyBzbmFwc2hvdHRlZCB0bwogIGBsb2NhbFN0b3JhZ2VgIGV2ZXJ5IHRpY2suIElmIHRoZSBwYWdlIGlzIHJlbG9hZGVkLCB0aGUgdGFiIGtpbGxlZCwgb3IgdGhlCiAgQW5kcm9pZCBhcHAgc3dpcGVkIGF3YXksIHRoZSB0aW1lciBpcyBhdXRvbWF0aWNhbGx5IHJlc3RvcmVkIG9uIG5leHQgbGF1bmNoCiAgKCJUaW1lciByZXN0b3JlZCIgdG9hc3QpIGFuZCBjb250aW51ZXMgZnJvbSB0aGUgZXhhY3QgcmVtYWluaW5nIHRpbWUg4oCUIGV2ZW4KICBpZiB0aGUgZGVhZGxpbmUgYWxyZWFkeSBwYXNzZWQgd2hpbGUgdGhlIGFwcCB3YXMgZGVhZCwgaW4gd2hpY2ggY2FzZSB0aGUKICBjb21wbGV0aW9uIGxvZ2ljIGZpcmVzIGNvcnJlY3RseS4KLSAqKkZvcmVncm91bmQgY29ycmVjdGlvbi4qKiBgdmlzaWJpbGl0eWNoYW5nZWAgLyBgZm9jdXNgIC8gYHBhZ2VzaG93YAogIChiZmNhY2hlKSBsaXN0ZW5lcnMgaW1tZWRpYXRlbHkgcmVjb21wdXRlIGFuZCByZXBhaW50IHRoZSBjb3VudGRvd24gdGhlCiAgbW9tZW50IHRoZSBhcHAgcmV0dXJucyB0byB0aGUgZm9yZWdyb3VuZC4KLSAqKlN5bmMgdmlldyAoY2xvdWQgZm9jdXMpLioqIEEgbmV3IENsb3VkIFN5bmMgc2VjdGlvbiBzaG93cyB0aGUgc2lnbmVkLWluCiAgYWNjb3VudCwgb25saW5lL29mZmxpbmUgc3RhdHVzLCBsYXN0IHN5bmMgdGltZSwgZGV2aWNlIElELCBhbmQgYQogICoqU3luYyBOb3cqKiBidXR0b24uIFRoZSBEYXRhIE92ZXJ2aWV3IG5vdyBpbmNsdWRlcyBhICoqUGVuZGluZyBVcGxvYWQqKgogIGNvdW50ZXIgZm9yIHRoZSBvZmZsaW5lIHF1ZXVlLgoKIyMjIENoYW5nZWQKCi0gKipJbmNyZW1lbnRhbCBzeW5jIHF1ZXVlLioqIFNlc3Npb25zIGFyZSBlbnF1ZXVlZCBmb3IgY2xvdWQgdXBsb2FkIG9ubHkgYXQKICB0aGVpciBtdXRhdGlvbiBwb2ludHMgKGNvbXBsZXRlLCBwYXJ0aWFsLXNhdmUsIGRlbGV0ZSkgaW5zdGVhZCBvZiByZS1xdWV1aW5nCiAgdGhlIGVudGlyZSBkYXRhc2V0IG9uIGV2ZXJ5IHNhdmUg4oCUIGtlZXBpbmcgdGhlIHBlbmRpbmcgcXVldWUgc21hbGwgYW5kCiAgcHVzaGVzIG1pbmltYWwuCi0gKipIZWF0bWFwIHJlbmRlcmluZyBwZXJmb3JtYW5jZS4qKiBUaGUgbWludXRlcy1wZXItZGF5IGFnZ3JlZ2F0aW9uIGlzIG5vdwogIGNhY2hlZCBhbmQgb25seSByZWNvbXB1dGVkIHdoZW4gc2Vzc2lvbnMgY2hhbmdlOyBjYWxlbmRhciBjZWxscyBhcmUgYnVpbHQgaW4KICBhIGBEb2N1bWVudEZyYWdtZW50YCBhbmQgYXR0YWNoZWQgaW4gYSBzaW5nbGUgcmVmbG93OyBjZWxsIGNsaWNrcyB1c2Ugb25lCiAgZGVsZWdhdGVkIGxpc3RlbmVyIGluc3RlYWQgb2Ygb25lIHBlciBjZWxsOyBtb250aCBzd2l0Y2hpbmcgKGDigLlgIGDigLpgKSBpcwogIHNjaGVkdWxlZCB2aWEgYHJlcXVlc3RBbmltYXRpb25GcmFtZWAsIHNvIHJhcGlkIHRhcHMgc3RheSBzbW9vdGguCi0gKipVbmlmaWVkIFFSIGNhbWVyYSBlbmdpbmUuKiogUDJQIGRhdGEgc3luYyAoUVIgU3luYyB2aWV3KSBhbmQgYWNjb3VudCBRUgogIGxvZ2luIG5vdyBzaGFyZSBvbmUgY2FtZXJhIGxvb3AuIElmIHRoZSBjYW1lcmEgaXMgdW5hdmFpbGFibGUgKHBlcm1pc3Npb24KICBkZW5pZWQgLyBkZXNrdG9wIHdpdGhvdXQgY2FtZXJhKSwgdGhlIFFSIGxvZ2luIGZhbGxzIGJhY2sgdG8gbWFudWFsIHRva2VuCiAgZW50cnkuCi0gKipQMlAgc3luYyByZXRhaW5lZC4qKiBUaGUgb2ZmbGluZSBwZWVyLXRvLXBlZXIgbW9kdWxlIChzaGFyZWQgc3luYyBrZXksCiAgQUVTLTI1Ni1HQ00gZW5jcnlwdGVkIGBTVFVEWTI6YCBwYWNrZXRzLCBRUi90ZXh0IGV4cG9ydC1pbXBvcnQsIHBhaXJlZAogIGRldmljZSBsaXN0KSByZW1haW5zIGZ1bGx5IGF2YWlsYWJsZSBhbmQgY29tcGxlbWVudHMgdGhlIG9ubGluZSBjbG91ZCBzeW5jLgotICoqUVIgUDJQIGlzIG5vdyBwaG9uZS90YWJsZXQgb25seS4qKiBEZXNrdG9wIGJ1aWxkcyAoYW5kIHRvdWNobGVzcyBQQwogIGJyb3dzZXJzKSBubyBsb25nZXIgc2hvdyB0aGUgUVIgU3luYyBlbnRyeSDigJQgdGhlIGNhbWVyYS10by1jYW1lcmEgZmxvdyBkb2VzCiAgbm90IGFwcGx5IHRoZXJlIGFuZCBkZXNrdG9wIHVzZXMgY2xvdWQgc3luYyBleGNsdXNpdmVseS4gRGlyZWN0CiAgYHN3aXRjaFZpZXcoJ3FyJylgIGNhbGxzIGFyZSByZWRpcmVjdGVkIHRvIHRoZSBTeW5jIHZpZXcgd2l0aCBhIGhpbnQuCi0gKipDaHVua2VkIG11bHRpLVFSIHRyYW5zZmVycyAoU1RVRFkzKS4qKiBBIHNpbmdsZSBRUiBjb2RlIGNhcHMgYXQgfjIuOUtCLAogIHNvIG1vbnRocyBvZiByZWNvcmRzIG5vIGxvbmdlciBmaXQuIEV4cG9ydGVkIHBheWxvYWRzIGFyZSBub3cKICBnemlwLWNvbXByZXNzZWQgKHJlcGV0aXRpdmUgcmVjb3JkIGtleXMgc2hyaW5rIH44LTEweCB2aWEKICBgQ29tcHJlc3Npb25TdHJlYW1gKSBhbmQsIHdoZW4gc3RpbGwgdG9vIGxhcmdlLCBzcGxpdCBpbnRvIGEKICBzZWxmLWRlc2NyaWJpbmcgY2h1bmsgc2VxdWVuY2UgYFNUVURZMzo8aWQ+LjxpZHg+Ljx0b3RhbD4uPHNsaWNlPmAuIFRoZQogIGdlbmVyYXRvciBzaG93cyBhIGBRUiAxL05gIGxhYmVsIHdpdGggUHJldi9OZXh0IHBhZ2luZyBhbmQgYSBkZWZhdWx0LW9uCiAgQXV0byBjeWNsZSAoMi42cyBwZXIgY29kZSk7IHRoZSBzY2FubmVyIHJ1bnMgY29udGludW91c2x5LCBhY2NlcHRzIGNodW5rcwogIGluIGFueSBvcmRlciAoZHVwbGljYXRlcyBhcmUgaWRlbXBvdGVudCwgMS41cyBkZWJvdW5jZSksIHNob3dzCiAgYFJlY2VpdmluZyB4L05gIHByb2dyZXNzLCBhbmQgYXV0by1tZXJnZXMgb25jZSB0aGUgc2VxdWVuY2UgaXMgY29tcGxldGUuCiAgU2VjdXJpdHkgaXMgdW5jaGFuZ2VkIOKAlCBjaHVua3MgYXJlIGNpcGhlcnRleHQgc2xpY2VzLCBpbnRlZ3JpdHkgaXMKICB2ZXJpZmllZCBieSB0aGUgQUVTLUdDTSB0YWcgYXQgZGVjcnlwdGlvbiB0aW1lLiBUaGUgbGVnYWN5IGBTVFVEWTE6YAogIGluc2VjdXJlLWNvbnRleHQgcGF0aCBhbHNvIGNvbXByZXNzZXMgbm93ICh2aWEgYSBgZ3pgIGZpZWxkKS4gTWVhc3VyZWQ6CiAgMyBtb250aHMg4omIIDkwMCBzZXNzaW9ucyDihpIgMTkgY29kZXM7IDUwMCBzZXNzaW9ucyB0aGF0IG5lZWRlZCA5NQogIHVuY29tcHJlc3NlZCBjb2RlcyBub3cgdGFrZSAxMi4KLSAqKlAyUCBtZXJnZSBlbmdpbmUgcmV3cml0ZS4qKiBJbXBvcnRpbmcgYSBzeW5jIGNvZGUgbm93IHJ1bnMgYSB2YWxpZGF0ZWQsCiAgdG9tYnN0b25lLWF3YXJlLCBsYXN0LXdyaXRlLXdpbnMgbWVyZ2U6IHJlY29yZHMgYXJlIHNhbml0aXNlZCBhbmQgY2xhbXBlZAogIGJlZm9yZSBlbnRlcmluZyB0aGUgZGF0YXNldDsgc2FtZS1pZCByZWNvcmRzIGFyZSBvdmVyd3JpdHRlbiBvbmx5IHdoZW4gdGhlCiAgcmVtb3RlIGB1cGRhdGVkX2F0YCBpcyBuZXdlcjsgZGVsZXRlZCBzZXNzaW9ucyBwcm9wYWdhdGUgdmlhIGEgOTAtZGF5CiAgdG9tYnN0b25lIHJlZ2lzdHJ5IChgU1RVRFkyOmAgcGF5bG9hZCB2MyBjYXJyaWVzIGB0b21ic3RvbmVzYCksIHNvIGRlbGV0ZWQKICBzZXNzaW9ucyBjYW4gbm8gbG9uZ2VyIGJlIHJlc3VycmVjdGVkIGJ5IGFuIG9sZCBwZWVyIHNuYXBzaG90OyBtZXJnZWQgcm93cwogIGZhbiBvdXQgdG8gdGhlIGNsb3VkIHVwbG9hZCBxdWV1ZSBzbyB0aGUgcmVzdWx0IHJlYWNoZXMgdGhlIHNlcnZlciB3aGVuCiAgZWl0aGVyIGRldmljZSBjb21lcyBiYWNrIG9ubGluZS4gQSByb2xsaW5nIHByZS1tZXJnZSBiYWNrdXAgaXMga2VwdCBpbgogIGBzdHVkeWZsb3dfcDJwX2JhY2t1cF92MWAsIGFuZCB0aGUgaW1wb3J0IHRvYXN0IHJlcG9ydHMgYSBmdWxsIHN1bW1hcnkKICAoYWRkZWQgLyB1cGRhdGVkIC8gcmVtb3ZlZCAvIHNraXBwZWQpLiBTZWUgYGRvY3MvUDJQLURBVEEtTUVSR0UubWRgIGZvciB0aGUKICB0ZWNobmljYWwgc3BlY2lmaWNhdGlvbi4KCiMjIFt2My4wLjBdIOKAlCAyMDI2LTA5LTA3CgpBIGZ1bGwtYXJjaGl0ZWN0dXJlIHJld3JpdGUgdGhhdCB0dXJucyBTdHVkeUZsb3cgaW50byBhIGNyb3NzLXBsYXRmb3JtLApjbG91ZC1zeW5jZWQgc3R1ZHkgbWFuYWdlbWVudCBzeXN0ZW0gd2l0aCBtdWx0aS1kZXZpY2UgYWNjb3VudHMsIGR1YWwtbW9kZQpkYXRhIHN5bmMsIGVuY3J5cHRlZCBwZWVyLXRvLXBlZXIgc3luYywgYW5kIGNvbW11bml0eSBncm91cCBzdXBlcnZpc2lvbi4KCiMjIyBBZGRlZAoKLSAqKk11bHRpLWRldmljZSBhY2NvdW50IHN5c3RlbS4qKiBBIG5ldyBiYWNrZW5kIHNlcnZlciAoYHNlcnZlci9gKSBidWlsdCBvbgogIE5vZGUuanMgKyBFeHByZXNzIHdpdGggYSBNeVNRTCBwcmltYXJ5IGRhdGFiYXNlIChTUUxpdGUgZmFsbGJhY2sgZm9yCiAgc2luZ2xlLW1hY2hpbmUgb3Igb2ZmbGluZSBkZXZlbG9wbWVudCkuIFVzZXJzIHJlZ2lzdGVyIHdpdGggYSB1c2VybmFtZSBhbmQKICBwYXNzd29yZCAoYmNyeXB0LWhhc2hlZCkgYW5kIHJlY2VpdmUgYSBKV1Qgc2Vzc2lvbiB0b2tlbiB2YWxpZCBmb3IgMzAgZGF5cy4KLSAqKlFSLWNvZGUgbG9naW4uKiogQSBsb2dnZWQtaW4gZGV2aWNlIGNhbiBnZW5lcmF0ZSBhIG9uZS10aW1lIFFSIHRva2VuCiAgKHZhbGlkIDUgbWludXRlcykuIFNjYW5uaW5nIChvciBwYXN0aW5nKSB0aGF0IHRva2VuIG9uIGEgbmV3IGRldmljZSBzaWducyBpdAogIGludG8gdGhlIHNhbWUgYWNjb3VudCBpbnN0YW50bHkg4oCUIG5vIHBhc3N3b3JkIHJlLWVudHJ5IG5lZWRlZC4KLSAqKkR1YWwtbW9kZSBjbG91ZCBzeW5jLioqIE9ubGluZSBzZXNzaW9ucyBhcmUgcHVzaGVkIHRvIHRoZSBjbG91ZCBkYXRhYmFzZTsKICBvZmZsaW5lIHNlc3Npb25zIGFyZSBxdWV1ZWQgbG9jYWxseSBhbmQgYXV0by11cGxvYWRlZCB3aGVuIGNvbm5lY3Rpdml0eQogIHJldHVybnMuIEEgcHVsbCBtZXJnZXMgY2xvdWQgcmVjb3JkcyBpbnRvIHRoZSBsb2NhbCBzdG9yZSB1c2luZwogIGxhc3Qtd3JpdGUtd2lucyAoYnkgYHVwZGF0ZWRfYXRgKSB3aXRoIHRvbWJzdG9uZSBkZWxldGVzLiBBbiBhdXRvLXN5bmMgbG9vcAogIHJ1bnMgZXZlcnkgMzAgc2Vjb25kcy4KLSAqKkVuY3J5cHRlZCBQMlAgc3luYy4qKiBUaGUgZXhpc3RpbmcgUVIvdGV4dCBzeW5jIGNvZGUgaXMgbm93IGVuY3J5cHRlZCB3aXRoCiAgQUVTLTI1Ni1HQ00uIFRoZSBzaGFyZWQgc3luYyBrZXkgaXMgZmVkIHRocm91Z2ggUEJLREYyICgxMDBrIGl0ZXJhdGlvbnMpIHRvCiAgZGVyaXZlIHRoZSBBRVMga2V5LiBUaGUgbmV3IGBTVFVEWTI6YCBwYXlsb2FkIGZvcm1hdCBjYXJyaWVzIGFuIElWLXByZWZpeGVkCiAgY2lwaGVydGV4dDsgdGhlIGxlZ2FjeSBgU1RVRFkxOmAgcGxhaW50ZXh0IGZvcm1hdCBpcyBzdGlsbCBhY2NlcHRlZCBmb3IKICBiYWNrd2FyZCBjb21wYXRpYmlsaXR5LgotICoqQ29tbXVuaXR5IHN1cGVydmlzaW9uLioqIENyZWF0ZSBvciBqb2luIHN0dWR5IGNvbW11bml0aWVzIHZpYSBhbiBpbnZpdGUKICBjb2RlLiBNZW1iZXJzIGNhbiBwcm9wb3NlIGEgc3R1ZHkgc3RhbmRhcmQgKHRpdGxlICsgdGFyZ2V0IGRhaWx5IG1pbnV0ZXMpLgogIEEgcHJvcG9zYWwgKipwYXNzZXMgd2hlbiBtb3JlIHRoYW4gNTAlIG9mIG1lbWJlcnMgdm90ZSAiZm9yIioqIChtYWpvcml0eQogIHJ1bGUpIGFuZCBiZWNvbWVzIHRoZSBjb21tdW5pdHkncyBhY3RpdmUgc3RhbmRhcmQuIFByb3Bvc2FscyBleHBpcmUgYWZ0ZXIKICA3IGRheXMuCi0gKipBY2NvdW50IHZpZXcuKiogU2hvd3MgdXNlcm5hbWUsIHVzZXIgSUQsIGxvY2FsIGRldmljZSBJRCwgYSBRUi1sb2dpbgogIGdlbmVyYXRvciwgYW5kIGEgbWFudWFsICJTeW5jIE5vdyIgYnV0dG9uLgotICoqQ29tbXVuaXR5IHZpZXcuKiogTGlzdHMgdGhlIHVzZXIncyBjb21tdW5pdGllcywgc3VwcG9ydHMgY3JlYXRpb24sIGpvaW5pbmcKICBieSBpbnZpdGUgY29kZSwgYW5kIHBlci1jb21tdW5pdHkgZGV0YWlsIChtZW1iZXJzLCBwcm9wb3NhbHMsIHZvdGluZywKICBjdXJyZW50IHN0YW5kYXJkKS4KCiMjIyBDaGFuZ2VkCgotICoqTG9naW4gZ2F0ZS4qKiBUaGUgYXBwIG5vdyBvcGVucyB0byBhIGxvZ2luL3JlZ2lzdGVyIHNjcmVlbi4gTG9jYWwgZGF0YSBpcwogIHN0aWxsIGF2YWlsYWJsZSBvZmZsaW5lIG9uY2UgdGhlIHVzZXIgaGFzIGxvZ2dlZCBpbiBhdCBsZWFzdCBvbmNlLgotICoqTmF2aWdhdGlvbi4qKiBUaGUgZGVza3RvcC90YWJsZXQgbGVmdC1yYWlsIG1lbnUgYW5kIHRoZSBwaG9uZSBib3R0b20gYmFyCiAgbm93IGluY2x1ZGUgYENvbW11bml0eWAgYW5kIGBBY2NvdW50YCBlbnRyaWVzLiBUaGUgcGhvbmUgYm90dG9tIGJhciBpcwogIGBGb2N1cyDCtyBIZWF0IMK3IEdyb3VwIMK3IFN5bmMgwrcgTWVudWA7IHRoZSBgTWVudWAgdGFiIG9wZW5zIGEgcGFuZWwgd2l0aAogIGFjY291bnQgaW5mbywgUVIgU3luYywgQWNjb3VudCwgYW5kIExvZ291dC4KLSAqKkhlYWRlci4qKiBUaGUgdG9wIGhlYWRlciBub3cgc2hvd3MgdGhlIGxvZ2dlZC1pbiB1c2VybmFtZSBhbmQgYSBzeW5jCiAgc3RhdHVzIGluZGljYXRvciAoeWVsbG93IGRvdCA9IG9ubGluZS9zeW5jZWQsIHBpbmsgZG90ID0gb2ZmbGluZSkuCi0gKipQMlAgc3luYyBjb2RlLioqIE5vdyBBRVMtZW5jcnlwdGVkIChzZWUgYWJvdmUpLgoKIyMjIEFyY2hpdGVjdHVyZQoKLSBOZXcgYHNlcnZlci9gIGRpcmVjdG9yeSB3aXRoIHRoZSBiYWNrZW5kOgogIC0gYHNyYy9zZXJ2ZXIuanNgIOKAlCBFeHByZXNzIGVudHJ5IHBvaW50LCBzZXJ2ZXMgdGhlIGZyb250ZW5kLgogIC0gYHNyYy9kYi5qc2Ag4oCUIE15U1FMIChteXNxbDIpIHByaW1hcnksIFNRTGl0ZSAoYmV0dGVyLXNxbGl0ZTMpIGZhbGxiYWNrLgogIC0gYHNyYy9hdXRoLmpzYCDigJQgcmVnaXN0ZXIgLyBwYXNzd29yZC1sb2dpbiAvIFFSLWxvZ2luIC8gSldUIG1pZGRsZXdhcmUuCiAgLSBgc3JjL3N5bmMuanNgIOKAlCBwdWxsL3B1c2ggd2l0aCBsYXN0LXdyaXRlLXdpbnMgY29uZmxpY3QgcmVzb2x1dGlvbi4KICAtIGBzcmMvY29tbXVuaXR5LmpzYCDigJQgY29tbXVuaXRpZXMsIG1lbWJlcnMsIHByb3Bvc2FscywgbWFqb3JpdHkgdm90aW5nLgogIC0gYHNxbC9zY2hlbWEuc3FsYCDigJQgTXlTUUwgc2NoZW1hLgoKIyMgW3YyLjAuMF0g4oCUIDIwMjYtMDgtMTIKCkEgZm9jdXNlZCB1cGRhdGUgdGhhdCBpbXByb3ZlcyBob3cgdGhlIGFwcCBjb3VudHMgZm9jdXMgdGltZSwgcmV3b3JrcyB0aGUKaGVhdG1hcCBpbnRvIGEgbW9udGggY2FsZW5kYXIsIGFuZCBzaW1wbGlmaWVzIG5hdmlnYXRpb24gYWNyb3NzIGV2ZXJ5IGRldmljZS4KCiMjIyBBZGRlZAotICoqUmVhbC10aW1lIGZvY3VzIGFjY3VtdWxhdGlvbi4qKiBUaGUgIkZvY3VzIFRvZGF5IiBhbmQgIlRvdGFsIEhvdXJzIgogIHN0YXRpc3RpY3Mgbm93IHVwZGF0ZSBsaXZlIHdoaWxlIGEgcG9tb2Rvcm8gaXMgcnVubmluZyDigJQgbm90IG9ubHkgYWZ0ZXIgdGhlCiAgc2Vzc2lvbiBjb21wbGV0ZXMuIEVsYXBzZWQgbWludXRlcyBhcmUgY291bnRlZCB0b3dhcmQgdGhlIHRvdGFscyBlYWNoIHNlY29uZC4KLSAqKkludGVycnVwdGVkLXNlc3Npb24gcmVjb3JkaW5nLioqIFdoZW4gYSB3b3JrIHNlc3Npb24gaXMgcGF1c2VkIGFuZCBSZXNldAogIGJlZm9yZSBjb21wbGV0aW5nLCB0aGUgZm9jdXNlZCB0aW1lIGlzIG5vIGxvbmdlciBsb3N0LiBTZXNzaW9ucyBvZiDiiaUxIG1pbnV0ZQogIGFyZSBzYXZlZCB3aXRoIGBjb21wbGV0ZWQ6IGZhbHNlYCBhbmQ6CiAgLSBDb3VudCB0b3dhcmQgdGhlIGRhaWx5IGFuZCBhbGwtdGltZSB0b3RhbHMuCiAgLSBBcHBlYXIgaW4gdGhlIFRvZGF5IGxpc3QgYW5kIHRoZSBkYXRlLWRldGFpbCBtb2RhbCwgdGFnZ2VkIHdpdGggYSBwaW5rCiAgICBgwrcgcGFydGlhbGAgbWFya2VyIGFuZCBkaW1tZWQgc3R5bGluZyBzbyB0aGV5J3JlIGVhc3kgdG8gZGlzdGluZ3Vpc2ggZnJvbQogICAgY29tcGxldGVkIHBvbW9kb3Jvcy4KLSAqKk1vbnRoLWJhc2VkIGhlYXRtYXAuKiogVGhlIGNvbnRyaWJ1dGlvbiBoZWF0bWFwIGlzIG5vdyBhIDctY29sdW1uIGNhbGVuZGFyCiAgZ3JpZCBzaG93aW5nIGEgc2luZ2xlIG1vbnRoIGF0IGEgdGltZSwgd2l0aCBkYXkgbnVtYmVycyAx4oCTMzEgaW4gZWFjaCBjZWxsLgogIFN3aXRjaCBtb250aHMgd2l0aCB0aGUgbmV3IG1vbnRoIHNlbGVjdG9yIChtb250aCArIHllYXIgZHJvcGRvd25zKSBvciB0aGUKICBg4oC5YCAvIGDigLpgIGFycm93IGJ1dHRvbnMuIFN0cmVhayBhbmQgY29udHJpYnV0aW9uIHN0YXRzIGFyZSBzY29wZWQgdG8gdGhlCiAgc2VsZWN0ZWQgbW9udGguCi0gKipCb3R0b20gbWVudSBiYXIgKHBob25lIHBvcnRyYWl0KS4qKiBPbiBwaG9uZXMgdGhlIHNpZGUgcmFpbHMgYW5kIHNsaWRlLW91dAogIHBhbmVsIGFyZSByZXBsYWNlZCB3aXRoIGEgZml4ZWQgYm90dG9tIHRhYiBiYXI6IGBGb2N1cyDCtyBIZWF0IMK3IFN5bmMgwrcgUVIgwrcKICBJbmZvYC4gVGhlIGFjdGl2ZSB0YWIgaXMgbWFya2VkIHdpdGggYSB5ZWxsb3cgZG90LiBUaGUgYEluZm9gIHRhYiBvcGVucyBhCiAgYm90dG9tIHNoZWV0IHdpdGggYXBwIGluZm9ybWF0aW9uIGFuZCBrZXlib2FyZCBzaG9ydGN1dHMuCi0gKipJbmZvcm1hdGlvbiBzZWN0aW9uIGluIHRoZSBkZXNrdG9wL3RhYmxldCBtZW51LioqIFRoZSByaWdodC1oYW5kICJJbmZvIgogIHJhaWwgaXMgcmVtb3ZlZDsgdGhlIGxlZnQtaGFuZCBNZW51IHBhbmVsIG5vdyBzaG93cyBOYXZpZ2F0aW9uLCBJbmZvcm1hdGlvbiwKICBhbmQgU2hvcnRjdXRzIHNlY3Rpb25zIHRvZ2V0aGVyIGluIGEgc2luZ2xlIHZpZXcuCgojIyMgQ2hhbmdlZAotIE1haW4gY29udGVudCBvbiBkZXNrdG9wIGFuZCB0YWJsZXQgbm8gbG9uZ2VyIHJlc2VydmVzIHBhZGRpbmcgZm9yIGEgcmVtb3ZlZAogIHJpZ2h0IHJhaWwsIGdpdmluZyB0aGUgd29ya3NwYWNlIHRoZSBmdWxsIHJpZ2h0LWVkZ2Ugd2lkdGguCi0gVGhlIGBQcm9kdWN0YCBpbmZvIGxpbmUgbm93IHJlYWRzIGBTdHVkeUZsb3dgICh3YXMgYFN0dWR5IFRpbWUgVHJhY2tlcmApLgotIFBob25lLXBvcnRyYWl0IGxheW91dCB1c2VzIGZ1bGwtd2lkdGggcGFkZGluZyBhbmQgcmVzZXJ2ZXMgYm90dG9tIHNwYWNlIGZvcgogIHRoZSBuZXcgYm90dG9tIGJhciBzbyBjb250ZW50IGlzIG5ldmVyIGhpZGRlbiBiZWhpbmQgaXQuCgojIyMgRml4ZWQKLSBTdGF0aXN0aWNzIGluIHRoZSBUb2RheSBwYW5lbCBhbmQgdGhlIHRvcC1yaWdodCBoZWFkZXIgc3RhdHMgbm90IHVwZGF0aW5nCiAgYWZ0ZXIgYSBwb21vZG9ybyBjb21wbGV0ZWQgKG5vdyByZWZyZXNoIG9uIGV2ZXJ5IHRpY2sgYW5kIG9uIGNvbXBsZXRpb24pLgotIE1vbnRoL3llYXIgZHJvcGRvd25zIHN0YXlpbmcgc3RhbGUgd2hlbiBgcmVuZGVySGVhdG1hcCh5ZWFyLCBtb250aClgIHdhcwogIGNhbGxlZCBkaXJlY3RseSDigJQgdGhleSBub3cgc3RheSBpbiBzeW5jIHdpdGggdGhlIHJlbmRlcmVkIGdyaWQuCgojIyBbdjEuMC4wXSDigJQgMjAyNi0wOC0xMgoKSW5pdGlhbCBwdWJsaWMgcmVsZWFzZS4KCiMjIyBBZGRlZAotIEJydXRhbGlzdCBibGFjayAmIHdoaXRlIGRlc2lnbiBmb2xsb3dpbmcgdGhlIDl0bzVzdHVkaW8uaXQgc3BlY2lmaWNhdGlvbjoKICBTd2lzcyBJbnRlcm5hdGlvbmFsIC8gQnJ1dGFsaXN0IEFyY2hpdGVjdHVyZSAvIE1pbmltYWwgR2FsbGVyeS4KLSBQb21vZG9ybyBmb2N1cyB0aW1lciB3aXRoIGdlb21ldHJpYyBibG9jay1zdHlsZSBudW1lcmFscywgbXVsdGktbGF5ZXIKICBjb25jZW50cmljIHByb2dyZXNzIHJpbmcgKG5vIHNoYWRvd3MpLCBjeWNsZSBpbmRpY2F0b3IsIGFuZCBjcmlzcAogIHN5bnRoZXNpemVkIHN0YXJ0L2VuZCBzb3VuZCBjdWVzIChXZWIgQXVkaW8gQVBJKS4KLSBDb25maWd1cmFibGUgZm9jdXMvcmVzdCBkdXJhdGlvbiBhbmQgY3ljbGUgY291bnQsIHdpdGggInNraXAgbGFzdCByZXN0Ii4KLSBZZWFyIGNvbnRyaWJ1dGlvbiBoZWF0bWFwIHdpdGggd2Vla2RheSBsYWJlbHMsIG1vbnRoIGxhYmVscywgYW5kIGEKICBMZXNz4oCTTW9yZSBsZWdlbmQuCi0gVG9kYXkgcGFuZWw6IGZvY3VzIG1pbnV0ZXMsIHBvbW9kb3JvIGNvdW50LCBhbmQgYSBzZXNzaW9uIGxpc3Qgd2l0aAogIGRlbGV0ZS4KLSBNdWx0aS1kZXZpY2Ugc3luYyB2aWEgYSBzaGFyZWQgc3luYyBrZXksIGV4cG9ydC9pbXBvcnQgc3luYyBjb2RlcywgYW5kIGEKICBwYWlyZWQtZGV2aWNlcyBsaXN0LgotIFFSLWNvZGUgc3luYzogZ2VuZXJhdGUgYSBwYWlyaW5nIFFSIG9uIG9uZSBkZXZpY2UgYW5kIHNjYW4gaXQgd2l0aCBhbm90aGVyLgotIDEwMCUgb2ZmbGluZS1maXJzdCBwZXJzaXN0ZW5jZSB2aWEgbG9jYWxTdG9yYWdlLgotIFZlcnRpY2FsIHJvdGF0ZWQtdGV4dCBuYXZpZ2F0aW9uIHJhaWxzIG9uIGRlc2t0b3AvdGFibGV0LgotIFJlc3BvbnNpdmUgbGF5b3V0cyBmb3IgcGhvbmUgcG9ydHJhaXQsIHRhYmxldCBwb3J0cmFpdCwgdGFibGV0IGxhbmRzY2FwZSwKICBsYXJnZSAyLWluLTEgdG91Y2ggZGV2aWNlcywgYW5kIGxhbmRzY2FwZSBwaG9uZXMuCi0gUmVhZHktdG8tdXNlIHByZS1idWlsdCBiaW5hcmllczoKICAtIFdpbmRvd3MgcG9ydGFibGUgKGBTdHVkeUZsb3ctMS4wLjAtd2luLXg2NC1wb3J0YWJsZS56aXBgKQogIC0gTGludXggZGVza3RvcCAoYFN0dWR5Rmxvdy0xLjAuMC1saW51eC14ODZfNjQuQXBwSW1hZ2VgIC8gYC50YXIuZ3pgKQogIC0gQW5kcm9pZCBwaG9uZSBBUEssIHBvcnRyYWl0LWxvY2tlZCAoYHN0dWR5Zmxvdy1kZWJ1Zy5hcGtgKQogIC0gQW5kcm9pZCB0YWJsZXQgQVBLLCBsYW5kc2NhcGUtbG9ja2VkIChgc3R1ZHlmbG93LXRhYmxldC5hcGtgKQo=
+# Changelog
+
+All notable changes to **StudyFlow** are documented here.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [v3.22.0] — 2026-09-09
+
+Security and community-lifecycle release, plus automated packaging.
+
+### Added
+
+- **Brute-force protection on auth endpoints.** A zero-dependency in-memory
+  rate limiter (`server/src/ratelimit.js`): registration is capped at 5 accounts
+  per IP per hour; password login allows 20 attempts per 15 minutes (only
+  failures count) and locks an account+IP pair for 15 minutes after 5 wrong
+  passwords. Every `/api` route also has a baseline 600-request / 15-minute
+  ceiling (`RATE_LIMIT_MAX` to tune).
+- **Community lifecycle endpoints.**
+  - `DELETE /api/community/:id/leave` — a member leaves a community (the owner
+    must dissolve instead).
+  - `POST /api/community/:id/kick` — the owner removes another member; the
+    removed member's votes are purged so tallies stay accurate.
+  - `DELETE /api/community/:id` — the owner dissolves a community; proposals,
+    votes and memberships are deleted atomically inside a transaction.
+- **Automated packaging.** `.github/workflows/build.yml` builds the Android
+  debug APK and the Linux / Windows / macOS desktop installers on every `v*`
+  tag push and attaches them to the release.
+
+### Changed
+
+- Version bumped to **3.22.0** across `server/`, `build/android-cordova/`
+  (package + `config.xml`) and `build/desktop-electron/`.
+
+## [v3.21.0] — 2026-09-09
+
+Correctness and reliability release. Fixes a MySQL transaction bug that could
+leave `/api/sync/push` partially written, makes proposal expiry actually take
+effect, and fixes QR scanning doing nothing at all on phone and tablet.
+
+### Fixed
+
+- **MySQL transactions now pin a single connection.** `db.begin()` previously
+  issued `pool.query('START TRANSACTION')`, but a connection pool may hand a
+  different connection to each subsequent query — so the statements in
+  `/api/sync/push` were never really in one transaction, and a mid-batch
+  failure could leave a partially merged dataset that `rollback()` could not
+  undo. `begin()` now acquires a dedicated connection (`pool.getConnection()`
+  + `beginTransaction()`) that all queries reuse until `commit()`/`rollback()`,
+  which also releases it. A new `db.transaction(fn)` helper wraps the
+  commit/rollback/error-propagation dance.
+- **Proposal expiry is enforced.** `expires_at` was written but never read, so a
+  proposal from 7 days ago could still be voted on. `expireStaleProposals()`
+  now runs before listing and before voting: proposals past their window are
+  closed as `passed` (if a majority voted for) or `expired`, and voting on a
+  non-active proposal reports its actual status.
+- **QR scan is fixed on phone and tablet.** Tapping *Start Camera* did nothing
+  because the Cordova project declared `CAMERA` in the manifest but never
+  requested the Android **runtime** permission — `getUserMedia` rejected
+  instantly with `NotAllowedError` and no system dialog ever appeared. See
+  `docs/P2P-DATA-MERGE.md` §4.1 for the full analysis. Changes:
+  - `ensureCameraReady()` runs before `getUserMedia`: detects a missing camera
+    API (and reports "needs HTTPS" when `isSecureContext` is false) and, when
+    `cordova-plugin-android-permissions` is present, checks and requests the
+    runtime permission first.
+  - `describeCameraError()` maps `NotAllowedError` / `NotFoundError` /
+    `NotReadableError` / `OverconstrainedError` to actionable messages instead
+    of surfacing a raw `TypeError`.
+  - Camera failures now render an inline explanation plus a **Paste sync code
+    instead** button, so P2P sync still completes without a camera.
+  - `startQrScanner()` clears stale state with `stopQrCamera()` first — a stuck
+    `qrScanning` flag made every later tap a silent no-op.
+  - `video.play()` rejections are caught, with a 1.5s safety kick for WebViews
+    that never fire `loadedmetadata` (previously stuck on "Scanning").
+  - `facingMode` is now a soft `{ ideal: 'environment' }` constraint.
+- **`POST /api/sync/push` no longer returns the user's entire history.** It
+  echoed every session row back on every push; it now returns only the rows
+  touched by that push, plus an `applied` count. Payloads over 5000 sessions
+  are rejected with `413`.
+
+### Security
+
+- **The server refuses to start in production with the default JWT secret.**
+  `NODE_ENV=production` with `JWT_SECRET` unset or left at
+  `studyflow-dev-secret-change-me` is now a fatal startup error; otherwise it
+  logs a warning.
+- **SQLite fallback can be disabled.** `DB_STRICT=1` makes an unreachable MySQL
+  a hard failure instead of silently writing to a local `data.sqlite` (which
+  risks splitting data across two databases). Defaults to strict when
+  `NODE_ENV=production`.
+
+### Changed
+
+- `build/android-cordova/package.json` now declares
+  `cordova-plugin-android-permissions`; `npm run build:apk` restores it
+  automatically via `npm run plugins:restore`.
+
+## [v3.20.0] — 2026-09-07
+
+Performance and reliability focused release. The P2P sync module is retained
+alongside the cloud dual-mode sync; the heatmap rendering and the Pomodoro
+timer are hardened.
+
+### Added
+
+- **Timer anti-kill (wall-clock countdown).** The countdown is now anchored to
+  an absolute end timestamp (`endAt`) instead of decrementing once per
+  `setInterval` tick. Background-tab throttling, device sleep, or a slow
+  renderer can no longer slow the timer — the remaining time is always
+  recomputed from `Date.now()`.
+- **Timer state persistence + restore.** The running timer is snapshotted to
+  `localStorage` every tick. If the page is reloaded, the tab killed, or the
+  Android app swiped away, the timer is automatically restored on next launch
+  ("Timer restored" toast) and continues from the exact remaining time — even
+  if the deadline already passed while the app was dead, in which case the
+  completion logic fires correctly.
+- **Foreground correction.** `visibilitychange` / `focus` / `pageshow`
+  (bfcache) listeners immediately recompute and repaint the countdown the
+  moment the app returns to the foreground.
+- **Sync view (cloud focus).** A new Cloud Sync section shows the signed-in
+  account, online/offline status, last sync time, device ID, and a
+  **Sync Now** button. The Data Overview now includes a **Pending Upload**
+  counter for the offline queue.
+
+### Changed
+
+- **Incremental sync queue.** Sessions are enqueued for cloud upload only at
+  their mutation points (complete, partial-save, delete) instead of re-queuing
+  the entire dataset on every save — keeping the pending queue small and
+  pushes minimal.
+- **Heatmap rendering performance.** The minutes-per-day aggregation is now
+  cached and only recomputed when sessions change; calendar cells are built in
+  a `DocumentFragment` and attached in a single reflow; cell clicks use one
+  delegated listener instead of one per cell; month switching (`‹` `›`) is
+  scheduled via `requestAnimationFrame`, so rapid taps stay smooth.
+- **Unified QR camera engine.** P2P data sync (QR Sync view) and account QR
+  login now share one camera loop. If the camera is unavailable (permission
+  denied / desktop without camera), the QR login falls back to manual token
+  entry.
+- **P2P sync retained.** The offline peer-to-peer module (shared sync key,
+  AES-256-GCM encrypted `STUDY2:` packets, QR/text export-import, paired
+  device list) remains fully available and complements the online cloud sync.
+- **QR P2P is now phone/tablet only.** Desktop builds (and touchless PC
+  browsers) no longer show the QR Sync entry — the camera-to-camera flow does
+  not apply there and desktop uses cloud sync exclusively. Direct
+  `switchView('qr')` calls are redirected to the Sync view with a hint.
+- **Chunked multi-QR transfers (STUDY3).** A single QR code caps at ~2.9KB,
+  so months of records no longer fit. Exported payloads are now
+  gzip-compressed (repetitive record keys shrink ~8-10x via
+  `CompressionStream`) and, when still too large, split into a
+  self-describing chunk sequence `STUDY3:<id>.<idx>.<total>.<slice>`. The
+  generator shows a `QR 1/N` label with Prev/Next paging and a default-on
+  Auto cycle (2.6s per code); the scanner runs continuously, accepts chunks
+  in any order (duplicates are idempotent, 1.5s debounce), shows
+  `Receiving x/N` progress, and auto-merges once the sequence is complete.
+  Security is unchanged — chunks are ciphertext slices, integrity is
+  verified by the AES-GCM tag at decryption time. The legacy `STUDY1:`
+  insecure-context path also compresses now (via a `gz` field). Measured:
+  3 months ≈ 900 sessions → 19 codes; 500 sessions that needed 95
+  uncompressed codes now take 12.
+- **P2P merge engine rewrite.** Importing a sync code now runs a validated,
+  tombstone-aware, last-write-wins merge: records are sanitised and clamped
+  before entering the dataset; same-id records are overwritten only when the
+  remote `updated_at` is newer; deleted sessions propagate via a 90-day
+  tombstone registry (`STUDY2:` payload v3 carries `tombstones`), so deleted
+  sessions can no longer be resurrected by an old peer snapshot; merged rows
+  fan out to the cloud upload queue so the result reaches the server when
+  either device comes back online. A rolling pre-merge backup is kept in
+  `studyflow_p2p_backup_v1`, and the import toast reports a full summary
+  (added / updated / removed / skipped). See `docs/P2P-DATA-MERGE.md` for the
+  technical specification.
+
+## [v3.0.0] — 2026-09-07
+
+A full-architecture rewrite that turns StudyFlow into a cross-platform,
+cloud-synced study management system with multi-device accounts, dual-mode
+data sync, encrypted peer-to-peer sync, and community group supervision.
+
+### Added
+
+- **Multi-device account system.** A new backend server (`server/`) built on
+  Node.js + Express with a MySQL primary database (SQLite fallback for
+  single-machine or offline development). Users register with a username and
+  password (bcrypt-hashed) and receive a JWT session token valid for 30 days.
+- **QR-code login.** A logged-in device can generate a one-time QR token
+  (valid 5 minutes). Scanning (or pasting) that token on a new device signs it
+  into the same account instantly — no password re-entry needed.
+- **Dual-mode cloud sync.** Online sessions are pushed to the cloud database;
+  offline sessions are queued locally and auto-uploaded when connectivity
+  returns. A pull merges cloud records into the local store using
+  last-write-wins (by `updated_at`) with tombstone deletes. An auto-sync loop
+  runs every 30 seconds.
+- **Encrypted P2P sync.** The existing QR/text sync code is now encrypted with
+  AES-256-GCM. The shared sync key is fed through PBKDF2 (100k iterations) to
+  derive the AES key. The new `STUDY2:` payload format carries an IV-prefixed
+  ciphertext; the legacy `STUDY1:` plaintext format is still accepted for
+  backward compatibility.
+- **Community supervision.** Create or join study communities via an invite
+  code. Members can propose a study standard (title + target daily minutes).
+  A proposal **passes when more than 50% of members vote "for"** (majority
+  rule) and becomes the community's active standard. Proposals expire after
+  7 days.
+- **Account view.** Shows username, user ID, local device ID, a QR-login
+  generator, and a manual "Sync Now" button.
+- **Community view.** Lists the user's communities, supports creation, joining
+  by invite code, and per-community detail (members, proposals, voting,
+  current standard).
+
+### Changed
+
+- **Login gate.** The app now opens to a login/register screen. Local data is
+  still available offline once the user has logged in at least once.
+- **Navigation.** The desktop/tablet left-rail menu and the phone bottom bar
+  now include `Community` and `Account` entries. The phone bottom bar is
+  `Focus · Heat · Group · Sync · Menu`; the `Menu` tab opens a panel with
+  account info, QR Sync, Account, and Logout.
+- **Header.** The top header now shows the logged-in username and a sync
+  status indicator (yellow dot = online/synced, pink dot = offline).
+- **P2P sync code.** Now AES-encrypted (see above).
+
+### Architecture
+
+- New `server/` directory with the backend:
+  - `src/server.js` — Express entry point, serves the frontend.
+  - `src/db.js` — MySQL (mysql2) primary, SQLite (better-sqlite3) fallback.
+  - `src/auth.js` — register / password-login / QR-login / JWT middleware.
+  - `src/sync.js` — pull/push with last-write-wins conflict resolution.
+  - `src/community.js` — communities, members, proposals, majority voting.
+  - `sql/schema.sql` — MySQL schema.
+
+## [v2.0.0] — 2026-08-12
+
+A focused update that improves how the app counts focus time, reworks the
+heatmap into a month calendar, and simplifies navigation across every device.
+
+### Added
+- **Real-time focus accumulation.** The "Focus Today" and "Total Hours"
+  statistics now update live while a pomodoro is running — not only after the
+  session completes. Elapsed minutes are counted toward the totals each second.
+- **Interrupted-session recording.** When a work session is paused and Reset
+  before completing, the focused time is no longer lost. Sessions of ≥1 minute
+  are saved with `completed: false` and:
+  - Count toward the daily and all-time totals.
+  - Appear in the Today list and the date-detail modal, tagged with a pink
+    `· partial` marker and dimmed styling so they're easy to distinguish from
+    completed pomodoros.
+- **Month-based heatmap.** The contribution heatmap is now a 7-column calendar
+  grid showing a single month at a time, with day numbers 1–31 in each cell.
+  Switch months with the new month selector (month + year dropdowns) or the
+  `‹` / `›` arrow buttons. Streak and contribution stats are scoped to the
+  selected month.
+- **Bottom menu bar (phone portrait).** On phones the side rails and slide-out
+  panel are replaced with a fixed bottom tab bar: `Focus · Heat · Sync · QR ·
+  Info`. The active tab is marked with a yellow dot. The `Info` tab opens a
+  bottom sheet with app information and keyboard shortcuts.
+- **Information section in the desktop/tablet menu.** The right-hand "Info"
+  rail is removed; the left-hand Menu panel now shows Navigation, Information,
+  and Shortcuts sections together in a single view.
+
+### Changed
+- Main content on desktop and tablet no longer reserves padding for a removed
+  right rail, giving the workspace the full right-edge width.
+- The `Product` info line now reads `StudyFlow` (was `Study Time Tracker`).
+- Phone-portrait layout uses full-width padding and reserves bottom space for
+  the new bottom bar so content is never hidden behind it.
+
+### Fixed
+- Statistics in the Today panel and the top-right header stats not updating
+  after a pomodoro completed (now refresh on every tick and on completion).
+- Month/year dropdowns staying stale when `renderHeatmap(year, month)` was
+  called directly — they now stay in sync with the rendered grid.
+
+## [v1.0.0] — 2026-08-12
+
+Initial public release.
+
+### Added
+- Brutalist black & white design following the 9to5studio.it specification:
+  Swiss International / Brutalist Architecture / Minimal Gallery.
+- Pomodoro focus timer with geometric block-style numerals, multi-layer
+  concentric progress ring (no shadows), cycle indicator, and crisp
+  synthesized start/end sound cues (Web Audio API).
+- Configurable focus/rest duration and cycle count, with "skip last rest".
+- Year contribution heatmap with weekday labels, month labels, and a
+  Less–More legend.
+- Today panel: focus minutes, pomodoro count, and a session list with
+  delete.
+- Multi-device sync via a shared sync key, export/import sync codes, and a
+  paired-devices list.
+- QR-code sync: generate a pairing QR on one device and scan it with another.
+- 100% offline-first persistence via localStorage.
+- Vertical rotated-text navigation rails on desktop/tablet.
+- Responsive layouts for phone portrait, tablet portrait, tablet landscape,
+  large 2-in-1 touch devices, and landscape phones.
+- Ready-to-use pre-built binaries:
+  - Windows portable (`StudyFlow-1.0.0-win-x64-portable.zip`)
+  - Linux desktop (`StudyFlow-1.0.0-linux-x86_64.AppImage` / `.tar.gz`)
+  - Android phone APK, portrait-locked (`studyflow-debug.apk`)
+  - Android tablet APK, landscape-locked (`studyflow-tablet.apk`)

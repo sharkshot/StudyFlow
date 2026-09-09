@@ -1,1 +1,349 @@
-LyoqCiAqIENvbW11bml0eSBtb2R1bGUg4oCUIGNyZWF0ZS9qb2luIHN0dWR5IGNvbW11bml0aWVzLCBwcm9wb3NlIHN0YW5kYXJkcywgbWFqb3JpdHkgdm90ZS4KICoKICogUnVsZXM6CiAqIC0gQSBjb21tdW5pdHkgaGFzIGFuIGludml0ZV9jb2RlOyBtZW1iZXJzIGpvaW4gdmlhIGl0LgogKiAtIEFueSBtZW1iZXIgY2FuIHByb3Bvc2UgYSBzdHVkeSBzdGFuZGFyZCAodGFyZ2V0IGRhaWx5IG1pbnV0ZXMpLgogKiAtIEEgcHJvcG9zYWwgcGFzc2VzIHdoZW4gPjUwJSBvZiBtZW1iZXJzIHZvdGUgImZvciIgKG1ham9yaXR5KS4KICogLSBQcm9wb3NhbHMgZXhwaXJlIGFmdGVyIDcgZGF5czsgZXhwaXJlZCBwcm9wb3NhbHMgd2l0aCBtYWpvcml0eSBhcmUgYXV0by1wYXNzZWQuCiAqLwpjb25zdCBleHByZXNzID0gcmVxdWlyZSgnZXhwcmVzcycpOwpjb25zdCBjcnlwdG8gPSByZXF1aXJlKCdjcnlwdG8nKTsKY29uc3QgZGIgPSByZXF1aXJlKCcuL2RiJyk7CmNvbnN0IHsgYXV0aE1pZGRsZXdhcmUgfSA9IHJlcXVpcmUoJy4vYXV0aCcpOwoKY29uc3Qgcm91dGVyID0gZXhwcmVzcy5Sb3V0ZXIoKTsKcm91dGVyLnVzZShhdXRoTWlkZGxld2FyZSk7CgpmdW5jdGlvbiBub3coKSB7IHJldHVybiBuZXcgRGF0ZSgpLnRvSVNPU3RyaW5nKCk7IH0KZnVuY3Rpb24gcmFuZG9tSW52aXRlQ29kZSgpIHsKICByZXR1cm4gY3J5cHRvLnJhbmRvbUJ5dGVzKDQpLnRvU3RyaW5nKCdoZXgnKS50b1VwcGVyQ2FzZSgpOyAvLyA4IGNoYXJzCn0KCi8qKiBDbG9zZSBvdXQgcHJvcG9zYWxzIHBhc3QgdGhlaXIgNy1kYXkgd2luZG93LiBBIHByb3Bvc2FsIHRoYXQgc3RpbGwgaG9sZHMgYQogKiAgbWFqb3JpdHkgb2YgImZvciIgdm90ZXMgaXMgbWFya2VkIHBhc3NlZDsgb3RoZXJ3aXNlIGl0IHNpbXBseSBleHBpcmVzLgogKiAgQ2FsbGVkIGJlZm9yZSBsaXN0aW5nIGFuZCBiZWZvcmUgdm90aW5nIHNvIGV4cGlyeSBpcyBhbHdheXMgZW5mb3JjZWQuICovCmFzeW5jIGZ1bmN0aW9uIGV4cGlyZVN0YWxlUHJvcG9zYWxzKCkgewogIGNvbnN0IHN0YWxlID0gYXdhaXQgZGIucXVlcnkoCiAgICAiU0VMRUNUIGlkLCBjb21tdW5pdHlfaWQgRlJPTSBwcm9wb3NhbHMgV0hFUkUgc3RhdHVzID0gJ2FjdGl2ZScgQU5EIGV4cGlyZXNfYXQgPD0gPyIsCiAgICBbbm93KCldCiAgKTsKICBmb3IgKGNvbnN0IHAgb2Ygc3RhbGUpIHsKICAgIGNvbnN0IG1lbWJlckNvdW50Um93ID0gYXdhaXQgZGIuZ2V0KAogICAgICAnU0VMRUNUIENPVU5UKCopIEFTIGMgRlJPTSBjb21tdW5pdHlfbWVtYmVycyBXSEVSRSBjb21tdW5pdHlfaWQgPSA/JywgW3AuY29tbXVuaXR5X2lkXQogICAgKTsKICAgIGNvbnN0IHRvdGFsID0gbWVtYmVyQ291bnRSb3cgPyBtZW1iZXJDb3VudFJvdy5jIDogMDsKICAgIGNvbnN0IHZvdGVzRm9yUm93ID0gYXdhaXQgZGIuZ2V0KAogICAgICAnU0VMRUNUIENPVU5UKCopIEFTIGMgRlJPTSBwcm9wb3NhbF92b3RlcyBXSEVSRSBwcm9wb3NhbF9pZCA9ID8gQU5EIHZvdGUgPSAxJywgW3AuaWRdCiAgICApOwogICAgY29uc3Qgdm90ZXNGb3IgPSB2b3Rlc0ZvclJvdyA/IHZvdGVzRm9yUm93LmMgOiAwOwogICAgY29uc3QgcGFzc2VkID0gdG90YWwgPiAwICYmIHZvdGVzRm9yID4gdG90YWwgLyAyOwogICAgYXdhaXQgZGIucnVuKCdVUERBVEUgcHJvcG9zYWxzIFNFVCBzdGF0dXMgPSA/IFdIRVJFIGlkID0gPycsIFtwYXNzZWQgPyAncGFzc2VkJyA6ICdleHBpcmVkJywgcC5pZF0pOwogIH0KICByZXR1cm4gc3RhbGUubGVuZ3RoOwp9CgovLyAtLS0tIENyZWF0ZSBjb21tdW5pdHkgLS0tLQpyb3V0ZXIucG9zdCgnLycsIGFzeW5jIChyZXEsIHJlcykgPT4gewogIGNvbnN0IHsgbmFtZSwgZGVzY3JpcHRpb24gfSA9IHJlcS5ib2R5IHx8IHt9OwogIGlmICghbmFtZSkgcmV0dXJuIHJlcy5zdGF0dXMoNDAwKS5qc29uKHsgZXJyb3I6ICdOYW1lIHJlcXVpcmVkJyB9KTsKICB0cnkgewogICAgbGV0IGNvZGU7CiAgICAvLyBFbnN1cmUgdW5pcXVlIGludml0ZSBjb2RlCiAgICBmb3IgKGxldCBpID0gMDsgaSA8IDU7IGkrKykgewogICAgICBjb2RlID0gcmFuZG9tSW52aXRlQ29kZSgpOwogICAgICBjb25zdCBleGlzdHMgPSBhd2FpdCBkYi5nZXQoJ1NFTEVDVCBpZCBGUk9NIGNvbW11bml0aWVzIFdIRVJFIGludml0ZV9jb2RlID0gPycsIFtjb2RlXSk7CiAgICAgIGlmICghZXhpc3RzKSBicmVhazsKICAgIH0KICAgIGNvbnN0IHJlc3VsdCA9IGF3YWl0IGRiLnJ1bigKICAgICAgJ0lOU0VSVCBJTlRPIGNvbW11bml0aWVzIChuYW1lLCBkZXNjcmlwdGlvbiwgY3JlYXRlZF9ieSwgaW52aXRlX2NvZGUsIGNyZWF0ZWRfYXQpIFZBTFVFUyAoPywgPywgPywgPywgPyknLAogICAgICBbbmFtZSwgZGVzY3JpcHRpb24gfHwgJycsIHJlcS51c2VyLmlkLCBjb2RlLCBub3coKV0KICAgICk7CiAgICBjb25zdCBjb21tdW5pdHlJZCA9IHJlc3VsdC5sYXN0SW5zZXJ0Um93aWQ7CiAgICBhd2FpdCBkYi5ydW4oCiAgICAgICdJTlNFUlQgSU5UTyBjb21tdW5pdHlfbWVtYmVycyAoY29tbXVuaXR5X2lkLCB1c2VyX2lkLCByb2xlLCBqb2luZWRfYXQpIFZBTFVFUyAoPywgPywgPywgPyknLAogICAgICBbY29tbXVuaXR5SWQsIHJlcS51c2VyLmlkLCAnb3duZXInLCBub3coKV0KICAgICk7CiAgICByZXMuanNvbih7IGlkOiBjb21tdW5pdHlJZCwgbmFtZSwgZGVzY3JpcHRpb24sIGludml0ZV9jb2RlOiBjb2RlLCByb2xlOiAnb3duZXInIH0pOwogIH0gY2F0Y2ggKGUpIHsKICAgIGNvbnNvbGUuZXJyb3IoJ0NyZWF0ZSBjb21tdW5pdHkgZXJyb3InLCBlKTsKICAgIHJlcy5zdGF0dXMoNTAwKS5qc29uKHsgZXJyb3I6ICdTZXJ2ZXIgZXJyb3InIH0pOwogIH0KfSk7CgovLyAtLS0tIEpvaW4gY29tbXVuaXR5IGJ5IGludml0ZSBjb2RlIC0tLS0Kcm91dGVyLnBvc3QoJy9qb2luJywgYXN5bmMgKHJlcSwgcmVzKSA9PiB7CiAgY29uc3QgeyBpbnZpdGVfY29kZSB9ID0gcmVxLmJvZHkgfHwge307CiAgaWYgKCFpbnZpdGVfY29kZSkgcmV0dXJuIHJlcy5zdGF0dXMoNDAwKS5qc29uKHsgZXJyb3I6ICdJbnZpdGUgY29kZSByZXF1aXJlZCcgfSk7CiAgdHJ5IHsKICAgIGNvbnN0IGNvbW11bml0eSA9IGF3YWl0IGRiLmdldCgnU0VMRUNUICogRlJPTSBjb21tdW5pdGllcyBXSEVSRSBpbnZpdGVfY29kZSA9ID8nLCBbaW52aXRlX2NvZGUudHJpbSgpXSk7CiAgICBpZiAoIWNvbW11bml0eSkgcmV0dXJuIHJlcy5zdGF0dXMoNDA0KS5qc29uKHsgZXJyb3I6ICdDb21tdW5pdHkgbm90IGZvdW5kJyB9KTsKCiAgICBjb25zdCBtZW1iZXIgPSBhd2FpdCBkYi5nZXQoCiAgICAgICdTRUxFQ1QgKiBGUk9NIGNvbW11bml0eV9tZW1iZXJzIFdIRVJFIGNvbW11bml0eV9pZCA9ID8gQU5EIHVzZXJfaWQgPSA/JywKICAgICAgW2NvbW11bml0eS5pZCwgcmVxLnVzZXIuaWRdCiAgICApOwogICAgaWYgKG1lbWJlcikgcmV0dXJuIHJlcy5zdGF0dXMoNDA5KS5qc29uKHsgZXJyb3I6ICdBbHJlYWR5IGEgbWVtYmVyJyB9KTsKCiAgICBhd2FpdCBkYi5ydW4oCiAgICAgICdJTlNFUlQgSU5UTyBjb21tdW5pdHlfbWVtYmVycyAoY29tbXVuaXR5X2lkLCB1c2VyX2lkLCByb2xlLCBqb2luZWRfYXQpIFZBTFVFUyAoPywgPywgPywgPyknLAogICAgICBbY29tbXVuaXR5LmlkLCByZXEudXNlci5pZCwgJ21lbWJlcicsIG5vdygpXQogICAgKTsKICAgIHJlcy5qc29uKHsgaWQ6IGNvbW11bml0eS5pZCwgbmFtZTogY29tbXVuaXR5Lm5hbWUsIHJvbGU6ICdtZW1iZXInIH0pOwogIH0gY2F0Y2ggKGUpIHsKICAgIGNvbnNvbGUuZXJyb3IoJ0pvaW4gY29tbXVuaXR5IGVycm9yJywgZSk7CiAgICByZXMuc3RhdHVzKDUwMCkuanNvbih7IGVycm9yOiAnU2VydmVyIGVycm9yJyB9KTsKICB9Cn0pOwoKLy8gLS0tLSBMaXN0IG15IGNvbW11bml0aWVzIC0tLS0Kcm91dGVyLmdldCgnLycsIGFzeW5jIChyZXEsIHJlcykgPT4gewogIHRyeSB7CiAgICBjb25zdCByb3dzID0gYXdhaXQgZGIucXVlcnkoCiAgICAgIGBTRUxFQ1QgYy5pZCwgYy5uYW1lLCBjLmRlc2NyaXB0aW9uLCBjLmludml0ZV9jb2RlLCBjLmNyZWF0ZWRfYXQsIGNtLnJvbGUsCiAgICAgICAgICAgICAgKFNFTEVDVCBDT1VOVCgqKSBGUk9NIGNvbW11bml0eV9tZW1iZXJzIFdIRVJFIGNvbW11bml0eV9pZCA9IGMuaWQpIEFTIG1lbWJlcl9jb3VudAogICAgICAgRlJPTSBjb21tdW5pdGllcyBjCiAgICAgICBKT0lOIGNvbW11bml0eV9tZW1iZXJzIGNtIE9OIGNtLmNvbW11bml0eV9pZCA9IGMuaWQKICAgICAgIFdIRVJFIGNtLnVzZXJfaWQgPSA/CiAgICAgICBPUkRFUiBCWSBjLmNyZWF0ZWRfYXQgREVTQ2AsCiAgICAgIFtyZXEudXNlci5pZF0KICAgICk7CiAgICByZXMuanNvbih7IGNvbW11bml0aWVzOiByb3dzIH0pOwogIH0gY2F0Y2ggKGUpIHsKICAgIGNvbnNvbGUuZXJyb3IoJ0xpc3QgY29tbXVuaXRpZXMgZXJyb3InLCBlKTsKICAgIHJlcy5zdGF0dXMoNTAwKS5qc29uKHsgZXJyb3I6ICdTZXJ2ZXIgZXJyb3InIH0pOwogIH0KfSk7CgovLyAtLS0tIENvbW11bml0eSBkZXRhaWwgKyBtZW1iZXJzIC0tLS0Kcm91dGVyLmdldCgnLzppZCcsIGFzeW5jIChyZXEsIHJlcykgPT4gewogIGNvbnN0IGlkID0gcGFyc2VJbnQocmVxLnBhcmFtcy5pZCwgMTApOwogIHRyeSB7CiAgICBjb25zdCBtZW1iZXJzaGlwID0gYXdhaXQgZGIuZ2V0KAogICAgICAnU0VMRUNUICogRlJPTSBjb21tdW5pdHlfbWVtYmVycyBXSEVSRSBjb21tdW5pdHlfaWQgPSA/IEFORCB1c2VyX2lkID0gPycsCiAgICAgIFtpZCwgcmVxLnVzZXIuaWRdCiAgICApOwogICAgaWYgKCFtZW1iZXJzaGlwKSByZXR1cm4gcmVzLnN0YXR1cyg0MDMpLmpzb24oeyBlcnJvcjogJ05vdCBhIG1lbWJlcicgfSk7CgogICAgY29uc3QgY29tbXVuaXR5ID0gYXdhaXQgZGIuZ2V0KCdTRUxFQ1QgKiBGUk9NIGNvbW11bml0aWVzIFdIRVJFIGlkID0gPycsIFtpZF0pOwogICAgY29uc3QgbWVtYmVycyA9IGF3YWl0IGRiLnF1ZXJ5KAogICAgICBgU0VMRUNUIHUuaWQsIHUudXNlcm5hbWUsIGNtLnJvbGUsIGNtLmpvaW5lZF9hdAogICAgICAgRlJPTSBjb21tdW5pdHlfbWVtYmVycyBjbSBKT0lOIHVzZXJzIHUgT04gdS5pZCA9IGNtLnVzZXJfaWQKICAgICAgIFdIRVJFIGNtLmNvbW11bml0eV9pZCA9ID8gT1JERVIgQlkgY20uam9pbmVkX2F0YCwKICAgICAgW2lkXQogICAgKTsKICAgIC8vIEN1cnJlbnQgYWN0aXZlIHN0YW5kYXJkOiBsYXRlc3QgcGFzc2VkIHByb3Bvc2FsCiAgICBjb25zdCBzdGFuZGFyZCA9IGF3YWl0IGRiLmdldCgKICAgICAgYFNFTEVDVCAqIEZST00gcHJvcG9zYWxzIFdIRVJFIGNvbW11bml0eV9pZCA9ID8gQU5EIHN0YXR1cyA9ICdwYXNzZWQnIE9SREVSIEJZIGNyZWF0ZWRfYXQgREVTQyBMSU1JVCAxYCwKICAgICAgW2lkXQogICAgKTsKICAgIHJlcy5qc29uKHsgY29tbXVuaXR5LCBtZW1iZXJzLCBzdGFuZGFyZCB9KTsKICB9IGNhdGNoIChlKSB7CiAgICBjb25zb2xlLmVycm9yKCdDb21tdW5pdHkgZGV0YWlsIGVycm9yJywgZSk7CiAgICByZXMuc3RhdHVzKDUwMCkuanNvbih7IGVycm9yOiAnU2VydmVyIGVycm9yJyB9KTsKICB9Cn0pOwoKLy8gLS0tLSBDcmVhdGUgcHJvcG9zYWwgLS0tLQpyb3V0ZXIucG9zdCgnLzppZC9wcm9wb3NhbHMnLCBhc3luYyAocmVxLCByZXMpID0+IHsKICBjb25zdCBpZCA9IHBhcnNlSW50KHJlcS5wYXJhbXMuaWQsIDEwKTsKICBjb25zdCB7IHRpdGxlLCBkZXNjcmlwdGlvbiwgdGFyZ2V0X21pbnV0ZXMgfSA9IHJlcS5ib2R5IHx8IHt9OwogIGlmICghdGl0bGUpIHJldHVybiByZXMuc3RhdHVzKDQwMCkuanNvbih7IGVycm9yOiAnVGl0bGUgcmVxdWlyZWQnIH0pOwogIHRyeSB7CiAgICBjb25zdCBtZW1iZXJzaGlwID0gYXdhaXQgZGIuZ2V0KAogICAgICAnU0VMRUNUICogRlJPTSBjb21tdW5pdHlfbWVtYmVycyBXSEVSRSBjb21tdW5pdHlfaWQgPSA/IEFORCB1c2VyX2lkID0gPycsCiAgICAgIFtpZCwgcmVxLnVzZXIuaWRdCiAgICApOwogICAgaWYgKCFtZW1iZXJzaGlwKSByZXR1cm4gcmVzLnN0YXR1cyg0MDMpLmpzb24oeyBlcnJvcjogJ05vdCBhIG1lbWJlcicgfSk7CgogICAgY29uc3QgZXhwaXJlcyA9IG5ldyBEYXRlKERhdGUubm93KCkgKyA3ICogMjQgKiA2MCAqIDYwICogMTAwMCkudG9JU09TdHJpbmcoKTsKICAgIGNvbnN0IHJlc3VsdCA9IGF3YWl0IGRiLnJ1bigKICAgICAgYElOU0VSVCBJTlRPIHByb3Bvc2FscyAoY29tbXVuaXR5X2lkLCBwcm9wb3Nlcl9pZCwgdGl0bGUsIGRlc2NyaXB0aW9uLCB0YXJnZXRfbWludXRlcywgc3RhdHVzLCBjcmVhdGVkX2F0LCBleHBpcmVzX2F0KQogICAgICAgVkFMVUVTICg/LCA/LCA/LCA/LCA/LCAnYWN0aXZlJywgPywgPylgLAogICAgICBbaWQsIHJlcS51c2VyLmlkLCB0aXRsZSwgZGVzY3JpcHRpb24gfHwgJycsIHRhcmdldF9taW51dGVzIHx8IDAsIG5vdygpLCBleHBpcmVzXQogICAgKTsKICAgIHJlcy5qc29uKHsgaWQ6IHJlc3VsdC5sYXN0SW5zZXJ0Um93aWQsIHRpdGxlLCBzdGF0dXM6ICdhY3RpdmUnLCBleHBpcmVzX2F0OiBleHBpcmVzIH0pOwogIH0gY2F0Y2ggKGUpIHsKICAgIGNvbnNvbGUuZXJyb3IoJ0NyZWF0ZSBwcm9wb3NhbCBlcnJvcicsIGUpOwogICAgcmVzLnN0YXR1cyg1MDApLmpzb24oeyBlcnJvcjogJ1NlcnZlciBlcnJvcicgfSk7CiAgfQp9KTsKCi8vIC0tLS0gTGlzdCBwcm9wb3NhbHMgZm9yIGEgY29tbXVuaXR5ICh3aXRoIHZvdGUgY291bnRzKSAtLS0tCnJvdXRlci5nZXQoJy86aWQvcHJvcG9zYWxzJywgYXN5bmMgKHJlcSwgcmVzKSA9PiB7CiAgY29uc3QgaWQgPSBwYXJzZUludChyZXEucGFyYW1zLmlkLCAxMCk7CiAgdHJ5IHsKICAgIGNvbnN0IG1lbWJlcnNoaXAgPSBhd2FpdCBkYi5nZXQoCiAgICAgICdTRUxFQ1QgKiBGUk9NIGNvbW11bml0eV9tZW1iZXJzIFdIRVJFIGNvbW11bml0eV9pZCA9ID8gQU5EIHVzZXJfaWQgPSA/JywKICAgICAgW2lkLCByZXEudXNlci5pZF0KICAgICk7CiAgICBpZiAoIW1lbWJlcnNoaXApIHJldHVybiByZXMuc3RhdHVzKDQwMykuanNvbih7IGVycm9yOiAnTm90IGEgbWVtYmVyJyB9KTsKCiAgICBhd2FpdCBleHBpcmVTdGFsZVByb3Bvc2FscygpOwoKICAgIGNvbnN0IG1lbWJlckNvdW50ID0gYXdhaXQgZGIuZ2V0KAogICAgICAnU0VMRUNUIENPVU5UKCopIEFTIGMgRlJPTSBjb21tdW5pdHlfbWVtYmVycyBXSEVSRSBjb21tdW5pdHlfaWQgPSA/JywgW2lkXQogICAgKTsKICAgIGNvbnN0IHRvdGFsID0gbWVtYmVyQ291bnQuYzsKCiAgICBjb25zdCBwcm9wb3NhbHMgPSBhd2FpdCBkYi5xdWVyeSgKICAgICAgYFNFTEVDVCBwLiosIHUudXNlcm5hbWUgQVMgcHJvcG9zZXJfbmFtZSwKICAgICAgICAgICAgICAoU0VMRUNUIENPVU5UKCopIEZST00gcHJvcG9zYWxfdm90ZXMgV0hFUkUgcHJvcG9zYWxfaWQgPSBwLmlkIEFORCB2b3RlID0gMSkgQVMgdm90ZXNfZm9yLAogICAgICAgICAgICAgIChTRUxFQ1QgQ09VTlQoKikgRlJPTSBwcm9wb3NhbF92b3RlcyBXSEVSRSBwcm9wb3NhbF9pZCA9IHAuaWQgQU5EIHZvdGUgPSAwKSBBUyB2b3Rlc19hZ2FpbnN0LAogICAgICAgICAgICAgIChTRUxFQ1Qgdm90ZSBGUk9NIHByb3Bvc2FsX3ZvdGVzIFdIRVJFIHByb3Bvc2FsX2lkID0gcC5pZCBBTkQgdXNlcl9pZCA9ID8pIEFTIG15X3ZvdGUKICAgICAgIEZST00gcHJvcG9zYWxzIHAgSk9JTiB1c2VycyB1IE9OIHUuaWQgPSBwLnByb3Bvc2VyX2lkCiAgICAgICBXSEVSRSBwLmNvbW11bml0eV9pZCA9ID8gT1JERVIgQlkgcC5jcmVhdGVkX2F0IERFU0NgLAogICAgICBbcmVxLnVzZXIuaWQsIGlkXQogICAgKTsKICAgIHJlcy5qc29uKHsgcHJvcG9zYWxzLCB0b3RhbF9tZW1iZXJzOiB0b3RhbCB9KTsKICB9IGNhdGNoIChlKSB7CiAgICBjb25zb2xlLmVycm9yKCdMaXN0IHByb3Bvc2FscyBlcnJvcicsIGUpOwogICAgcmVzLnN0YXR1cyg1MDApLmpzb24oeyBlcnJvcjogJ1NlcnZlciBlcnJvcicgfSk7CiAgfQp9KTsKCi8vIC0tLS0gTGVhdmUgYSBjb21tdW5pdHkgKGFueSBtZW1iZXIgZXhjZXB0IHRoZSBvd25lcikgLS0tLQpyb3V0ZXIuZGVsZXRlKCcvOmlkL2xlYXZlJywgYXN5bmMgKHJlcSwgcmVzKSA9PiB7CiAgY29uc3QgaWQgPSBwYXJzZUludChyZXEucGFyYW1zLmlkLCAxMCk7CiAgdHJ5IHsKICAgIGNvbnN0IG1lbWJlcnNoaXAgPSBhd2FpdCBkYi5nZXQoCiAgICAgICdTRUxFQ1QgKiBGUk9NIGNvbW11bml0eV9tZW1iZXJzIFdIRVJFIGNvbW11bml0eV9pZCA9ID8gQU5EIHVzZXJfaWQgPSA/JywKICAgICAgW2lkLCByZXEudXNlci5pZF0KICAgICk7CiAgICBpZiAoIW1lbWJlcnNoaXApIHJldHVybiByZXMuc3RhdHVzKDQwMykuanNvbih7IGVycm9yOiAnTm90IGEgbWVtYmVyJyB9KTsKICAgIGlmIChtZW1iZXJzaGlwLnJvbGUgPT09ICdvd25lcicpIHsKICAgICAgcmV0dXJuIHJlcy5zdGF0dXMoNDAzKS5qc29uKHsgZXJyb3I6ICdPd25lciBjYW5ub3QgbGVhdmUg4oCUIGRpc3NvbHZlIHRoZSBjb21tdW5pdHkgaW5zdGVhZCcgfSk7CiAgICB9CiAgICBhd2FpdCBkYi5ydW4oJ0RFTEVURSBGUk9NIGNvbW11bml0eV9tZW1iZXJzIFdIRVJFIGNvbW11bml0eV9pZCA9ID8gQU5EIHVzZXJfaWQgPSA/JywgW2lkLCByZXEudXNlci5pZF0pOwogICAgcmVzLmpzb24oeyBsZWZ0OiB0cnVlLCBjb21tdW5pdHlfaWQ6IGlkIH0pOwogIH0gY2F0Y2ggKGUpIHsKICAgIGNvbnNvbGUuZXJyb3IoJ0xlYXZlIGNvbW11bml0eSBlcnJvcicsIGUpOwogICAgcmVzLnN0YXR1cyg1MDApLmpzb24oeyBlcnJvcjogJ1NlcnZlciBlcnJvcicgfSk7CiAgfQp9KTsKCi8vIC0tLS0gS2ljayBhIG1lbWJlciAob3duZXIgb25seSkgLS0tLQpyb3V0ZXIucG9zdCgnLzppZC9raWNrJywgYXN5bmMgKHJlcSwgcmVzKSA9PiB7CiAgY29uc3QgaWQgPSBwYXJzZUludChyZXEucGFyYW1zLmlkLCAxMCk7CiAgY29uc3QgeyB1c2VyX2lkIH0gPSByZXEuYm9keSB8fCB7fTsKICBpZiAoIXVzZXJfaWQpIHJldHVybiByZXMuc3RhdHVzKDQwMCkuanNvbih7IGVycm9yOiAndXNlcl9pZCByZXF1aXJlZCcgfSk7CiAgdHJ5IHsKICAgIGNvbnN0IG1lID0gYXdhaXQgZGIuZ2V0KAogICAgICAnU0VMRUNUICogRlJPTSBjb21tdW5pdHlfbWVtYmVycyBXSEVSRSBjb21tdW5pdHlfaWQgPSA/IEFORCB1c2VyX2lkID0gPycsCiAgICAgIFtpZCwgcmVxLnVzZXIuaWRdCiAgICApOwogICAgaWYgKCFtZSkgcmV0dXJuIHJlcy5zdGF0dXMoNDAzKS5qc29uKHsgZXJyb3I6ICdOb3QgYSBtZW1iZXInIH0pOwogICAgaWYgKG1lLnJvbGUgIT09ICdvd25lcicpIHJldHVybiByZXMuc3RhdHVzKDQwMykuanNvbih7IGVycm9yOiAnT25seSB0aGUgb3duZXIgY2FuIHJlbW92ZSBtZW1iZXJzJyB9KTsKCiAgICBjb25zdCB0YXJnZXQgPSBhd2FpdCBkYi5nZXQoCiAgICAgICdTRUxFQ1QgKiBGUk9NIGNvbW11bml0eV9tZW1iZXJzIFdIRVJFIGNvbW11bml0eV9pZCA9ID8gQU5EIHVzZXJfaWQgPSA/JywKICAgICAgW2lkLCB1c2VyX2lkXQogICAgKTsKICAgIGlmICghdGFyZ2V0KSByZXR1cm4gcmVzLnN0YXR1cyg0MDQpLmpzb24oeyBlcnJvcjogJ1VzZXIgaXMgbm90IGEgbWVtYmVyJyB9KTsKICAgIGlmICh0YXJnZXQucm9sZSA9PT0gJ293bmVyJykgcmV0dXJuIHJlcy5zdGF0dXMoNDAwKS5qc29uKHsgZXJyb3I6ICdDYW5ub3QgcmVtb3ZlIHRoZSBvd25lcicgfSk7CiAgICBpZiAoTnVtYmVyKHRhcmdldC51c2VyX2lkKSA9PT0gTnVtYmVyKHJlcS51c2VyLmlkKSkgewogICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDApLmpzb24oeyBlcnJvcjogJ1VzZSBsZWF2ZSBpbnN0ZWFkIG9mIHJlbW92aW5nIHlvdXJzZWxmJyB9KTsKICAgIH0KCiAgICBhd2FpdCBkYi5ydW4oJ0RFTEVURSBGUk9NIGNvbW11bml0eV9tZW1iZXJzIFdIRVJFIGNvbW11bml0eV9pZCA9ID8gQU5EIHVzZXJfaWQgPSA/JywgW2lkLCB1c2VyX2lkXSk7CiAgICAvLyBEcm9wIHRoZSBleC1tZW1iZXIncyB2b3RlcyBzbyBwcm9wb3NhbCB0YWxsaWVzIHN0YXkgYWNjdXJhdGUuCiAgICBjb25zdCBwcm9wb3NhbElkcyA9IGF3YWl0IGRiLnF1ZXJ5KCdTRUxFQ1QgaWQgRlJPTSBwcm9wb3NhbHMgV0hFUkUgY29tbXVuaXR5X2lkID0gPycsIFtpZF0pOwogICAgaWYgKHByb3Bvc2FsSWRzLmxlbmd0aCkgewogICAgICBjb25zdCBwbGFjZWhvbGRlcnMgPSBwcm9wb3NhbElkcy5tYXAoKCkgPT4gJz8nKS5qb2luKCcsJyk7CiAgICAgIGF3YWl0IGRiLnJ1bigKICAgICAgICBgREVMRVRFIEZST00gcHJvcG9zYWxfdm90ZXMgV0hFUkUgdXNlcl9pZCA9ID8gQU5EIHByb3Bvc2FsX2lkIElOICgke3BsYWNlaG9sZGVyc30pYCwKICAgICAgICBbdXNlcl9pZCwgLi4ucHJvcG9zYWxJZHMubWFwKChwKSA9PiBwLmlkKV0KICAgICAgKTsKICAgIH0KICAgIHJlcy5qc29uKHsga2lja2VkOiB0cnVlLCB1c2VyX2lkIH0pOwogIH0gY2F0Y2ggKGUpIHsKICAgIGNvbnNvbGUuZXJyb3IoJ0tpY2sgbWVtYmVyIGVycm9yJywgZSk7CiAgICByZXMuc3RhdHVzKDUwMCkuanNvbih7IGVycm9yOiAnU2VydmVyIGVycm9yJyB9KTsKICB9Cn0pOwoKLy8gLS0tLSBEaXNzb2x2ZSBhIGNvbW11bml0eSAob3duZXIgb25seSkgLS0tLQpyb3V0ZXIuZGVsZXRlKCcvOmlkJywgYXN5bmMgKHJlcSwgcmVzKSA9PiB7CiAgY29uc3QgaWQgPSBwYXJzZUludChyZXEucGFyYW1zLmlkLCAxMCk7CiAgdHJ5IHsKICAgIGNvbnN0IG1lID0gYXdhaXQgZGIuZ2V0KAogICAgICAnU0VMRUNUICogRlJPTSBjb21tdW5pdHlfbWVtYmVycyBXSEVSRSBjb21tdW5pdHlfaWQgPSA/IEFORCB1c2VyX2lkID0gPycsCiAgICAgIFtpZCwgcmVxLnVzZXIuaWRdCiAgICApOwogICAgaWYgKCFtZSkgcmV0dXJuIHJlcy5zdGF0dXMoNDAzKS5qc29uKHsgZXJyb3I6ICdOb3QgYSBtZW1iZXInIH0pOwogICAgaWYgKG1lLnJvbGUgIT09ICdvd25lcicpIHsKICAgICAgcmV0dXJuIHJlcy5zdGF0dXMoNDAzKS5qc29uKHsgZXJyb3I6ICdPbmx5IHRoZSBvd25lciBjYW4gZGlzc29sdmUgdGhlIGNvbW11bml0eScgfSk7CiAgICB9CgogICAgYXdhaXQgZGIudHJhbnNhY3Rpb24oYXN5bmMgKCkgPT4gewogICAgICBjb25zdCBwcm9wb3NhbElkcyA9IGF3YWl0IGRiLnF1ZXJ5KCdTRUxFQ1QgaWQgRlJPTSBwcm9wb3NhbHMgV0hFUkUgY29tbXVuaXR5X2lkID0gPycsIFtpZF0pOwogICAgICBpZiAocHJvcG9zYWxJZHMubGVuZ3RoKSB7CiAgICAgICAgY29uc3QgcGxhY2Vob2xkZXJzID0gcHJvcG9zYWxJZHMubWFwKCgpID0+ICc/Jykuam9pbignLCcpOwogICAgICAgIGF3YWl0IGRiLnJ1bigKICAgICAgICAgIGBERUxFVEUgRlJPTSBwcm9wb3NhbF92b3RlcyBXSEVSRSBwcm9wb3NhbF9pZCBJTiAoJHtwbGFjZWhvbGRlcnN9KWAsCiAgICAgICAgICBwcm9wb3NhbElkcy5tYXAoKHApID0+IHAuaWQpCiAgICAgICAgKTsKICAgICAgfQogICAgICBhd2FpdCBkYi5ydW4oJ0RFTEVURSBGUk9NIHByb3Bvc2FscyBXSEVSRSBjb21tdW5pdHlfaWQgPSA/JywgW2lkXSk7CiAgICAgIGF3YWl0IGRiLnJ1bignREVMRVRFIEZST00gY29tbXVuaXR5X21lbWJlcnMgV0hFUkUgY29tbXVuaXR5X2lkID0gPycsIFtpZF0pOwogICAgICBhd2FpdCBkYi5ydW4oJ0RFTEVURSBGUk9NIGNvbW11bml0aWVzIFdIRVJFIGlkID0gPycsIFtpZF0pOwogICAgfSk7CiAgICByZXMuanNvbih7IGRpc3NvbHZlZDogdHJ1ZSwgY29tbXVuaXR5X2lkOiBpZCB9KTsKICB9IGNhdGNoIChlKSB7CiAgICBjb25zb2xlLmVycm9yKCdEaXNzb2x2ZSBjb21tdW5pdHkgZXJyb3InLCBlKTsKICAgIHJlcy5zdGF0dXMoNTAwKS5qc29uKHsgZXJyb3I6ICdTZXJ2ZXIgZXJyb3InIH0pOwogIH0KfSk7CgovLyAtLS0tIFZvdGUgb24gYSBwcm9wb3NhbCAtLS0tCnJvdXRlci5wb3N0KCcvcHJvcG9zYWxzLzpwcm9wb3NhbElkL3ZvdGUnLCBhc3luYyAocmVxLCByZXMpID0+IHsKICAgIGNvbnN0IHByb3Bvc2FsSWQgPSBwYXJzZUludChyZXEucGFyYW1zLnByb3Bvc2FsSWQsIDEwKTsKICAgIGNvbnN0IHsgdm90ZSB9ID0gcmVxLmJvZHkgfHwge307CiAgICBjb25zdCB2b3RlVmFsID0gdm90ZSA/IDEgOiAwOwogICAgdHJ5IHsKICAgICAgLy8gU3dlZXAgZmlyc3Qgc28gYW4gYWxyZWFkeS1leHBpcmVkIHByb3Bvc2FsIGNhbiBuZXZlciBiZSB2b3RlZCBvbi4KICAgICAgYXdhaXQgZXhwaXJlU3RhbGVQcm9wb3NhbHMoKTsKICAgICAgY29uc3QgcHJvcG9zYWwgPSBhd2FpdCBkYi5nZXQoJ1NFTEVDVCAqIEZST00gcHJvcG9zYWxzIFdIRVJFIGlkID0gPycsIFtwcm9wb3NhbElkXSk7CiAgICAgIGlmICghcHJvcG9zYWwpIHJldHVybiByZXMuc3RhdHVzKDQwNCkuanNvbih7IGVycm9yOiAnUHJvcG9zYWwgbm90IGZvdW5kJyB9KTsKICAgICAgaWYgKHByb3Bvc2FsLnN0YXR1cyAhPT0gJ2FjdGl2ZScpIHsKICAgICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDkpLmpzb24oeyBlcnJvcjogYFByb3Bvc2FsIGlzICR7cHJvcG9zYWwuc3RhdHVzfWAgfSk7CiAgICAgIH0KICAgICAgaWYgKHByb3Bvc2FsLmV4cGlyZXNfYXQgJiYgcHJvcG9zYWwuZXhwaXJlc19hdCA8PSBub3coKSkgewogICAgICAgIHJldHVybiByZXMuc3RhdHVzKDQwOSkuanNvbih7IGVycm9yOiAnUHJvcG9zYWwgaGFzIGV4cGlyZWQnIH0pOwogICAgICB9CgogICAgY29uc3QgbWVtYmVyc2hpcCA9IGF3YWl0IGRiLmdldCgKICAgICAgJ1NFTEVDVCAqIEZST00gY29tbXVuaXR5X21lbWJlcnMgV0hFUkUgY29tbXVuaXR5X2lkID0gPyBBTkQgdXNlcl9pZCA9ID8nLAogICAgICBbcHJvcG9zYWwuY29tbXVuaXR5X2lkLCByZXEudXNlci5pZF0KICAgICk7CiAgICBpZiAoIW1lbWJlcnNoaXApIHJldHVybiByZXMuc3RhdHVzKDQwMykuanNvbih7IGVycm9yOiAnTm90IGEgbWVtYmVyJyB9KTsKCiAgICAvLyBVcHNlcnQgdm90ZSAoZGlhbGVjdC1zcGVjaWZpYzogTXlTUUwgdnMgU1FMaXRlIHN5bnRheCkKICAgIGNvbnN0IHVwc2VydFNxbCA9IGRiLmRyaXZlciA9PT0gJ215c3FsJwogICAgICA/IGBJTlNFUlQgSU5UTyBwcm9wb3NhbF92b3RlcyAocHJvcG9zYWxfaWQsIHVzZXJfaWQsIHZvdGUsIGNyZWF0ZWRfYXQpIFZBTFVFUyAoPywgPywgPywgPykKICAgICAgICAgT04gRFVQTElDQVRFIEtFWSBVUERBVEUgdm90ZSA9IFZBTFVFUyh2b3RlKSwgY3JlYXRlZF9hdCA9IFZBTFVFUyhjcmVhdGVkX2F0KWAKICAgICAgOiBgSU5TRVJUIElOVE8gcHJvcG9zYWxfdm90ZXMgKHByb3Bvc2FsX2lkLCB1c2VyX2lkLCB2b3RlLCBjcmVhdGVkX2F0KSBWQUxVRVMgKD8sID8sID8sID8pCiAgICAgICAgIE9OIENPTkZMSUNUKHByb3Bvc2FsX2lkLCB1c2VyX2lkKSBETyBVUERBVEUgU0VUIHZvdGUgPSBleGNsdWRlZC52b3RlLCBjcmVhdGVkX2F0ID0gZXhjbHVkZWQuY3JlYXRlZF9hdGA7CiAgICBhd2FpdCBkYi5ydW4odXBzZXJ0U3FsLCBbcHJvcG9zYWxJZCwgcmVxLnVzZXIuaWQsIHZvdGVWYWwsIG5vdygpXSk7CgogICAgLy8gQ2hlY2sgaWYgcGFzc2VkICg+NTAlIG9mIG1lbWJlcnMgdm90ZWQgZm9yKQogICAgY29uc3QgbWVtYmVyQ291bnRSb3cgPSBhd2FpdCBkYi5nZXQoCiAgICAgICdTRUxFQ1QgQ09VTlQoKikgQVMgYyBGUk9NIGNvbW11bml0eV9tZW1iZXJzIFdIRVJFIGNvbW11bml0eV9pZCA9ID8nLCBbcHJvcG9zYWwuY29tbXVuaXR5X2lkXQogICAgKTsKICAgIGNvbnN0IHRvdGFsID0gbWVtYmVyQ291bnRSb3cuYzsKICAgIGNvbnN0IHZvdGVzRm9yUm93ID0gYXdhaXQgZGIuZ2V0KAogICAgICAnU0VMRUNUIENPVU5UKCopIEFTIGMgRlJPTSBwcm9wb3NhbF92b3RlcyBXSEVSRSBwcm9wb3NhbF9pZCA9ID8gQU5EIHZvdGUgPSAxJywgW3Byb3Bvc2FsSWRdCiAgICApOwogICAgY29uc3Qgdm90ZXNGb3IgPSB2b3Rlc0ZvclJvdy5jOwogICAgaWYgKHZvdGVzRm9yID4gdG90YWwgLyAyKSB7CiAgICAgIGF3YWl0IGRiLnJ1bigiVVBEQVRFIHByb3Bvc2FscyBTRVQgc3RhdHVzID0gJ3Bhc3NlZCcgV0hFUkUgaWQgPSA/IiwgW3Byb3Bvc2FsSWRdKTsKICAgICAgcmV0dXJuIHJlcy5qc29uKHsgdm90ZWQ6IHZvdGVWYWwsIHN0YXR1czogJ3Bhc3NlZCcsIHZvdGVzX2Zvcjogdm90ZXNGb3IsIHRvdGFsX21lbWJlcnM6IHRvdGFsIH0pOwogICAgfQogICAgcmVzLmpzb24oeyB2b3RlZDogdm90ZVZhbCwgc3RhdHVzOiAnYWN0aXZlJywgdm90ZXNfZm9yOiB2b3Rlc0ZvciwgdG90YWxfbWVtYmVyczogdG90YWwgfSk7CiAgfSBjYXRjaCAoZSkgewogICAgY29uc29sZS5lcnJvcignVm90ZSBlcnJvcicsIGUpOwogICAgcmVzLnN0YXR1cyg1MDApLmpzb24oeyBlcnJvcjogJ1NlcnZlciBlcnJvcicgfSk7CiAgfQp9KTsKCm1vZHVsZS5leHBvcnRzID0gcm91dGVyOwo=
+/**
+ * Community module — create/join study communities, propose standards, majority vote.
+ *
+ * Rules:
+ * - A community has an invite_code; members join via it.
+ * - Any member can propose a study standard (target daily minutes).
+ * - A proposal passes when >50% of members vote "for" (majority).
+ * - Proposals expire after 7 days; expired proposals with majority are auto-passed.
+ */
+const express = require('express');
+const crypto = require('crypto');
+const db = require('./db');
+const { authMiddleware } = require('./auth');
+
+const router = express.Router();
+router.use(authMiddleware);
+
+function now() { return new Date().toISOString(); }
+function randomInviteCode() {
+  return crypto.randomBytes(4).toString('hex').toUpperCase(); // 8 chars
+}
+
+/** Close out proposals past their 7-day window. A proposal that still holds a
+ *  majority of "for" votes is marked passed; otherwise it simply expires.
+ *  Called before listing and before voting so expiry is always enforced. */
+async function expireStaleProposals() {
+  const stale = await db.query(
+    "SELECT id, community_id FROM proposals WHERE status = 'active' AND expires_at <= ?",
+    [now()]
+  );
+  for (const p of stale) {
+    const memberCountRow = await db.get(
+      'SELECT COUNT(*) AS c FROM community_members WHERE community_id = ?', [p.community_id]
+    );
+    const total = memberCountRow ? memberCountRow.c : 0;
+    const votesForRow = await db.get(
+      'SELECT COUNT(*) AS c FROM proposal_votes WHERE proposal_id = ? AND vote = 1', [p.id]
+    );
+    const votesFor = votesForRow ? votesForRow.c : 0;
+    const passed = total > 0 && votesFor > total / 2;
+    await db.run('UPDATE proposals SET status = ? WHERE id = ?', [passed ? 'passed' : 'expired', p.id]);
+  }
+  return stale.length;
+}
+
+// ---- Create community ----
+router.post('/', async (req, res) => {
+  const { name, description } = req.body || {};
+  if (!name) return res.status(400).json({ error: 'Name required' });
+  try {
+    let code;
+    // Ensure unique invite code
+    for (let i = 0; i < 5; i++) {
+      code = randomInviteCode();
+      const exists = await db.get('SELECT id FROM communities WHERE invite_code = ?', [code]);
+      if (!exists) break;
+    }
+    const result = await db.run(
+      'INSERT INTO communities (name, description, created_by, invite_code, created_at) VALUES (?, ?, ?, ?, ?)',
+      [name, description || '', req.user.id, code, now()]
+    );
+    const communityId = result.lastInsertRowid;
+    await db.run(
+      'INSERT INTO community_members (community_id, user_id, role, joined_at) VALUES (?, ?, ?, ?)',
+      [communityId, req.user.id, 'owner', now()]
+    );
+    res.json({ id: communityId, name, description, invite_code: code, role: 'owner' });
+  } catch (e) {
+    console.error('Create community error', e);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ---- Join community by invite code ----
+router.post('/join', async (req, res) => {
+  const { invite_code } = req.body || {};
+  if (!invite_code) return res.status(400).json({ error: 'Invite code required' });
+  try {
+    const community = await db.get('SELECT * FROM communities WHERE invite_code = ?', [invite_code.trim()]);
+    if (!community) return res.status(404).json({ error: 'Community not found' });
+
+    const member = await db.get(
+      'SELECT * FROM community_members WHERE community_id = ? AND user_id = ?',
+      [community.id, req.user.id]
+    );
+    if (member) return res.status(409).json({ error: 'Already a member' });
+
+    await db.run(
+      'INSERT INTO community_members (community_id, user_id, role, joined_at) VALUES (?, ?, ?, ?)',
+      [community.id, req.user.id, 'member', now()]
+    );
+    res.json({ id: community.id, name: community.name, role: 'member' });
+  } catch (e) {
+    console.error('Join community error', e);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ---- List my communities ----
+router.get('/', async (req, res) => {
+  try {
+    const rows = await db.query(
+      `SELECT c.id, c.name, c.description, c.invite_code, c.created_at, cm.role,
+              (SELECT COUNT(*) FROM community_members WHERE community_id = c.id) AS member_count
+       FROM communities c
+       JOIN community_members cm ON cm.community_id = c.id
+       WHERE cm.user_id = ?
+       ORDER BY c.created_at DESC`,
+      [req.user.id]
+    );
+    res.json({ communities: rows });
+  } catch (e) {
+    console.error('List communities error', e);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ---- Community detail + members ----
+router.get('/:id', async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    const membership = await db.get(
+      'SELECT * FROM community_members WHERE community_id = ? AND user_id = ?',
+      [id, req.user.id]
+    );
+    if (!membership) return res.status(403).json({ error: 'Not a member' });
+
+    const community = await db.get('SELECT * FROM communities WHERE id = ?', [id]);
+    const members = await db.query(
+      `SELECT u.id, u.username, cm.role, cm.joined_at
+       FROM community_members cm JOIN users u ON u.id = cm.user_id
+       WHERE cm.community_id = ? ORDER BY cm.joined_at`,
+      [id]
+    );
+    // Current active standard: latest passed proposal
+    const standard = await db.get(
+      `SELECT * FROM proposals WHERE community_id = ? AND status = 'passed' ORDER BY created_at DESC LIMIT 1`,
+      [id]
+    );
+    res.json({ community, members, standard });
+  } catch (e) {
+    console.error('Community detail error', e);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ---- Create proposal ----
+router.post('/:id/proposals', async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const { title, description, target_minutes } = req.body || {};
+  if (!title) return res.status(400).json({ error: 'Title required' });
+  try {
+    const membership = await db.get(
+      'SELECT * FROM community_members WHERE community_id = ? AND user_id = ?',
+      [id, req.user.id]
+    );
+    if (!membership) return res.status(403).json({ error: 'Not a member' });
+
+    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const result = await db.run(
+      `INSERT INTO proposals (community_id, proposer_id, title, description, target_minutes, status, created_at, expires_at)
+       VALUES (?, ?, ?, ?, ?, 'active', ?, ?)`,
+      [id, req.user.id, title, description || '', target_minutes || 0, now(), expires]
+    );
+    res.json({ id: result.lastInsertRowid, title, status: 'active', expires_at: expires });
+  } catch (e) {
+    console.error('Create proposal error', e);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ---- List proposals for a community (with vote counts) ----
+router.get('/:id/proposals', async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    const membership = await db.get(
+      'SELECT * FROM community_members WHERE community_id = ? AND user_id = ?',
+      [id, req.user.id]
+    );
+    if (!membership) return res.status(403).json({ error: 'Not a member' });
+
+    await expireStaleProposals();
+
+    const memberCount = await db.get(
+      'SELECT COUNT(*) AS c FROM community_members WHERE community_id = ?', [id]
+    );
+    const total = memberCount.c;
+
+    const proposals = await db.query(
+      `SELECT p.*, u.username AS proposer_name,
+              (SELECT COUNT(*) FROM proposal_votes WHERE proposal_id = p.id AND vote = 1) AS votes_for,
+              (SELECT COUNT(*) FROM proposal_votes WHERE proposal_id = p.id AND vote = 0) AS votes_against,
+              (SELECT vote FROM proposal_votes WHERE proposal_id = p.id AND user_id = ?) AS my_vote
+       FROM proposals p JOIN users u ON u.id = p.proposer_id
+       WHERE p.community_id = ? ORDER BY p.created_at DESC`,
+      [req.user.id, id]
+    );
+    res.json({ proposals, total_members: total });
+  } catch (e) {
+    console.error('List proposals error', e);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ---- Leave a community (any member except the owner) ----
+router.delete('/:id/leave', async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    const membership = await db.get(
+      'SELECT * FROM community_members WHERE community_id = ? AND user_id = ?',
+      [id, req.user.id]
+    );
+    if (!membership) return res.status(403).json({ error: 'Not a member' });
+    if (membership.role === 'owner') {
+      return res.status(403).json({ error: 'Owner cannot leave — dissolve the community instead' });
+    }
+    await db.run('DELETE FROM community_members WHERE community_id = ? AND user_id = ?', [id, req.user.id]);
+    res.json({ left: true, community_id: id });
+  } catch (e) {
+    console.error('Leave community error', e);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ---- Kick a member (owner only) ----
+router.post('/:id/kick', async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const { user_id } = req.body || {};
+  if (!user_id) return res.status(400).json({ error: 'user_id required' });
+  try {
+    const me = await db.get(
+      'SELECT * FROM community_members WHERE community_id = ? AND user_id = ?',
+      [id, req.user.id]
+    );
+    if (!me) return res.status(403).json({ error: 'Not a member' });
+    if (me.role !== 'owner') return res.status(403).json({ error: 'Only the owner can remove members' });
+
+    const target = await db.get(
+      'SELECT * FROM community_members WHERE community_id = ? AND user_id = ?',
+      [id, user_id]
+    );
+    if (!target) return res.status(404).json({ error: 'User is not a member' });
+    if (target.role === 'owner') return res.status(400).json({ error: 'Cannot remove the owner' });
+    if (Number(target.user_id) === Number(req.user.id)) {
+      return res.status(400).json({ error: 'Use leave instead of removing yourself' });
+    }
+
+    await db.run('DELETE FROM community_members WHERE community_id = ? AND user_id = ?', [id, user_id]);
+    // Drop the ex-member's votes so proposal tallies stay accurate.
+    const proposalIds = await db.query('SELECT id FROM proposals WHERE community_id = ?', [id]);
+    if (proposalIds.length) {
+      const placeholders = proposalIds.map(() => '?').join(',');
+      await db.run(
+        `DELETE FROM proposal_votes WHERE user_id = ? AND proposal_id IN (${placeholders})`,
+        [user_id, ...proposalIds.map((p) => p.id)]
+      );
+    }
+    res.json({ kicked: true, user_id });
+  } catch (e) {
+    console.error('Kick member error', e);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ---- Dissolve a community (owner only) ----
+router.delete('/:id', async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    const me = await db.get(
+      'SELECT * FROM community_members WHERE community_id = ? AND user_id = ?',
+      [id, req.user.id]
+    );
+    if (!me) return res.status(403).json({ error: 'Not a member' });
+    if (me.role !== 'owner') {
+      return res.status(403).json({ error: 'Only the owner can dissolve the community' });
+    }
+
+    await db.transaction(async () => {
+      const proposalIds = await db.query('SELECT id FROM proposals WHERE community_id = ?', [id]);
+      if (proposalIds.length) {
+        const placeholders = proposalIds.map(() => '?').join(',');
+        await db.run(
+          `DELETE FROM proposal_votes WHERE proposal_id IN (${placeholders})`,
+          proposalIds.map((p) => p.id)
+        );
+      }
+      await db.run('DELETE FROM proposals WHERE community_id = ?', [id]);
+      await db.run('DELETE FROM community_members WHERE community_id = ?', [id]);
+      await db.run('DELETE FROM communities WHERE id = ?', [id]);
+    });
+    res.json({ dissolved: true, community_id: id });
+  } catch (e) {
+    console.error('Dissolve community error', e);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ---- Vote on a proposal ----
+router.post('/proposals/:proposalId/vote', async (req, res) => {
+    const proposalId = parseInt(req.params.proposalId, 10);
+    const { vote } = req.body || {};
+    const voteVal = vote ? 1 : 0;
+    try {
+      // Sweep first so an already-expired proposal can never be voted on.
+      await expireStaleProposals();
+      const proposal = await db.get('SELECT * FROM proposals WHERE id = ?', [proposalId]);
+      if (!proposal) return res.status(404).json({ error: 'Proposal not found' });
+      if (proposal.status !== 'active') {
+        return res.status(409).json({ error: `Proposal is ${proposal.status}` });
+      }
+      if (proposal.expires_at && proposal.expires_at <= now()) {
+        return res.status(409).json({ error: 'Proposal has expired' });
+      }
+
+    const membership = await db.get(
+      'SELECT * FROM community_members WHERE community_id = ? AND user_id = ?',
+      [proposal.community_id, req.user.id]
+    );
+    if (!membership) return res.status(403).json({ error: 'Not a member' });
+
+    // Upsert vote (dialect-specific: MySQL vs SQLite syntax)
+    const upsertSql = db.driver === 'mysql'
+      ? `INSERT INTO proposal_votes (proposal_id, user_id, vote, created_at) VALUES (?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE vote = VALUES(vote), created_at = VALUES(created_at)`
+      : `INSERT INTO proposal_votes (proposal_id, user_id, vote, created_at) VALUES (?, ?, ?, ?)
+         ON CONFLICT(proposal_id, user_id) DO UPDATE SET vote = excluded.vote, created_at = excluded.created_at`;
+    await db.run(upsertSql, [proposalId, req.user.id, voteVal, now()]);
+
+    // Check if passed (>50% of members voted for)
+    const memberCountRow = await db.get(
+      'SELECT COUNT(*) AS c FROM community_members WHERE community_id = ?', [proposal.community_id]
+    );
+    const total = memberCountRow.c;
+    const votesForRow = await db.get(
+      'SELECT COUNT(*) AS c FROM proposal_votes WHERE proposal_id = ? AND vote = 1', [proposalId]
+    );
+    const votesFor = votesForRow.c;
+    if (votesFor > total / 2) {
+      await db.run("UPDATE proposals SET status = 'passed' WHERE id = ?", [proposalId]);
+      return res.json({ voted: voteVal, status: 'passed', votes_for: votesFor, total_members: total });
+    }
+    res.json({ voted: voteVal, status: 'active', votes_for: votesFor, total_members: total });
+  } catch (e) {
+    console.error('Vote error', e);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+module.exports = router;

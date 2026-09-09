@@ -1,1 +1,111 @@
-LyoqCiAqIFplcm8tZGVwZW5kZW5jeSBpbi1tZW1vcnkgcmF0ZSBsaW1pdGVyLgogKgogKiBTY29wZTogYSBzaW5nbGUgc2VydmVyIHByb2Nlc3MuIEJlaGluZCBtdWx0aXBsZSBpbnN0YW5jZXMsIHB1dCBhIHNoYXJlZAogKiBsaW1pdGVyIGF0IHRoZSBwcm94eSBpbnN0ZWFkIOKAlCB0aGlzIG9uZSBpcyBwcm9jZXNzLWxvY2FsIGJ5IGRlc2lnbi4KICoKICogVXNhZ2U6CiAqICAgYXBwLnVzZSgnL2FwaS9hdXRoJywgcmF0ZUxpbWl0KHsgd2luZG93TXM6IDE1ICogNjBlMywgbWF4OiAyMCB9KSk7CiAqLwpjb25zdCBidWNrZXRzID0gbmV3IE1hcCgpOwoKLyoqIFB1cmdlIGV4cGlyZWQgYnVja2V0cyBzbyB0aGUgbWFwIGNhbm5vdCBncm93IHdpdGhvdXQgYm91bmQuICovCmNvbnN0IHN3ZWVwZXIgPSBzZXRJbnRlcnZhbCgoKSA9PiB7CiAgY29uc3Qgbm93ID0gRGF0ZS5ub3coKTsKICBmb3IgKGNvbnN0IFtrZXksIGJdIG9mIGJ1Y2tldHMpIHsKICAgIGlmIChiLnJlc2V0QXQgPD0gbm93KSBidWNrZXRzLmRlbGV0ZShrZXkpOwogIH0KfSwgNjAgKiAxMDAwKTsKaWYgKHN3ZWVwZXIudW5yZWYpIHN3ZWVwZXIudW5yZWYoKTsgLy8gbmV2ZXIgaG9sZCB0aGUgcHJvY2VzcyBvcGVuCgpmdW5jdGlvbiByYXRlTGltaXQob3B0aW9ucyA9IHt9KSB7CiAgY29uc3QgewogICAgd2luZG93TXMgPSAxNSAqIDYwICogMTAwMCwKICAgIG1heCA9IDEwMCwKICAgIG1lc3NhZ2UgPSAnVG9vIG1hbnkgcmVxdWVzdHMg4oCUIHBsZWFzZSBzbG93IGRvd24nLAogICAga2V5Rm4gPSAocmVxKSA9PiByZXEuaXAgfHwgcmVxLmNvbm5lY3Rpb24/LnJlbW90ZUFkZHJlc3MgfHwgJ3Vua25vd24nLAogICAgc2tpcFN1Y2Nlc3NmdWwgPSBmYWxzZSwKICB9ID0gb3B0aW9uczsKCiAgcmV0dXJuIGZ1bmN0aW9uIHJhdGVMaW1pdE1pZGRsZXdhcmUocmVxLCByZXMsIG5leHQpIHsKICAgIGNvbnN0IGtleSA9IGtleUZuKHJlcSk7CiAgICBjb25zdCBub3cgPSBEYXRlLm5vdygpOwogICAgbGV0IGIgPSBidWNrZXRzLmdldChrZXkpOwogICAgaWYgKCFiIHx8IGIucmVzZXRBdCA8PSBub3cpIHsKICAgICAgYiA9IHsgY291bnQ6IDAsIHJlc2V0QXQ6IG5vdyArIHdpbmRvd01zIH07CiAgICAgIGJ1Y2tldHMuc2V0KGtleSwgYik7CiAgICB9CiAgICBiLmNvdW50Kys7CgogICAgY29uc3QgcmVtYWluaW5nID0gTWF0aC5tYXgoMCwgbWF4IC0gYi5jb3VudCk7CiAgICByZXMuc2V0SGVhZGVyKCdYLVJhdGVMaW1pdC1MaW1pdCcsIFN0cmluZyhtYXgpKTsKICAgIHJlcy5zZXRIZWFkZXIoJ1gtUmF0ZUxpbWl0LVJlbWFpbmluZycsIFN0cmluZyhyZW1haW5pbmcpKTsKICAgIHJlcy5zZXRIZWFkZXIoJ1gtUmF0ZUxpbWl0LVJlc2V0JywgU3RyaW5nKE1hdGguY2VpbChiLnJlc2V0QXQgLyAxMDAwKSkpOwoKICAgIGlmIChiLmNvdW50ID4gbWF4KSB7CiAgICAgIGNvbnN0IHJldHJ5QWZ0ZXIgPSBNYXRoLmNlaWwoKGIucmVzZXRBdCAtIG5vdykgLyAxMDAwKTsKICAgICAgcmVzLnNldEhlYWRlcignUmV0cnktQWZ0ZXInLCBTdHJpbmcocmV0cnlBZnRlcikpOwogICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MjkpLmpzb24oewogICAgICAgIGVycm9yOiBtZXNzYWdlLAogICAgICAgIHJldHJ5X2FmdGVyX3NlY29uZHM6IHJldHJ5QWZ0ZXIsCiAgICAgIH0pOwogICAgfQoKICAgIGlmIChza2lwU3VjY2Vzc2Z1bCkgewogICAgICAvLyBSZWZ1bmQgdGhlIHRpY2tldCB3aGVuIHRoZSByZXF1ZXN0IHN1Y2NlZWRzIOKAlCB1c2VmdWwgZm9yIGxvZ2luCiAgICAgIC8vIGVuZHBvaW50cywgd2hlcmUgb25seSBmYWlsdXJlcyBzaG91bGQgY291bnQgYWdhaW5zdCB0aGUgYnVkZ2V0LgogICAgICByZXMub24oJ2ZpbmlzaCcsICgpID0+IHsKICAgICAgICBpZiAocmVzLnN0YXR1c0NvZGUgPCA0MDApIHsKICAgICAgICAgIGNvbnN0IGN1ciA9IGJ1Y2tldHMuZ2V0KGtleSk7CiAgICAgICAgICBpZiAoY3VyICYmIGN1ci5jb3VudCA+IDApIGN1ci5jb3VudC0tOwogICAgICAgIH0KICAgICAgfSk7CiAgICB9CiAgICBuZXh0KCk7CiAgfTsKfQoKLyoqCiAqIEZhaWx1cmUgdHJhY2tlciBmb3IgY3JlZGVudGlhbCBlbmRwb2ludHM6IGxvY2sgYSBrZXkgYWZ0ZXIgYG1heEZhaWx1cmVzYAogKiB3cm9uZyBhdHRlbXB0cyBpbnNpZGUgYHdpbmRvd01zYCwgZm9yIGBsb2NrTXNgLgogKi8KZnVuY3Rpb24gY3JlYXRlTG9ja291dCh7IG1heEZhaWx1cmVzID0gNSwgd2luZG93TXMgPSAxNSAqIDYwICogMTAwMCwgbG9ja01zID0gMTUgKiA2MCAqIDEwMDAgfSA9IHt9KSB7CiAgY29uc3QgYXR0ZW1wdHMgPSBuZXcgTWFwKCk7IC8vIGtleSAtPiB7IGNvdW50LCBmaXJzdEF0LCBsb2NrZWRVbnRpbCB9CgogIGNvbnN0IHB1cmdlID0gc2V0SW50ZXJ2YWwoKCkgPT4gewogICAgY29uc3Qgbm93ID0gRGF0ZS5ub3coKTsKICAgIGZvciAoY29uc3QgW2ssIHZdIG9mIGF0dGVtcHRzKSB7CiAgICAgIGlmICh2LmxvY2tlZFVudGlsICYmIHYubG9ja2VkVW50aWwgPD0gbm93KSBhdHRlbXB0cy5kZWxldGUoayk7CiAgICAgIGVsc2UgaWYgKCF2LmxvY2tlZFVudGlsICYmIHYuZmlyc3RBdCArIHdpbmRvd01zIDw9IG5vdykgYXR0ZW1wdHMuZGVsZXRlKGspOwogICAgfQogIH0sIDYwICogMTAwMCk7CiAgaWYgKHB1cmdlLnVucmVmKSBwdXJnZS51bnJlZigpOwoKICByZXR1cm4gewogICAgLyoqIEByZXR1cm5zIHtudW1iZXJ8bnVsbH0gc2Vjb25kcyByZW1haW5pbmcgaWYgbG9ja2VkLCBlbHNlIG51bGwgKi8KICAgIGxvY2tlZEZvcihrZXkpIHsKICAgICAgY29uc3QgYSA9IGF0dGVtcHRzLmdldChrZXkpOwogICAgICBpZiAoIWEpIHJldHVybiBudWxsOwogICAgICBjb25zdCBub3cgPSBEYXRlLm5vdygpOwogICAgICBpZiAoYS5sb2NrZWRVbnRpbCAmJiBhLmxvY2tlZFVudGlsID4gbm93KSByZXR1cm4gTWF0aC5jZWlsKChhLmxvY2tlZFVudGlsIC0gbm93KSAvIDEwMDApOwogICAgICBpZiAoYS5sb2NrZWRVbnRpbCAmJiBhLmxvY2tlZFVudGlsIDw9IG5vdykgYXR0ZW1wdHMuZGVsZXRlKGtleSk7CiAgICAgIHJldHVybiBudWxsOwogICAgfSwKICAgIHJlY29yZEZhaWx1cmUoa2V5KSB7CiAgICAgIGNvbnN0IG5vdyA9IERhdGUubm93KCk7CiAgICAgIGxldCBhID0gYXR0ZW1wdHMuZ2V0KGtleSk7CiAgICAgIGlmICghYSB8fCBhLmZpcnN0QXQgKyB3aW5kb3dNcyA8PSBub3cpIGEgPSB7IGNvdW50OiAwLCBmaXJzdEF0OiBub3csIGxvY2tlZFVudGlsOiAwIH07CiAgICAgIGEuY291bnQrKzsKICAgICAgaWYgKGEuY291bnQgPj0gbWF4RmFpbHVyZXMpIHsKICAgICAgICBhLmxvY2tlZFVudGlsID0gbm93ICsgbG9ja01zOwogICAgICAgIGF0dGVtcHRzLnNldChrZXksIGEpOwogICAgICAgIHJldHVybiBNYXRoLmNlaWwobG9ja01zIC8gMTAwMCk7CiAgICAgIH0KICAgICAgYXR0ZW1wdHMuc2V0KGtleSwgYSk7CiAgICAgIHJldHVybiBudWxsOwogICAgfSwKICAgIGNsZWFyKGtleSkgeyBhdHRlbXB0cy5kZWxldGUoa2V5KTsgfSwKICB9Owp9Cgptb2R1bGUuZXhwb3J0cyA9IHsgcmF0ZUxpbWl0LCBjcmVhdGVMb2Nrb3V0IH07Cg==
+/**
+ * Zero-dependency in-memory rate limiter.
+ *
+ * Scope: a single server process. Behind multiple instances, put a shared
+ * limiter at the proxy instead — this one is process-local by design.
+ *
+ * Usage:
+ *   app.use('/api/auth', rateLimit({ windowMs: 15 * 60e3, max: 20 }));
+ */
+const buckets = new Map();
+
+/** Purge expired buckets so the map cannot grow without bound. */
+const sweeper = setInterval(() => {
+  const now = Date.now();
+  for (const [key, b] of buckets) {
+    if (b.resetAt <= now) buckets.delete(key);
+  }
+}, 60 * 1000);
+if (sweeper.unref) sweeper.unref(); // never hold the process open
+
+function rateLimit(options = {}) {
+  const {
+    windowMs = 15 * 60 * 1000,
+    max = 100,
+    message = 'Too many requests — please slow down',
+    keyFn = (req) => req.ip || req.connection?.remoteAddress || 'unknown',
+    skipSuccessful = false,
+  } = options;
+
+  return function rateLimitMiddleware(req, res, next) {
+    const key = keyFn(req);
+    const now = Date.now();
+    let b = buckets.get(key);
+    if (!b || b.resetAt <= now) {
+      b = { count: 0, resetAt: now + windowMs };
+      buckets.set(key, b);
+    }
+    b.count++;
+
+    const remaining = Math.max(0, max - b.count);
+    res.setHeader('X-RateLimit-Limit', String(max));
+    res.setHeader('X-RateLimit-Remaining', String(remaining));
+    res.setHeader('X-RateLimit-Reset', String(Math.ceil(b.resetAt / 1000)));
+
+    if (b.count > max) {
+      const retryAfter = Math.ceil((b.resetAt - now) / 1000);
+      res.setHeader('Retry-After', String(retryAfter));
+      return res.status(429).json({
+        error: message,
+        retry_after_seconds: retryAfter,
+      });
+    }
+
+    if (skipSuccessful) {
+      // Refund the ticket when the request succeeds — useful for login
+      // endpoints, where only failures should count against the budget.
+      res.on('finish', () => {
+        if (res.statusCode < 400) {
+          const cur = buckets.get(key);
+          if (cur && cur.count > 0) cur.count--;
+        }
+      });
+    }
+    next();
+  };
+}
+
+/**
+ * Failure tracker for credential endpoints: lock a key after `maxFailures`
+ * wrong attempts inside `windowMs`, for `lockMs`.
+ */
+function createLockout({ maxFailures = 5, windowMs = 15 * 60 * 1000, lockMs = 15 * 60 * 1000 } = {}) {
+  const attempts = new Map(); // key -> { count, firstAt, lockedUntil }
+
+  const purge = setInterval(() => {
+    const now = Date.now();
+    for (const [k, v] of attempts) {
+      if (v.lockedUntil && v.lockedUntil <= now) attempts.delete(k);
+      else if (!v.lockedUntil && v.firstAt + windowMs <= now) attempts.delete(k);
+    }
+  }, 60 * 1000);
+  if (purge.unref) purge.unref();
+
+  return {
+    /** @returns {number|null} seconds remaining if locked, else null */
+    lockedFor(key) {
+      const a = attempts.get(key);
+      if (!a) return null;
+      const now = Date.now();
+      if (a.lockedUntil && a.lockedUntil > now) return Math.ceil((a.lockedUntil - now) / 1000);
+      if (a.lockedUntil && a.lockedUntil <= now) attempts.delete(key);
+      return null;
+    },
+    recordFailure(key) {
+      const now = Date.now();
+      let a = attempts.get(key);
+      if (!a || a.firstAt + windowMs <= now) a = { count: 0, firstAt: now, lockedUntil: 0 };
+      a.count++;
+      if (a.count >= maxFailures) {
+        a.lockedUntil = now + lockMs;
+        attempts.set(key, a);
+        return Math.ceil(lockMs / 1000);
+      }
+      attempts.set(key, a);
+      return null;
+    },
+    clear(key) { attempts.delete(key); },
+  };
+}
+
+module.exports = { rateLimit, createLockout };
