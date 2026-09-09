@@ -18,6 +18,8 @@ const { authMiddleware } = require('./auth');
 const router = express.Router();
 router.use(authMiddleware);
 
+const MAX_PUSH = 5000;
+
 function now() { return new Date().toISOString(); }
 
 // ---- Pull sessions ----
@@ -41,12 +43,20 @@ router.get('/pull', async (req, res) => {
 router.post('/push', async (req, res) => {
   const incoming = (req.body && req.body.sessions) || [];
   if (!Array.isArray(incoming)) return res.status(400).json({ error: 'sessions must be array' });
+  if (incoming.length > MAX_PUSH) {
+    return res.status(413).json({ error: `Too many sessions in one push (max ${MAX_PUSH})` });
+  }
 
-  let merged = [];
+  // Only the ids involved in this push are echoed back, so the response scales
+  // with the push size instead of the user's entire history.
+  const touched = [];
+  let applied = 0;
+
   try {
     await db.begin();
     for (const s of incoming) {
       if (!s || !s.id) continue;
+      if (typeof s.id !== 'string' || s.id.length > 64) continue;
       const existing = await db.get(
         'SELECT id, updated_at FROM sessions WHERE id = ? AND user_id = ?',
         [s.id, req.user.id]
@@ -54,6 +64,7 @@ router.post('/push', async (req, res) => {
       const completedAt = s.completed_at || now();
       const updatedAt = s.updated_at || now();
       const deleted = s.deleted ? 1 : 0;
+      touched.push(s.id);
 
       if (!existing) {
         await db.run(
@@ -62,6 +73,7 @@ router.post('/push', async (req, res) => {
           [s.id, req.user.id, s.type || 'work', s.duration || 0, s.subject || null,
            completedAt, completedAt, updatedAt, deleted]
         );
+        applied++;
       } else if (updatedAt >= existing.updated_at) {
         await db.run(
           `UPDATE sessions SET type=?, duration=?, subject=?, completed_at=?, updated_at=?, deleted=?
@@ -69,6 +81,7 @@ router.post('/push', async (req, res) => {
           [s.type || 'work', s.duration || 0, s.subject || null, completedAt, updatedAt, deleted,
            s.id, req.user.id]
         );
+        applied++;
       }
     }
     await db.commit();
@@ -78,12 +91,14 @@ router.post('/push', async (req, res) => {
     return res.status(500).json({ error: 'Server error' });
   }
 
-  // Return the server's authoritative view for this user (so client can reconcile)
+  if (!touched.length) return res.json({ ok: true, sessions: [], applied: 0, server_now: now() });
+
   const rows = await db.query(
-    'SELECT id, type, duration, subject, completed_at, updated_at, deleted FROM sessions WHERE user_id = ?',
-    [req.user.id]
+    `SELECT id, type, duration, subject, completed_at, updated_at, deleted
+     FROM sessions WHERE user_id = ? AND id IN (${touched.map(() => '?').join(',')})`,
+    [req.user.id, ...touched]
   );
-  res.json({ ok: true, sessions: rows, server_now: now() });
+  res.json({ ok: true, sessions: rows, applied, server_now: now() });
 });
 
 module.exports = router;
