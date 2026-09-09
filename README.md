@@ -71,6 +71,13 @@ built from whitespace and type.
   upload once back online (technical spec: `docs/P2P-DATA-MERGE.md`).
 - Desktop builds skip the QR entry entirely (no camera) and rely on cloud
   sync.
+- **Scanning requires a secure context** (HTTPS, `localhost`, or the packaged
+  `file://` app) and, on Android, the **camera runtime permission**. Opening
+  the app over plain `http://192.168.x.x:3000` will not be able to scan — use
+  the manual paste fallback on the Sync page, or enable HTTPS.
+- If the camera fails for any reason, the scan panel explains why and offers a
+  **Paste sync code instead** button — P2P sync never depends on the camera
+  alone.
 
 ### Community Supervision
 - Create a study community and share its invite code.
@@ -97,13 +104,17 @@ The server runs on `http://localhost:3000` and serves the web app at `/`.
   `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE`.
   Apply the schema with `mysql -u root -p < sql/schema.sql`.
 - **Fallback:** If MySQL is unreachable, the server automatically uses a local
-  SQLite database (`server/data.sqlite`) — no setup required.
+  SQLite database (`server/data.sqlite`) — no setup required. Set `DB_STRICT=1`
+  to make this a hard failure instead; silent fallback in production can split
+  your data across two databases.
 
 ### Environment Variables
 | Variable | Default | Description |
 | --- | --- | --- |
 | `PORT` | `3000` | HTTP server port |
-| `JWT_SECRET` | `studyflow-dev-secret-change-me` | JWT signing secret (set in production) |
+| `JWT_SECRET` | `studyflow-dev-secret-change-me` | JWT signing secret — **startup fails in production if unset or left at the default** |
+| `DB_STRICT` | `0` (`1` when `NODE_ENV=production`) | `1` = never fall back to SQLite; fail fast |
+| `NODE_ENV` | *(empty)* | `production` enables the strict startup checks |
 | `MYSQL_HOST` | `localhost` | MySQL host |
 | `MYSQL_PORT` | `3306` | MySQL port |
 | `MYSQL_USER` | `root` | MySQL user |
