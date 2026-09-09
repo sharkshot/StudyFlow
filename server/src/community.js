@@ -20,6 +20,29 @@ function randomInviteCode() {
   return crypto.randomBytes(4).toString('hex').toUpperCase(); // 8 chars
 }
 
+/** Close out proposals past their 7-day window. A proposal that still holds a
+ *  majority of "for" votes is marked passed; otherwise it simply expires.
+ *  Called before listing and before voting so expiry is always enforced. */
+async function expireStaleProposals() {
+  const stale = await db.query(
+    "SELECT id, community_id FROM proposals WHERE status = 'active' AND expires_at <= ?",
+    [now()]
+  );
+  for (const p of stale) {
+    const memberCountRow = await db.get(
+      'SELECT COUNT(*) AS c FROM community_members WHERE community_id = ?', [p.community_id]
+    );
+    const total = memberCountRow ? memberCountRow.c : 0;
+    const votesForRow = await db.get(
+      'SELECT COUNT(*) AS c FROM proposal_votes WHERE proposal_id = ? AND vote = 1', [p.id]
+    );
+    const votesFor = votesForRow ? votesForRow.c : 0;
+    const passed = total > 0 && votesFor > total / 2;
+    await db.run('UPDATE proposals SET status = ? WHERE id = ?', [passed ? 'passed' : 'expired', p.id]);
+  }
+  return stale.length;
+}
+
 // ---- Create community ----
 router.post('/', async (req, res) => {
   const { name, description } = req.body || {};
@@ -156,6 +179,8 @@ router.get('/:id/proposals', async (req, res) => {
     );
     if (!membership) return res.status(403).json({ error: 'Not a member' });
 
+    await expireStaleProposals();
+
     const memberCount = await db.get(
       'SELECT COUNT(*) AS c FROM community_members WHERE community_id = ?', [id]
     );
@@ -179,13 +204,20 @@ router.get('/:id/proposals', async (req, res) => {
 
 // ---- Vote on a proposal ----
 router.post('/proposals/:proposalId/vote', async (req, res) => {
-  const proposalId = parseInt(req.params.proposalId, 10);
-  const { vote } = req.body || {};
-  const voteVal = vote ? 1 : 0;
-  try {
-    const proposal = await db.get('SELECT * FROM proposals WHERE id = ?', [proposalId]);
-    if (!proposal) return res.status(404).json({ error: 'Proposal not found' });
-    if (proposal.status !== 'active') return res.status(409).json({ error: 'Proposal not active' });
+    const proposalId = parseInt(req.params.proposalId, 10);
+    const { vote } = req.body || {};
+    const voteVal = vote ? 1 : 0;
+    try {
+      // Sweep first so an already-expired proposal can never be voted on.
+      await expireStaleProposals();
+      const proposal = await db.get('SELECT * FROM proposals WHERE id = ?', [proposalId]);
+      if (!proposal) return res.status(404).json({ error: 'Proposal not found' });
+      if (proposal.status !== 'active') {
+        return res.status(409).json({ error: `Proposal is ${proposal.status}` });
+      }
+      if (proposal.expires_at && proposal.expires_at <= now()) {
+        return res.status(409).json({ error: 'Proposal has expired' });
+      }
 
     const membership = await db.get(
       'SELECT * FROM community_members WHERE community_id = ? AND user_id = ?',
