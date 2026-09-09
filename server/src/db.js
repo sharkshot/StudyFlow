@@ -8,7 +8,11 @@
  *   db.query(sql, params) -> Promise<Array<row>>
  *   db.get(sql, params)   -> Promise<row | null>
  *   db.run(sql, params)   -> Promise<{ changes, lastInsertRowid }>
+ *   db.transaction(fn)    -> runs fn() atomically, rolls back on throw
  *   db.begin() / db.commit() / db.rollback()
+ *
+ * Env vars:
+ *   DB_STRICT=1  -> never fall back to SQLite; fail fast instead.
  */
 const path = require('path');
 const fs = require('fs');
@@ -27,6 +31,10 @@ const MYSQL_CONFIG = {
 let pool = null;
 let sqliteDb = null;
 let driver = 'sqlite';
+// Dedicated connection for an open MySQL transaction. pool.query() may run on
+// a different connection each call, which silently breaks transaction
+// semantics — every statement inside a transaction MUST reuse this connection.
+let txConn = null;
 
 async function initMysql() {
   const mysql = require('mysql2/promise');
@@ -63,7 +71,7 @@ function translate(sql) {
 function query(sql, params = []) {
   sql = translate(sql);
   if (driver === 'mysql') {
-    return pool.query(sql, params).then(([rows]) => rows);
+    return (txConn || pool).query(sql, params).then(([rows]) => rows);
   }
   return Promise.resolve(sqliteDb.prepare(sql).all(...params));
 }
@@ -71,7 +79,7 @@ function query(sql, params = []) {
 function get(sql, params = []) {
   sql = translate(sql);
   if (driver === 'mysql') {
-    return pool.query(sql, params).then(([rows]) => rows[0] || null);
+    return (txConn || pool).query(sql, params).then(([rows]) => rows[0] || null);
   }
   return Promise.resolve(sqliteDb.prepare(sql).get(...params) || null);
 }
@@ -79,7 +87,7 @@ function get(sql, params = []) {
 function run(sql, params = []) {
   sql = translate(sql);
   if (driver === 'mysql') {
-    return pool.query(sql, params).then(([result]) => ({
+    return (txConn || pool).query(sql, params).then(([result]) => ({
       changes: result.affectedRows,
       lastInsertRowid: result.insertId,
     }));
@@ -89,18 +97,52 @@ function run(sql, params = []) {
   return Promise.resolve({ changes: info.changes, lastInsertRowid: info.lastInsertRowid });
 }
 
+/** Run fn() inside a transaction. MySQL pins a single pooled connection for
+ *  the duration; SQLite uses its single connection. */
+async function transaction(fn) {
+  await begin();
+  try {
+    const out = await fn();
+    await commit();
+    return out;
+  } catch (e) {
+    await rollback();
+    throw e;
+  }
+}
+
 function begin() {
-  if (driver === 'mysql') return pool.query('START TRANSACTION');
+  if (driver === 'mysql') {
+    if (txConn) return Promise.resolve(); // already inside a transaction
+    return pool.getConnection().then(async (conn) => {
+      txConn = conn;
+      await conn.beginTransaction();
+    });
+  }
   sqliteDb.exec('BEGIN');
   return Promise.resolve();
 }
+
 function commit() {
-  if (driver === 'mysql') return pool.query('COMMIT');
+  if (driver === 'mysql') {
+    const conn = txConn;
+    if (!conn) return Promise.resolve();
+    return conn.commit()
+      .catch(async (e) => { try { await conn.rollback(); } catch (_) {} throw e; })
+      .finally(() => { conn.release(); if (txConn === conn) txConn = null; });
+  }
   sqliteDb.exec('COMMIT');
   return Promise.resolve();
 }
+
 function rollback() {
-  if (driver === 'mysql') return pool.query('ROLLBACK');
+  if (driver === 'mysql') {
+    const conn = txConn;
+    if (!conn) return Promise.resolve();
+    return conn.rollback()
+      .catch(() => {})
+      .finally(() => { conn.release(); if (txConn === conn) txConn = null; });
+  }
   sqliteDb.exec('ROLLBACK');
   return Promise.resolve();
 }
@@ -182,15 +224,39 @@ async function ensureSchema() {
   }
 }
 
+function fallbackAllowed() {
+  const raw = process.env.DB_STRICT;
+  if (raw !== undefined && raw !== '') {
+    const v = String(raw).toLowerCase();
+    return !(v === '1' || v === 'true' || v === 'yes');
+  }
+  // Default: strict in production, permissive in development.
+  return process.env.NODE_ENV !== 'production';
+}
+
 async function init() {
   try {
     await initMysql();
   } catch (e) {
+    if (!fallbackAllowed()) {
+      console.error(
+        '[db] MySQL unavailable and SQLite fallback is disabled ' +
+        '(DB_STRICT=' + (process.env.DB_STRICT || '') + ', NODE_ENV=' + (process.env.NODE_ENV || '') + '). ' +
+        'Refusing to start: ' + e.message
+      );
+      throw e;
+    }
     console.warn('[db] MySQL unavailable, falling back to SQLite:', e.message);
+    console.warn('[db] WARNING: writes are going to a LOCAL SQLite file, not your MySQL database.');
+    console.warn('[db] Set DB_STRICT=1 to make this a hard failure instead.');
     initSqlite();
   }
   await ensureSchema();
   return driver;
 }
 
-module.exports = { init, query, get, run, begin, commit, rollback, get driver() { return driver; } };
+module.exports = {
+  init, query, get, run,
+  begin, commit, rollback, transaction,
+  get driver() { return driver; },
+};
