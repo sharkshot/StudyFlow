@@ -125,16 +125,26 @@ The server runs on `http://localhost:3000` and serves the web app at `/`.
 
 ## Downloads
 
-Pre-built, ready-to-use binaries are published on the
-[Releases page](https://github.com/sharkshot/StudyFlow/releases).
-No build step required — just download and run.
+Source archives (`zip` / `tar.gz`) are attached to every
+[release](https://github.com/sharkshot/StudyFlow/releases).
 
-| Platform | File | Notes |
-| --- | --- | --- |
-| Windows (x64) | `StudyFlow-1.0.0-win-x64-portable.zip` | Extract and run `StudyFlow.exe` |
-| Linux (x64) | `StudyFlow-1.0.0-linux-x64.tar.gz` | Extract and run the bundled launcher |
-| Android — Phone | `studyflow-debug.apk` | Portrait-locked, phone layout |
-| Android — Tablet | `studyflow-tablet.apk` | Landscape-locked, tablet layout |
+> ⚠️ **The prebuilt binaries on the v1.0.0 / v2.0.0 releases do NOT include
+> v3.x.** They predate the backend, so they have no accounts, no cloud sync and
+> no communities. v3.x currently ships as **source only** — build it with the
+> commands in [Building From Source](#building-from-source). Rebuilt binaries
+> will be attached to the release once they are produced.
+
+| Platform | How to get a v3.x build |
+| --- | --- |
+| Web (any OS) | `cd server && npm install && node src/server.js` → open `http://localhost:3000` |
+| Windows / Linux / macOS | `cd build/desktop-electron && npm install && npm run dist` (`:win` / `:mac`) |
+| Android | `cd build/android-cordova && npm install && npm run build:apk` |
+
+> Android note: `npm run build:apk` installs
+> `cordova-plugin-android-permissions` automatically. Without it the QR scanner
+> cannot start — Android requires the camera permission to be requested at
+> runtime, not just declared in the manifest. See
+> [`docs/P2P-DATA-MERGE.md`](docs/P2P-DATA-MERGE.md) §4.1.
 
 ---
 
@@ -199,7 +209,7 @@ studyflow/
 │   │   ├── app-web/        # Synced from share/ at build time
 │   │   ├── main.js
 │   │   └── package.json
-│   └── artifacts/          # Pre-built release binaries
+│   └── (artifacts are not committed — build them, see "Building From Source")
 ├── CHANGELOG.md
 └── README.md
 ```
@@ -231,13 +241,13 @@ features (Pomodoro, heatmap, encrypted P2P sync) work without the server;
 cloud sync, accounts, and communities require the backend.
 
 ### Packaged builds
-- **Android APK**: `cd build/android-cordova && bash build-apk.sh`
-- **Desktop (Electron)**: `cd build/desktop-electron && npm run dist` (Linux),
-  `npm run dist:win` (Windows), or `npm run dist:mac` (macOS)
+- **Android APK**: `cd build/android-cordova && npm install && npm run build:apk`
+  (adds `cordova-plugin-android-permissions`, required for QR scanning)
+- **Desktop (Electron)**: `cd build/desktop-electron && npm install` then
+  `npm run dist` (Linux), `npm run dist:win` (Windows), or `npm run dist:mac` (macOS)
 
-Pre-built binaries are already provided in
-[`build/artifacts/`](build/artifacts/) and on the
-[Releases page](https://github.com/sharkshot/StudyFlow/releases).
+Packaged builds point at `http://localhost:3000` by default. See the note under
+[Project Structure](#project-structure) for switching to a remote API.
 
 ---
 
