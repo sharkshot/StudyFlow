@@ -1,0 +1,155 @@
+name: Build Release Artifacts
+
+# Build the installable packages for every StudyFlow release.
+# Triggers:
+#   - a `v*` tag push
+#   - manual dispatch (set the `tag` input to the release to attach to)
+# The Android APK and the Linux / Windows / macOS desktop installers are
+# uploaded straight to the GitHub release that carries the matching tag.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to attach the built artifacts to'
+        required: true
+        default: 'v3.22.0'
+
+permissions:
+  contents: write
+
+jobs:
+  # ---------------------------------------------------------------- Android
+  android:
+    name: Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Build debug APK
+        working-directory: build/android-cordova
+        run: |
+          set -euo pipefail
+          export ANDROID_SDK_ROOT="$PWD/tools/android-sdk"
+          export ANDROID_HOME="$ANDROID_SDK_ROOT"
+          export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+          if [ ! -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]; then
+            python3 scripts/setup-android-sdk.py
+          fi
+          npm install --no-audit --no-fund
+          npm run plugins:restore
+          npx --no-install cordova platform add android@13.0.0 --no-interactive || true
+          node scripts/sync-web-assets.js
+          npx --no-install cordova build android --debug --no-interactive
+          mkdir -p "$GITHUB_WORKSPACE/build/artifacts"
+          APK="$(find platforms/android/app/build/outputs/apk -name '*.apk' | head -n1)"
+          cp "$APK" "$GITHUB_WORKSPACE/build/artifacts/studyflow-debug.apk"
+
+      - name: Upload APK to release
+        if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          files: build/artifacts/studyflow-debug.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ---------------------------------------------------------------- Desktop Linux
+  desktop-linux:
+    name: Desktop (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Build AppImage + tar.gz
+        working-directory: build/desktop-electron
+        env:
+          ELECTRON_MIRROR: https://npmmirror.com/mirrors/electron/
+          ELECTRON_BUILDER_BINARIES_MIRROR: https://npmmirror.com/mirrors/electron-builder-binaries/
+        run: |
+          npm install --no-audit --no-fund
+          npm run dist
+
+      - name: Upload Linux artifacts to release
+        if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          files: |
+            build/desktop-electron/dist/*.AppImage
+            build/desktop-electron/dist/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ---------------------------------------------------------------- Desktop Windows
+  desktop-win:
+    name: Desktop (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Build NSIS installer
+        working-directory: build/desktop-electron
+        env:
+          ELECTRON_MIRROR: https://npmmirror.com/mirrors/electron/
+          ELECTRON_BUILDER_BINARIES_MIRROR: https://npmmirror.com/mirrors/electron-builder-binaries/
+        run: |
+          npm install --no-audit --no-fund
+          npm run dist:win
+
+      - name: Upload Windows installer to release
+        if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          files: build/desktop-electron/dist/StudyFlow-*-setup.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ---------------------------------------------------------------- Desktop macOS
+  desktop-mac:
+    name: Desktop (macOS)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Build DMG
+        working-directory: build/desktop-electron
+        env:
+          ELECTRON_MIRROR: https://npmmirror.com/mirrors/electron/
+          ELECTRON_BUILDER_BINARIES_MIRROR: https://npmmirror.com/mirrors/electron-builder-binaries/
+        run: |
+          npm install --no-audit --no-fund
+          npm run dist:mac
+
+      - name: Upload macOS DMG to release
+        if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          files: build/desktop-electron/dist/*.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
